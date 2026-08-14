@@ -17,7 +17,7 @@ const ADMIN_USERNAME = "blackadmin";
 /*
    ĐỔI MẬT KHẨU ADMIN Ở ĐÂY
 */
-const ADMIN_PASSWORD = "THAY_MAT_KHAU_CUA_M";
+const ADMIN_PASSWORD = "11102011tuankhoi";
 
 /* ==================================================
    DATABASE
