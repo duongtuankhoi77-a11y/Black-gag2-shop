@@ -16,11 +16,8 @@ const ADMIN_USERNAME = "blackadmin";
 
 /*
    ĐỔI MẬT KHẨU ADMIN Ở ĐÂY
-   Ví dụ:
-   const ADMIN_PASSWORD = "Black123456";
 */
-const ADMIN_PASSWORD = "11102011tuankhoi";
-
+const ADMIN_PASSWORD = "THAY_MAT_KHAU_CUA_M";
 
 /* ==================================================
    DATABASE
@@ -98,6 +95,12 @@ addColumnIfMissing(
   "topups",
   "credited_amount",
   "INTEGER"
+);
+
+addColumnIfMissing(
+  "products",
+  "image",
+  "TEXT"
 );
 
 
@@ -187,7 +190,7 @@ createAdmin();
    SERVER
    ================================================== */
 
-app.use(express.json());
+app.use(express.json({limit:"8mb"}));
 
 app.use(
   express.static(
@@ -290,7 +293,8 @@ app.get(
         id,
         name,
         price,
-        stock
+        stock,
+        image
       FROM products
       WHERE active=1
       ORDER BY id
@@ -752,25 +756,12 @@ app.post(
       });
     }
 
-    /*
-      Lưu cả serial và mã thẻ
-      để ADMIN kiểm tra.
-    */
-
     const providerRef =
       JSON.stringify({
         provider,
         serial: String(serial).trim(),
         code: String(code).trim()
       });
-
-    /*
-      Chiết khấu 16%
-      Ví dụ:
-      10.000 → 8.400
-      20.000 → 16.800
-      50.000 → 42.000
-    */
 
     const expectedCredit =
       Math.floor(
@@ -854,10 +845,7 @@ app.post(
         "PENDING"
     });
   }
-);
-
-
-/* ==================================================
+);/* ==================================================
    ADMIN - OVERVIEW
    ================================================== */
 
@@ -990,7 +978,8 @@ app.post(
     const {
       name,
       price,
-      stock
+      stock,
+      image
     } = req.body || {};
 
     const p =
@@ -1011,11 +1000,17 @@ app.post(
       });
     }
 
+    const cleanImage =
+      typeof image === "string" &&
+      image.startsWith("data:image/")
+        ? image
+        : null;
+
     const result =
       db.prepare(`
         INSERT INTO products
-        (name,price,stock)
-        VALUES(?,?,?)
+        (name,price,stock,image)
+        VALUES(?,?,?,?)
       `).run(
         name.trim(),
         Math.floor(p),
@@ -1024,7 +1019,8 @@ app.post(
               0,
               Math.floor(s)
             )
-          : 0
+          : 0,
+        cleanImage
       );
 
     res.json({
@@ -1048,7 +1044,8 @@ app.patch(
       name,
       price,
       stock,
-      active
+      active,
+      image
     } = req.body || {};
 
     const p =
@@ -1067,6 +1064,16 @@ app.patch(
         : active
           ? 1
           : 0;
+
+    const img =
+      image === undefined
+        ? null
+        : (
+            typeof image === "string" &&
+            image.startsWith("data:image/")
+              ? image
+              : ""
+          );
 
     if (
       p !== null &&
@@ -1102,7 +1109,8 @@ app.patch(
         name=COALESCE(?,name),
         price=COALESCE(?,price),
         stock=COALESCE(?,stock),
-        active=COALESCE(?,active)
+        active=COALESCE(?,active),
+        image=COALESCE(?,image)
       WHERE id=?
     `).run(
       name || null,
@@ -1116,6 +1124,8 @@ app.patch(
         : Math.floor(s),
 
       a,
+
+      img,
 
       Number(
         req.params.id
@@ -1283,10 +1293,7 @@ app.post(
       ok: true
     });
   }
-);
-
-
-/* ==================================================
+);/* ==================================================
    ADMIN - ĐỔI TRẠNG THÁI ĐƠN
    ==================================================
 
@@ -1345,11 +1352,6 @@ app.post(
       });
     }
 
-    /*
-      Không cho thao tác
-      lại khi trạng thái giống nhau.
-    */
-
     if (
       order.status ===
       newStatus
@@ -1359,11 +1361,6 @@ app.post(
         ok: true
       });
     }
-
-    /*
-      Nếu hủy đơn lần đầu,
-      hoàn tiền + hoàn hàng.
-    */
 
     if (
       newStatus ===
@@ -1407,12 +1404,6 @@ app.post(
           for (
             const item of items
           ) {
-
-            /*
-              Chỉ cộng lại tồn kho
-              nếu sản phẩm đang
-              quản lý số lượng.
-            */
 
             db.prepare(`
               UPDATE products
@@ -1503,10 +1494,6 @@ app.post(
 
 /* ==================================================
    TRANG SHOP
-   ==================================================
-
-   Dùng app.use thay vì app.get("*")
-   để tránh lỗi trên Express mới.
    ================================================== */
 
 app.use(
@@ -1538,5 +1525,6 @@ app.listen(
     console.log(
       `Admin username: ${ADMIN_USERNAME}`
     );
+
   }
 );
