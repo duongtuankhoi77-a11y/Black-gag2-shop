@@ -1,40 +1,120 @@
-<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BLACK GAG2 SHOP</title>
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BLACK GAG2 SHOP</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#080a13;color:#fff;font-family:Arial,sans-serif}.wrap{max-width:1100px;margin:auto;padding:18px 16px 80px}
-header{position:sticky;top:0;z-index:5;background:#0b0d18ee;border-bottom:1px solid #292d48}.nav{max-width:1100px;margin:auto;padding:13px 16px;display:flex;gap:8px;align-items:center}.logo{font-size:20px;font-weight:900;margin-right:auto}.logo span{color:#8b6cff}
-button{border:0;border-radius:11px;padding:11px 14px;cursor:pointer;font-weight:800}.primary{background:linear-gradient(100deg,#6657ff,#aa5cff);color:#fff}.dark{background:#171a2c;color:#fff;border:1px solid #303451}.danger{background:#3b1820;color:#fff}
-.hero,.panel,.card{background:#10121e;border:1px solid #292d48;border-radius:20px}.hero{padding:35px;background:radial-gradient(circle at 85% 15%,#4c2c86,#15162a 40%,#10121e 72%)}.hero h1{font-size:clamp(40px,8vw,70px);line-height:1;margin:18px 0}.grad{background:linear-gradient(90deg,#7667ff,#d96cff);-webkit-background-clip:text;color:transparent}.muted{color:#989db7}.tag{display:inline-block;background:#1a1d31;color:#a49aff;padding:6px 9px;border-radius:8px;font-size:12px}.section{margin-top:25px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:13px}.card{padding:16px}.price{font-size:19px;font-weight:900;margin:12px 0}input,select{width:100%;padding:12px;margin:6px 0 12px;border-radius:10px;border:1px solid #303451;background:#0b0d17;color:#fff}.row{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #292d48}.hide{display:none!important}.modal{position:fixed;inset:0;background:#000b;z-index:30;display:none;align-items:center;justify-content:center;padding:18px}.modal.show{display:flex}.modalbox{width:min(480px,100%);background:#111426;border:1px solid #383c64;border-radius:20px;padding:20px}.bottom{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);width:min(620px,calc(100% - 24px));z-index:10;display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:7px;border:1px solid #292d48;border-radius:18px;background:#0d0f1af5}.bottom button{background:transparent;color:#aeb3ca}.bottom .on{background:#29214e;color:#fff}.admin{border-color:#6f5cff}
-</style></head><body>
-<header><div class="nav"><div class="logo">🎮 <span>BLACK</span> GAG2 SHOP</div><span id="hello" class="muted"></span><button id="loginBtn" class="dark" onclick="modal('login')">Đăng nhập</button><button id="regBtn" class="primary" onclick="modal('register')">Đăng ký</button><button id="logoutBtn" class="dark hide" onclick="logout()">Đăng xuất</button></div></header>
-<main class="wrap"><section class="hero"><span class="tag">GROW A GARDEN 2</span><h1>Mua bán GAG2<br><span class="grad">nhanh & tiện</span></h1><p class="muted">BLACK GAG2 SHOP — chỉ có Grow a Garden 2.</p><button class="primary" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">🛒 Xem sản phẩm</button></section>
-<section id="products" class="section"><h2>🌱 Sản phẩm</h2><div id="productGrid" class="grid"></div></section>
-<section class="section"><div class="panel" style="padding:20px"><h2>💰 Nạp tiền</h2><button class="dark" onclick="topupCard()">💳 Thẻ cào</button> <button class="dark" onclick="topupBank()">🏦 Bank</button><p id="topupMsg" class="muted"></p></div></section>
-<section class="section"><div class="panel" style="padding:20px"><h2>📦 Đơn hàng</h2><div id="orders"></div></div></section>
-<section id="adminSection" class="section hide"><div class="panel admin" style="padding:20px"><h2>👑 Admin</h2><div id="admin"></div></div></section></main>
-<nav class="bottom"><button class="on" onclick="scrollToId('products')">🏠<br>Shop</button><button onclick="topupCard()">💳<br>Nạp tiền</button><button onclick="loadOrders()">☷<br>Đơn hàng</button><button onclick="adminLogin()">👑<br>Admin</button></nav>
-<div class="modal" id="modal"><div class="modalbox" id="modalbox"></div></div>
+*{box-sizing:border-box}body{margin:0;background:#080a13;color:#fff;font-family:Arial,sans-serif}
+.wrap{max-width:1100px;margin:auto;padding:18px 16px 90px}
+header{position:sticky;top:0;z-index:5;background:#0b0d18ee;border-bottom:1px solid #292d48}
+.nav{max-width:1100px;margin:auto;padding:13px 16px;display:flex;gap:8px;align-items:center}
+.logo{font-size:20px;font-weight:900;margin-right:auto}.logo span{color:#8b6cff}
+button{border:0;border-radius:11px;padding:11px 14px;cursor:pointer;font-weight:800}
+.primary{background:linear-gradient(100deg,#6657ff,#aa5cff);color:#fff}.dark{background:#171a2c;color:#fff;border:1px solid #303451}
+.danger{background:#3b1820;color:#fff}.hero,.panel,.card{background:#10121e;border:1px solid #292d48;border-radius:20px}
+.hero{padding:35px;background:radial-gradient(circle at 85% 15%,#4c2c86,#15162a 40%,#10121e 72%)}
+.hero h1{font-size:clamp(40px,8vw,70px);line-height:1;margin:18px 0}.grad{background:linear-gradient(90deg,#7667ff,#d96cff);-webkit-background-clip:text;color:transparent}
+.muted{color:#989db7}.tag{display:inline-block;background:#1a1d31;color:#a49aff;padding:6px 9px;border-radius:8px;font-size:12px}
+.section{margin-top:25px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:13px}
+.card{padding:16px}.price{font-size:19px;font-weight:900;margin:12px 0}
+input,select{width:100%;padding:12px;margin:6px 0 12px;border-radius:10px;border:1px solid #303451;background:#0b0d17;color:#fff}
+.row{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #292d48}
+.hide{display:none!important}.modal{position:fixed;inset:0;background:#000b;z-index:30;display:none;align-items:center;justify-content:center;padding:18px}
+.modal.show{display:flex}.modalbox{width:min(500px,100%);max-height:90vh;overflow:auto;background:#111426;border:1px solid #383c64;border-radius:20px;padding:20px}
+.bottom{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);width:min(680px,calc(100% - 24px));z-index:10;display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:7px;border:1px solid #292d48;border-radius:18px;background:#0d0f1af5}
+.bottom button{background:transparent;color:#aeb3ca}.bottom .on{background:#29214e;color:#fff}.admin{border-color:#6f5cff}
+.qr{width:min(280px,100%);display:block;margin:12px auto;border-radius:12px;background:#fff;padding:8px}
+.status{display:inline-block;padding:5px 8px;border-radius:8px;background:#1a1d31;margin-top:5px}
+.admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.small{font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <div class="nav">
+    <div class="logo">🎮 <span>BLACK</span> GAG2 SHOP</div>
+    <span id="hello" class="muted"></span>
+    <button id="loginBtn" class="dark" onclick="modal('login')">Đăng nhập</button>
+    <button id="regBtn" class="primary" onclick="modal('register')">Đăng ký</button>
+    <button id="logoutBtn" class="dark hide" onclick="logout()">Đăng xuất</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <span class="tag">GROW A GARDEN 2</span>
+    <h1>Mua bán GAG2<br><span class="grad">nhanh & tiện</span></h1>
+    <p class="muted">BLACK GAG2 SHOP — chỉ có Grow a Garden 2.</p>
+    <button class="primary" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">🛒 Xem sản phẩm</button>
+  </section>
+
+  <section id="products" class="section">
+    <h2>🌱 Sản phẩm</h2>
+    <div id="productGrid" class="grid"></div>
+  </section>
+
+  <section class="section">
+    <div class="panel" style="padding:20px">
+      <h2>💰 Nạp tiền</h2>
+      <button class="dark" onclick="topupCard()">💳 Thẻ cào</button>
+      <button class="dark" onclick="topupBank()">🏦 Bank / QR</button>
+      <p id="topupMsg" class="muted"></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="panel" style="padding:20px">
+      <h2>📦 Đơn hàng</h2>
+      <div id="orders"></div>
+    </div>
+  </section>
+
+  <section id="adminSection" class="section hide">
+    <div class="panel admin" style="padding:20px">
+      <h2>👑 Admin</h2>
+      <div id="admin"></div>
+    </div>
+  </section>
+</main>
+
+<nav class="bottom">
+  <button class="on" onclick="scrollToId('products')">🏠<br>Shop</button>
+  <button onclick="topupBank()">🏦<br>Nạp Bank</button>
+  <button onclick="loadOrders()">☷<br>Đơn hàng</button>
+  <button id="adminNav" class="hide" onclick="adminLogin()">👑<br>Admin</button>
+</nav>
+
+<div class="modal" id="modal">
+  <div class="modalbox" id="modalbox"></div>
+</div>
+
 <script>
 let token=localStorage.getItem("black_token")||"", products=[], cart=[];
-const $=id=>document.getElementById(id), money=n=>Number(n).toLocaleString("vi-VN")+"đ";
-async function api(url,opt={}){opt.headers={...(opt.headers||{}),...(token?{Authorization:"Bearer "+token}:{})};if(opt.body&&typeof opt.body!=="string"){opt.headers["Content-Type"]="application/json";opt.body=JSON.stringify(opt.body)}let r=await fetch(url,opt),d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||"Có lỗi");return d}
-async function loadProducts(){products=await api("/api/products");$("productGrid").innerHTML=products.map(p=>`<div class="card"><span class="tag">GAG2</span><h3>${p.name}</h3><div class="muted">Grow a Garden 2</div><div class="price">${money(p.price)} / 1</div><button class="dark" onclick="buy(${p.id})">🛒 Thêm giỏ</button> <button class="primary" onclick="buy(${p.id},true)">⚡ Mua ngay</button></div>`).join("")}
-function modal(type){$("modalbox").innerHTML=type==="login"?`<h2>🔐 Đăng nhập</h2><input id="login" placeholder="Tên đăng nhập hoặc Email"><input id="pass" type="password" placeholder="Mật khẩu"><button class="primary" style="width:100%" onclick="doLogin()">Đăng nhập</button><p class="muted">Chưa có tài khoản? <a href="#" onclick="modal('register');return false">Đăng ký</a></p>`:`<h2>👤 Đăng ký</h2><input id="user" placeholder="Tên đăng nhập"><input id="contact" placeholder="Số điện thoại hoặc Email"><input id="pass" type="password" placeholder="Mật khẩu"><button class="primary" style="width:100%" onclick="doRegister()">Tạo tài khoản</button><p class="muted">Không cần OTP.</p>`;$("modal").classList.add("show")}
-function close(){ $("modal").classList.remove("show") }
-async function doRegister(){try{let d=await api("/api/register",{method:"POST",body:{username:$("user").value,contact:$("contact").value,password:$("pass").value}});token=d.token;localStorage.setItem("black_token",token);close();refresh()}catch(e){alert(e.message)}}
-async function doLogin(){try{let d=await api("/api/login",{method:"POST",body:{login:$("login").value,password:$("pass").value}});token=d.token;localStorage.setItem("black_token",token);close();refresh()}catch(e){alert(e.message)}}
-function logout(){token="";localStorage.removeItem("black_token");$("hello").textContent="";$("loginBtn").classList.remove("hide");$("regBtn").classList.remove("hide");$("logoutBtn").classList.add("hide");$("adminSection").classList.add("hide")}
-async function refresh(){try{let u=await api("/api/me");$("hello").textContent=`👤 ${u.username} · ${money(u.balance)}`;$("loginBtn").classList.add("hide");$("regBtn").classList.add("hide");$("logoutBtn").classList.remove("hide");if(u.role==="admin"){ $("adminSection").classList.remove("hide");loadAdmin() }loadOrders()}catch(e){logout()}}
-function buy(id,now=false){let p=products.find(x=>x.id===id);let q=Number(prompt(`Số lượng ${p.name}:`,"1"));if(!q||q<1)return;if(now)checkout([{productId:id,qty:q}]);else{cart.push({productId:id,qty:q});alert("Đã thêm vào giỏ.")}}
-async function checkout(items){try{let d=await api("/api/orders",{method:"POST",body:{items}});alert("Đặt hàng thành công. Mã đơn #"+d.orderId);cart=[];refresh()}catch(e){alert(e.message)}}
-async function loadOrders(){if(!token){$("orders").innerHTML='<p class="muted">Đăng nhập để xem đơn hàng.</p>';return}try{let a=await api("/api/orders");$("orders").innerHTML=a.map(o=>`<div class="row"><span>#${o.id} · ${o.items}<br><small class="muted">${o.status}</small></span><b>${money(o.total)}</b></div>`).join("")||'<p class="muted">Chưa có đơn.</p>'}catch(e){}}
-function topupCard(){if(!token)return modal("login");$("topupMsg").innerHTML=`<div class="panel"><h3>💳 Nạp thẻ cào</h3><select id="cp"><option>Viettel</option><option>Vinaphone</option><option>Mobifone</option></select><select id="cv">${[10000,20000,50000,100000,200000,500000].map(x=>`<option value="${x}">${money(x)}</option>`).join("")}</select><input id="cs" placeholder="Serial"><input id="cc" placeholder="Mã thẻ"><button class="primary" onclick="sendCard()">Gửi thẻ</button><p class="muted">Chưa kết nối API nhà cung cấp.</p></div>`}
-async function sendCard(){try{await api("/api/topups/card",{method:"POST",body:{provider:$("cp").value,value:Number($("cv").value),serial:$("cs").value,code:$("cc").value}});alert("Đã gửi yêu cầu nạp thẻ.");$("topupMsg").textContent=""}catch(e){alert(e.message)}}
-function topupBank(){if(!token)return modal("login");let a=Number(prompt("Số tiền muốn nạp:","10000"));if(!a)return;api("/api/topups/bank",{method:"POST",body:{amount:a}}).then(()=>alert("Đã tạo yêu cầu nạp Bank. API ngân hàng sẽ nối sau.")).catch(e=>alert(e.message))}
-async function adminLogin(){if(!token)return modal("login");try{let me=await api("/api/me");if(me.role!=="admin")return alert("Tài khoản không có quyền Admin.");$("adminSection").classList.remove("hide");loadAdmin();$("adminSection").scrollIntoView({behavior:"smooth"})}catch(e){alert(e.message)}}
-async function loadAdmin(){try{let d=await api("/api/admin/overview");$("admin").innerHTML=`<p>👥 ${d.users.length} tài khoản · 📦 ${d.orders.length} đơn · 💳 ${d.topups.length} yêu cầu nạp</p><h3>Sản phẩm</h3>${d.products.map(p=>`<div class="row"><span>${p.name}<br><small>${money(p.price)} · tồn ${p.stock}</small></span><button class="dark" onclick="editProduct(${p.id},'${p.name.replaceAll("'","\\'")}',${p.price},${p.stock})">Sửa</button></div>`).join("")}<h3>Yêu cầu nạp</h3>${d.topups.map(t=>`<div class="row"><span>#${t.id} · ${t.username} · ${t.method}</span><b>${money(t.amount)} ${t.status==="PENDING"?`<button class="primary" onclick="approve(${t.id})">Duyệt</button>`:t.status}</b></div>`).join("")}<h3>Đơn hàng</h3>${d.orders.map(o=>`<div class="row"><span>#${o.id} · ${o.username}</span><b>${money(o.total)} · ${o.status}</b></div>`).join("")}` }catch(e){$("admin").textContent=e.message}}
-async function approve(id){try{await api("/api/admin/topups/"+id+"/approve",{method:"POST"});loadAdmin()}catch(e){alert(e.message)}}
-async function editProduct(id,name,price,stock){let n=prompt("Tên",name),p=Number(prompt("Giá",price)),s=Number(prompt("Tồn kho (0 = không giới hạn)",stock));if(!n||!p)return;try{await api("/api/admin/products/"+id,{method:"PATCH",body:{name:n,price:p,stock:s}});loadProducts();loadAdmin()}catch(e){alert(e.message)}}
-function scrollToId(id){$(id).scrollIntoView({behavior:"smooth"})}
-$("modal").onclick=e=>{if(e.target.id==="modal")close()}
-loadProducts();if(token)refresh();
-</script></body></html>
+const $=id=>document.getElementById(id);
+const money=n=>Number(n).toLocaleString("vi-VN")+"đ";
+
+async function api(url,opt={}){
+  opt.headers={...(opt.headers||{}),...(token?{Authorization:"Bearer "+token}:{})};
+  if(opt.body&&typeof opt.body!=="string"){
+    opt.headers["Content-Type"]="application/json";
+    opt.body=JSON.stringify(opt.body);
+  }
+  const r=await fetch(url,opt);
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok)throw Error(d.error||"Có lỗi");
+  return d;
+}
+
+async function loadProducts(){
+  products=await api("/api/products");
+  $("productGrid").innerHTML=products.map(p=>`
+    <div class="card">
+      <span class="tag">GAG2</span>
+      <h3>${escapeHtml(p.name)}</h3>
+      <div class="muted">Grow a Garden 2</div>
+      <div class="price">${money(p.price)} / 1</div>
+      <button class="dark" onclick="buy(${p.id})">🛒 Thêm giỏ</button>
+      <button class="primary" onclick="buy(${p.id},true)">⚡ Mua ngay</button>
+    </div>
+  `).join("");
