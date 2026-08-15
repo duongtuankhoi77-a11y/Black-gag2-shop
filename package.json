@@ -1,4 +1,4 @@
-```json
+json
 {
   "name": "black-gag2-shop",
   "version": "1.0.0",
@@ -17,4 +17,3 @@
     "better-sqlite3": "^11.10.0"
   }
 }
-```
