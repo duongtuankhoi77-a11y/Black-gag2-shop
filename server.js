@@ -7,26 +7,37 @@ const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-/* ==================================================
-   DATABASE
-   Trên Render:
-   đặt biến môi trường DB_PATH nếu dùng Persistent Disk.
-   Ví dụ:
-   /var/data/black_gag2.db
+const PORT =
+  Number(process.env.PORT) || 3000;
 
-   Nếu chưa đặt DB_PATH:
-   dùng black_gag2.db trong project.
-================================================== */
+const ADMIN_USERNAME =
+  "blackadmin";
 
-const DEFAULT_DB_PATH =
-  path.join(__dirname, "black_gag2.db");
+const ADMIN_PASSWORD =
+  "11102011tuankhoi";
+
+/*
+  Render Persistent Disk:
+  đặt DB_PATH, ví dụ:
+  /var/data/black_gag2.db
+
+  Nếu chưa có DB_PATH thì dùng:
+  ./black_gag2.db
+*/
 
 const DB_PATH =
   process.env.DB_PATH
     ? path.resolve(process.env.DB_PATH)
-    : DEFAULT_DB_PATH;
+    : path.join(
+        __dirname,
+        "black_gag2.db"
+      );
+
+
+/* ==================================================
+   DATABASE
+================================================== */
 
 fs.mkdirSync(
   path.dirname(DB_PATH),
@@ -38,9 +49,13 @@ fs.mkdirSync(
 let db;
 
 try {
-  db = new Database(DB_PATH);
 
-  db.pragma("journal_mode = WAL");
+  db =
+    new Database(DB_PATH);
+
+  db.pragma(
+    "journal_mode = WAL"
+  );
 
   console.log(
     "Database:",
@@ -50,7 +65,7 @@ try {
 } catch (error) {
 
   console.error(
-    "Không mở được SQLite database:",
+    "DATABASE ERROR:",
     error
   );
 
@@ -59,79 +74,116 @@ try {
 
 
 /* ==================================================
-   ADMIN
-================================================== */
-
-const ADMIN_USERNAME =
-  "blackadmin";
-
-const ADMIN_PASSWORD =
-  "11102011tuankhoi";
-
-
-/* ==================================================
-   DATABASE TABLES
+   TABLES
 ================================================== */
 
 db.exec(`
+
 CREATE TABLE IF NOT EXISTS users(
+
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+
   username TEXT UNIQUE NOT NULL,
+
   contact TEXT NOT NULL,
+
   password_hash TEXT NOT NULL,
+
   balance INTEGER NOT NULL DEFAULT 0,
+
   role TEXT NOT NULL DEFAULT 'user',
-  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+
+  created_at TEXT NOT NULL
+    DEFAULT CURRENT_TIMESTAMP
+
 );
 
 CREATE TABLE IF NOT EXISTS products(
+
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+
   name TEXT NOT NULL,
+
   price INTEGER NOT NULL,
+
   stock INTEGER NOT NULL DEFAULT 0,
+
   active INTEGER NOT NULL DEFAULT 1,
+
   image TEXT
+
 );
 
 CREATE TABLE IF NOT EXISTS orders(
+
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+
   user_id INTEGER NOT NULL,
+
   total INTEGER NOT NULL,
+
   status TEXT NOT NULL DEFAULT 'PENDING',
+
   game_username TEXT,
-  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+
+  created_at TEXT NOT NULL
+    DEFAULT CURRENT_TIMESTAMP
+
 );
 
 CREATE TABLE IF NOT EXISTS order_items(
+
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+
   order_id INTEGER NOT NULL,
+
   product_id INTEGER NOT NULL,
+
   qty INTEGER NOT NULL,
+
   unit_price INTEGER NOT NULL
+
 );
 
 CREATE TABLE IF NOT EXISTS topups(
+
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+
   user_id INTEGER NOT NULL,
+
   method TEXT NOT NULL,
+
   amount INTEGER NOT NULL,
+
   status TEXT NOT NULL DEFAULT 'PENDING',
+
   provider_ref TEXT,
+
   credited_amount INTEGER,
+
   reject_reason TEXT,
-  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+
+  created_at TEXT NOT NULL
+    DEFAULT CURRENT_TIMESTAMP
+
 );
 
 CREATE TABLE IF NOT EXISTS sessions(
+
   token TEXT PRIMARY KEY,
+
   user_id INTEGER NOT NULL,
-  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+
+  created_at TEXT NOT NULL
+    DEFAULT CURRENT_TIMESTAMP
+
 );
+
 `);
 
 
 /* ==================================================
-   ADD COLUMN FOR OLD DATABASE
+   MIGRATE OLD DATABASE
 ================================================== */
 
 function addColumnIfMissing(
@@ -147,61 +199,44 @@ function addColumnIfMissing(
       )
       .all();
 
-  const exists =
-    columns.some(
+  if (
+    !columns.some(
       x => x.name === column
-    );
-
-  if (!exists) {
+    )
+  ) {
 
     db.exec(`
       ALTER TABLE ${table}
       ADD COLUMN ${column} ${definition}
     `);
 
-    console.log(
-      `Added column ${table}.${column}`
-    );
-
   }
 }
 
 
-try {
+addColumnIfMissing(
+  "products",
+  "image",
+  "TEXT"
+);
 
-  addColumnIfMissing(
-    "products",
-    "image",
-    "TEXT"
-  );
+addColumnIfMissing(
+  "orders",
+  "game_username",
+  "TEXT"
+);
 
-  addColumnIfMissing(
-    "orders",
-    "game_username",
-    "TEXT"
-  );
+addColumnIfMissing(
+  "topups",
+  "credited_amount",
+  "INTEGER"
+);
 
-  addColumnIfMissing(
-    "topups",
-    "credited_amount",
-    "INTEGER"
-  );
-
-  addColumnIfMissing(
-    "topups",
-    "reject_reason",
-    "TEXT"
-  );
-
-} catch (error) {
-
-  console.error(
-    "Lỗi cập nhật database:",
-    error
-  );
-
-  process.exit(1);
-}
+addColumnIfMissing(
+  "topups",
+  "reject_reason",
+  "TEXT"
+);
 
 
 /* ==================================================
@@ -216,7 +251,9 @@ const productCount =
     .get()
     .c;
 
-if (productCount === 0) {
+if (
+  productCount === 0
+) {
 
   const insert =
     db.prepare(`
@@ -228,10 +265,16 @@ if (productCount === 0) {
         active,
         image
       )
-      VALUES (?, ?, ?, 1, NULL)
+      VALUES(
+        ?,
+        ?,
+        ?,
+        1,
+        NULL
+      )
     `);
 
-  const defaultProducts = [
+  const products = [
 
     [
       "Dragon Breath Seed",
@@ -290,7 +333,7 @@ if (productCount === 0) {
   ];
 
   for (
-    const product of defaultProducts
+    const product of products
   ) {
 
     insert.run(
@@ -298,12 +341,11 @@ if (productCount === 0) {
     );
 
   }
-
 }
 
 
 /* ==================================================
-   CREATE ADMIN
+   ADMIN
 ================================================== */
 
 function createAdmin() {
@@ -335,16 +377,20 @@ function createAdmin() {
         password_hash,
         role
       )
-      VALUES (?, ?, ?, 'admin')
+      VALUES(
+        ?,
+        ?,
+        ?,
+        'admin'
+      )
     `).run(
-      ADMIN_USERNAME,
-      "admin@black-gag2.local",
-      hash
-    );
 
-    console.log(
-      "Created admin:",
-      ADMIN_USERNAME
+      ADMIN_USERNAME,
+
+      "admin@black-gag2.local",
+
+      hash
+
     );
 
   } else {
@@ -356,8 +402,11 @@ function createAdmin() {
         password_hash=?
       WHERE username=?
     `).run(
+
       hash,
+
       ADMIN_USERNAME
+
     );
 
   }
@@ -394,7 +443,7 @@ app.use(
 
 
 /* ==================================================
-   AUTH HELPERS
+   AUTH
 ================================================== */
 
 function createToken() {
@@ -405,16 +454,19 @@ function createToken() {
 
 }
 
-
 function getUser(req) {
 
   const auth =
     req.headers.authorization || "";
 
   if (
-    !auth.startsWith("Bearer ")
+    !auth.startsWith(
+      "Bearer "
+    )
   ) {
+
     return null;
+
   }
 
   const token =
@@ -423,24 +475,24 @@ function getUser(req) {
       .trim();
 
   if (!token) {
+
     return null;
+
   }
 
-  const user =
-    db
-      .prepare(`
-        SELECT
-          u.*
-        FROM sessions s
-        JOIN users u
-          ON u.id=s.user_id
-        WHERE s.token=?
-      `)
-      .get(
-        token
-      );
+  return db
+    .prepare(`
+      SELECT
+        u.*
+      FROM sessions s
+      JOIN users u
+        ON u.id=s.user_id
+      WHERE s.token=?
+    `)
+    .get(
+      token
+    ) || null;
 
-  return user || null;
 }
 
 
@@ -468,6 +520,7 @@ function requireUser(
     user;
 
   next();
+
 }
 
 
@@ -498,6 +551,7 @@ function requireAdmin(
     user;
 
   next();
+
 }
 
 
@@ -622,7 +676,11 @@ app.post(
             contact,
             password_hash
           )
-          VALUES (?, ?, ?)
+          VALUES(
+            ?,
+            ?,
+            ?
+          )
         `)
         .run(
           username,
@@ -639,7 +697,10 @@ app.post(
         token,
         user_id
       )
-      VALUES (?, ?)
+      VALUES(
+        ?,
+        ?
+      )
     `).run(
       token,
       result.lastInsertRowid
@@ -710,7 +771,10 @@ app.post(
         token,
         user_id
       )
-      VALUES (?, ?)
+      VALUES(
+        ?,
+        ?
+      )
     `).run(
       token,
       user.id
@@ -773,16 +837,16 @@ app.post(
   requireUser,
   (req, res) => {
 
-    const auth =
-      req.headers.authorization || "";
-
     const token =
-      auth
-        .replace(
-          "Bearer ",
-          ""
-        )
-        .trim();
+      (
+        req.headers.authorization ||
+        ""
+      )
+      .replace(
+        "Bearer ",
+        ""
+      )
+      .trim();
 
     db.prepare(`
       DELETE FROM sessions
@@ -800,7 +864,7 @@ app.post(
 
 
 /* ==================================================
-   CREATE ORDER
+   ORDERS
 ================================================== */
 
 app.post(
@@ -817,12 +881,11 @@ app.post(
 
     const gameUsername =
       String(
-        req.body?.gameUsername || ""
+        req.body?.gameUsername ||
+        ""
       ).trim();
 
-    if (
-      !gameUsername
-    ) {
+    if (!gameUsername) {
 
       return res
         .status(400)
@@ -833,9 +896,7 @@ app.post(
 
     }
 
-    if (
-      items.length === 0
-    ) {
+    if (!items.length) {
 
       return res
         .status(400)
@@ -905,7 +966,8 @@ app.post(
       }
 
       total +=
-        product.price * qty;
+        product.price *
+        qty;
 
       checked.push({
         product,
@@ -916,7 +978,8 @@ app.post(
 
 
     if (
-      req.user.balance < total
+      req.user.balance <
+      total
     ) {
 
       return res
@@ -934,8 +997,7 @@ app.post(
 
         db.prepare(`
           UPDATE users
-          SET
-            balance=balance-?
+          SET balance=balance-?
           WHERE id=?
         `).run(
           total,
@@ -974,7 +1036,12 @@ app.post(
               qty,
               unit_price
             )
-            VALUES (?, ?, ?, ?)
+            VALUES(
+              ?,
+              ?,
+              ?,
+              ?
+            )
           `);
 
         for (
@@ -994,8 +1061,7 @@ app.post(
 
             db.prepare(`
               UPDATE products
-              SET
-                stock=stock-?
+              SET stock=stock-?
               WHERE id=?
             `).run(
               item.qty,
@@ -1010,11 +1076,10 @@ app.post(
 
       });
 
-    const orderId =
-      transaction();
 
     res.json({
-      orderId
+      orderId:
+        transaction()
     });
 
   }
@@ -1022,7 +1087,7 @@ app.post(
 
 
 /* ==================================================
-   USER ORDER HISTORY
+   USER ORDERS
 ================================================== */
 
 app.get(
@@ -1047,6 +1112,7 @@ app.get(
           req.user.id
         );
 
+
     const itemQuery =
       db.prepare(`
         SELECT
@@ -1061,7 +1127,8 @@ app.get(
         WHERE oi.order_id=?
       `);
 
-    const result =
+
+    res.json(
       orders.map(
         order => ({
 
@@ -1073,10 +1140,7 @@ app.get(
             )
 
         })
-      );
-
-    res.json(
-      result
+      )
     );
 
   }
@@ -1085,7 +1149,6 @@ app.get(
 
 /* ==================================================
    BANK INFO
-   4 QR
 ================================================== */
 
 app.get(
@@ -1095,11 +1158,9 @@ app.get(
 
     res.json({
 
-      configured:
-        true,
+      configured: true,
 
-      minAmount:
-        10000,
+      minAmount: 10000,
 
       bankName:
         process.env.BANK_NAME || "",
@@ -1212,7 +1273,8 @@ app.post(
 
     const provider =
       String(
-        req.body?.provider || ""
+        req.body?.provider ||
+        ""
       ).trim();
 
     const value =
@@ -1224,12 +1286,14 @@ app.post(
 
     const serial =
       String(
-        req.body?.serial || ""
+        req.body?.serial ||
+        ""
       ).trim();
 
     const code =
       String(
-        req.body?.code || ""
+        req.body?.code ||
+        ""
       ).trim();
 
     if (
@@ -1349,7 +1413,6 @@ app.get(
         `)
         .all();
 
-
     const products =
       db
         .prepare(`
@@ -1358,7 +1421,6 @@ app.get(
           ORDER BY id
         `)
         .all();
-
 
     const orders =
       db
@@ -1377,7 +1439,6 @@ app.get(
         `)
         .all();
 
-
     const itemQuery =
       db.prepare(`
         SELECT
@@ -1391,7 +1452,6 @@ app.get(
         WHERE oi.order_id=?
       `);
 
-
     for (
       const order of orders
     ) {
@@ -1402,7 +1462,6 @@ app.get(
         );
 
     }
-
 
     const topups =
       db
@@ -1424,7 +1483,6 @@ app.get(
           ORDER BY t.id DESC
         `)
         .all();
-
 
     for (
       const topup of topups
@@ -1453,21 +1511,15 @@ app.get(
 
         } catch {
 
-          topup.provider =
-            "";
-
-          topup.serial =
-            "";
-
-          topup.code =
-            "";
+          topup.provider = "";
+          topup.serial = "";
+          topup.code = "";
 
         }
 
       }
 
     }
-
 
     res.json({
 
@@ -1496,7 +1548,8 @@ app.post(
 
     const name =
       String(
-        req.body?.name || ""
+        req.body?.name ||
+        ""
       ).trim();
 
     const price =
@@ -1509,22 +1562,13 @@ app.post(
         req.body?.stock
       );
 
-    let image =
-      null;
-
-
-    if (
+    const image =
       typeof req.body?.image === "string" &&
       req.body.image.startsWith(
         "data:image/"
       )
-    ) {
-
-      image =
-        req.body.image;
-
-    }
-
+      ? req.body.image
+      : null;
 
     if (
       !name ||
@@ -1542,7 +1586,6 @@ app.post(
         });
 
     }
-
 
     const result =
       db
@@ -1564,13 +1607,10 @@ app.post(
           )
         `)
         .run(
-
           name,
-
           Math.floor(
             price
           ),
-
           Number.isFinite(
             stock
           )
@@ -1581,11 +1621,8 @@ app.post(
               )
             )
           : 0,
-
           image
-
         );
-
 
     res.json({
 
@@ -1621,10 +1658,7 @@ app.patch(
           FROM products
           WHERE id=?
         `)
-        .get(
-          id
-        );
-
+        .get(id);
 
     if (!old) {
 
@@ -1637,14 +1671,12 @@ app.patch(
 
     }
 
-
     const name =
       req.body?.name === undefined
       ? old.name
       : String(
           req.body.name
         ).trim();
-
 
     const price =
       req.body?.price === undefined
@@ -1653,14 +1685,12 @@ app.patch(
           req.body.price
         );
 
-
     const stock =
       req.body?.stock === undefined
       ? old.stock
       : Number(
           req.body.stock
         );
-
 
     const active =
       req.body?.active === undefined
@@ -1669,10 +1699,8 @@ app.patch(
         ? 1
         : 0;
 
-
     let image =
       old.image || null;
-
 
     if (
       typeof req.body?.image === "string" &&
@@ -1685,7 +1713,6 @@ app.patch(
         req.body.image;
 
     }
-
 
     if (
       !name ||
@@ -1704,7 +1731,6 @@ app.patch(
 
     }
 
-
     if (
       !Number.isFinite(
         stock
@@ -1720,7 +1746,6 @@ app.patch(
         });
 
     }
-
 
     db.prepare(`
       UPDATE products
@@ -1751,7 +1776,6 @@ app.patch(
 
     );
 
-
     res.json({
 
       ok: true,
@@ -1763,9 +1787,7 @@ app.patch(
             FROM products
             WHERE id=?
           `)
-          .get(
-            id
-          )
+          .get(id)
 
     });
 
@@ -1774,7 +1796,7 @@ app.patch(
 
 
 /* ==================================================
-   ADMIN REMOVE PRODUCT IMAGE
+   REMOVE IMAGE
 ================================================== */
 
 app.post(
@@ -1792,7 +1814,6 @@ app.post(
       )
     );
 
-
     res.json({
       ok: true
     });
@@ -1802,7 +1823,7 @@ app.post(
 
 
 /* ==================================================
-   ADMIN HIDE PRODUCT
+   HIDE PRODUCT
 ================================================== */
 
 app.post(
@@ -1820,7 +1841,6 @@ app.post(
       )
     );
 
-
     res.json({
       ok: true
     });
@@ -1830,7 +1850,7 @@ app.post(
 
 
 /* ==================================================
-   ADMIN SHOW PRODUCT
+   SHOW PRODUCT
 ================================================== */
 
 app.post(
@@ -1848,7 +1868,6 @@ app.post(
       )
     );
 
-
     res.json({
       ok: true
     });
@@ -1858,9 +1877,7 @@ app.post(
 
 
 /* ==================================================
-   ADMIN APPROVE TOPUP
-   CARD = 84%
-   BANK = 100%
+   APPROVE TOPUP
 ================================================== */
 
 app.post(
@@ -1873,7 +1890,6 @@ app.post(
         req.params.id
       );
 
-
     const topup =
       db
         .prepare(`
@@ -1881,14 +1897,12 @@ app.post(
           FROM topups
           WHERE id=?
         `)
-        .get(
-          id
-        );
-
+        .get(id);
 
     if (
       !topup ||
-      topup.status !== "PENDING"
+      topup.status !==
+      "PENDING"
     ) {
 
       return res
@@ -1900,62 +1914,62 @@ app.post(
 
     }
 
-
     const credit =
-      topup.method === "CARD"
+      topup.method ===
+      "CARD"
+
       ? Math.floor(
-          topup.amount * 0.84
+          topup.amount *
+          0.84
         )
+
       : Math.floor(
           topup.amount
         );
 
 
-    const transaction =
-      db.transaction(() => {
+    try {
 
-        const result =
-          db
-            .prepare(`
-              UPDATE topups
-              SET
-                status='APPROVED',
-                credited_amount=?,
-                reject_reason=NULL
-              WHERE id=?
-              AND status='PENDING'
-            `)
-            .run(
-              credit,
-              id
+      const transaction =
+        db.transaction(() => {
+
+          const changed =
+            db
+              .prepare(`
+                UPDATE topups
+                SET
+                  status='APPROVED',
+                  credited_amount=?,
+                  reject_reason=NULL
+                WHERE id=?
+                AND status='PENDING'
+              `)
+              .run(
+                credit,
+                id
+              );
+
+          if (
+            changed.changes === 0
+          ) {
+
+            throw new Error(
+              "Yêu cầu đã được xử lý."
             );
 
+          }
 
-        if (
-          result.changes === 0
-        ) {
-
-          throw new Error(
-            "Yêu cầu đã được xử lý."
+          db.prepare(`
+            UPDATE users
+            SET
+              balance=balance+?
+            WHERE id=?
+          `).run(
+            credit,
+            topup.user_id
           );
 
-        }
-
-
-        db.prepare(`
-          UPDATE users
-          SET
-            balance=balance+?
-          WHERE id=?
-        `).run(
-          credit,
-          topup.user_id
-        );
-
-      });
-
-
-    try {
+        });
 
       transaction();
 
@@ -1975,9 +1989,6 @@ app.post(
 
       ok: true,
 
-      status:
-        "APPROVED",
-
       creditedAmount:
         credit
 
@@ -1988,7 +1999,7 @@ app.post(
 
 
 /* ==================================================
-   ADMIN REJECT TOPUP
+   REJECT TOPUP
 ================================================== */
 
 app.post(
@@ -2001,7 +2012,6 @@ app.post(
         req.params.id
       );
 
-
     const topup =
       db
         .prepare(`
@@ -2009,14 +2019,12 @@ app.post(
           FROM topups
           WHERE id=?
         `)
-        .get(
-          id
-        );
-
+        .get(id);
 
     if (
       !topup ||
-      topup.status !== "PENDING"
+      topup.status !==
+      "PENDING"
     ) {
 
       return res
@@ -2028,13 +2036,11 @@ app.post(
 
     }
 
-
     const reason =
       String(
         req.body?.reason ||
         "Thẻ sai hoặc giao dịch không hợp lệ."
       ).trim();
-
 
     db.prepare(`
       UPDATE topups
@@ -2049,16 +2055,9 @@ app.post(
       id
     );
 
-
     res.json({
-
       ok: true,
-
-      status:
-        "REJECTED",
-
       reason
-
     });
 
   }
@@ -2066,7 +2065,7 @@ app.post(
 
 
 /* ==================================================
-   ADMIN ADD BALANCE
+   ADD BALANCE
 ================================================== */
 
 app.post(
@@ -2076,9 +2075,9 @@ app.post(
 
     const username =
       String(
-        req.body?.username || ""
+        req.body?.username ||
+        ""
       ).trim();
-
 
     const amount =
       Math.floor(
@@ -2086,7 +2085,6 @@ app.post(
           req.body?.amount
         ) || 0
       );
-
 
     if (
       !username ||
@@ -2097,11 +2095,10 @@ app.post(
         .status(400)
         .json({
           error:
-            "Nhập đúng username và số tiền."
+            "Nhập username và số tiền."
         });
 
     }
-
 
     const user =
       db
@@ -2118,7 +2115,6 @@ app.post(
           username
         );
 
-
     if (!user) {
 
       return res
@@ -2130,37 +2126,33 @@ app.post(
 
     }
 
-
     if (
-      user.role === "admin"
+      user.role ===
+      "admin"
     ) {
 
       return res
         .status(400)
         .json({
           error:
-            "Không thể cộng tiền trực tiếp cho Admin."
+            "Không thể cộng tiền cho Admin."
         });
 
     }
 
-
     db.prepare(`
       UPDATE users
-      SET
-        balance=balance+?
+      SET balance=balance+?
       WHERE id=?
     `).run(
       amount,
       user.id
     );
 
-
     const updated =
       db
         .prepare(`
           SELECT
-            id,
             username,
             balance
           FROM users
@@ -2169,7 +2161,6 @@ app.post(
         .get(
           user.id
         );
-
 
     res.json({
 
@@ -2194,7 +2185,7 @@ app.post(
 
 
 /* ==================================================
-   ADMIN REMOVE BALANCE
+   REMOVE BALANCE
 ================================================== */
 
 app.post(
@@ -2204,9 +2195,9 @@ app.post(
 
     const username =
       String(
-        req.body?.username || ""
+        req.body?.username ||
+        ""
       ).trim();
-
 
     const amount =
       Math.floor(
@@ -2214,7 +2205,6 @@ app.post(
           req.body?.amount
         ) || 0
       );
-
 
     if (
       !username ||
@@ -2225,11 +2215,10 @@ app.post(
         .status(400)
         .json({
           error:
-            "Nhập đúng username và số tiền."
+            "Nhập username và số tiền."
         });
 
     }
-
 
     const user =
       db
@@ -2245,18 +2234,16 @@ app.post(
           username
         );
 
-
     if (!user) {
 
       return res
         .status(404)
         .json({
           error:
-            "Không tìm thấy tài khoản user."
+            "Không tìm thấy user."
         });
 
     }
-
 
     if (
       user.balance <
@@ -2267,28 +2254,24 @@ app.post(
         .status(400)
         .json({
           error:
-            "Số dư user không đủ."
+            "Số dư không đủ."
         });
 
     }
 
-
     db.prepare(`
       UPDATE users
-      SET
-        balance=balance-?
+      SET balance=balance-?
       WHERE id=?
     `).run(
       amount,
       user.id
     );
 
-
     const updated =
       db
         .prepare(`
           SELECT
-            id,
             username,
             balance
           FROM users
@@ -2297,7 +2280,6 @@ app.post(
         .get(
           user.id
         );
-
 
     res.json({
 
@@ -2322,7 +2304,7 @@ app.post(
 
 
 /* ==================================================
-   ADMIN ORDER STATUS
+   ORDER STATUS
 ================================================== */
 
 app.post(
@@ -2342,14 +2324,12 @@ app.post(
 
     ];
 
-
-    const newStatus =
+    const status =
       req.body?.status;
-
 
     if (
       !allowed.includes(
-        newStatus
+        status
       )
     ) {
 
@@ -2361,7 +2341,6 @@ app.post(
         });
 
     }
-
 
     const order =
       db
@@ -2376,7 +2355,6 @@ app.post(
           )
         );
 
-
     if (!order) {
 
       return res
@@ -2388,10 +2366,9 @@ app.post(
 
     }
 
-
     if (
       order.status ===
-      newStatus
+      status
     ) {
 
       return res.json({
@@ -2402,7 +2379,7 @@ app.post(
 
 
     if (
-      newStatus ===
+      status ===
       "CANCELLED" &&
       order.status !==
       "CANCELLED"
@@ -2420,7 +2397,6 @@ app.post(
             order.id
           );
 
-
           db.prepare(`
             UPDATE users
             SET
@@ -2430,7 +2406,6 @@ app.post(
             order.total,
             order.user_id
           );
-
 
           const items =
             db
@@ -2444,7 +2419,6 @@ app.post(
               .all(
                 order.id
               );
-
 
           for (
             const item of items
@@ -2464,7 +2438,6 @@ app.post(
 
         });
 
-
       transaction();
 
     } else {
@@ -2475,7 +2448,7 @@ app.post(
           status=?
         WHERE id=?
       `).run(
-        newStatus,
+        status,
         order.id
       );
 
@@ -2486,8 +2459,7 @@ app.post(
 
       ok: true,
 
-      status:
-        newStatus
+      status
 
     });
 
@@ -2496,61 +2468,42 @@ app.post(
 
 
 /* ==================================================
-   HEALTH
+   HEALTH CHECK
 ================================================== */
 
 app.get(
   "/api/health",
   (req, res) => {
 
-    let users = 0;
-    let products = 0;
+    const users =
+      db
+        .prepare(
+          "SELECT COUNT(*) AS c FROM users"
+        )
+        .get()
+        .c;
 
-    try {
-
-      users =
-        db
-          .prepare(
-            "SELECT COUNT(*) AS c FROM users"
-          )
-          .get()
-          .c;
-
-      products =
-        db
-          .prepare(
-            "SELECT COUNT(*) AS c FROM products"
-          )
-          .get()
-          .c;
-
-    } catch (error) {
-
-      return res
-        .status(500)
-        .json({
-          ok: false,
-          error:
-            error.message
-        });
-
-    }
-
+    const products =
+      db
+        .prepare(
+          "SELECT COUNT(*) AS c FROM products"
+        )
+        .get()
+        .c;
 
     res.json({
 
       ok: true,
 
-      database:
-        DB_PATH,
-
       users,
 
       products,
 
+      database:
+        DB_PATH,
+
       time:
-        new Date()
-          .toISOString()
+        new Date().toISOString()
 
     });
 
@@ -2559,7 +2512,7 @@ app.get(
 
 
 /* ==================================================
-   FALLBACK
+   FRONTEND
 ================================================== */
 
 app.use(
@@ -2578,7 +2531,7 @@ app.use(
 
 
 /* ==================================================
-   SERVER START
+   START
 ================================================== */
 
 app.listen(
@@ -2587,7 +2540,7 @@ app.listen(
   () => {
 
     console.log(
-      "===================================="
+      "================================"
     );
 
     console.log(
@@ -2595,22 +2548,22 @@ app.listen(
     );
 
     console.log(
-      "Port:",
+      "PORT:",
       PORT
     );
 
     console.log(
-      "Database:",
+      "DATABASE:",
       DB_PATH
     );
 
     console.log(
-      "Admin:",
+      "ADMIN:",
       ADMIN_USERNAME
     );
 
     console.log(
-      "===================================="
+      "================================"
     );
 
   }
@@ -2618,7 +2571,7 @@ app.listen(
 
 
 /* ==================================================
-   ERROR HANDLERS
+   GLOBAL ERROR LOG
 ================================================== */
 
 process.on(
