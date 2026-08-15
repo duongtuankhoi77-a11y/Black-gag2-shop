@@ -1,4 +1,3 @@
-```js
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
@@ -8,36 +7,23 @@ const crypto = require("crypto");
 
 const app = express();
 
-const PORT =
-  Number(process.env.PORT) || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
-const ADMIN_USERNAME =
-  "blackadmin";
-
-const ADMIN_PASSWORD =
-  "11102011tuankhoi";
-
-/*
-  Render Persistent Disk:
-  đặt DB_PATH, ví dụ:
-  /var/data/black_gag2.db
-
-  Nếu chưa có DB_PATH thì dùng:
-  ./black_gag2.db
-*/
-
-const DB_PATH =
-  process.env.DB_PATH
-    ? path.resolve(process.env.DB_PATH)
-    : path.join(
-        __dirname,
-        "black_gag2.db"
-      );
-
+const ADMIN_USERNAME = "blackadmin";
+const ADMIN_PASSWORD = "11102011tuankhoi";
 
 /* ==================================================
    DATABASE
 ================================================== */
+
+const DEFAULT_DB_PATH = path.join(
+  __dirname,
+  "black_gag2.db"
+);
+
+const DB_PATH = process.env.DB_PATH
+  ? path.resolve(process.env.DB_PATH)
+  : DEFAULT_DB_PATH;
 
 fs.mkdirSync(
   path.dirname(DB_PATH),
@@ -49,137 +35,88 @@ fs.mkdirSync(
 let db;
 
 try {
+  db = new Database(DB_PATH);
 
-  db =
-    new Database(DB_PATH);
+  db.pragma("journal_mode = WAL");
 
-  db.pragma(
-    "journal_mode = WAL"
-  );
-
-  console.log(
-    "Database:",
-    DB_PATH
-  );
-
+  console.log("Database:", DB_PATH);
 } catch (error) {
-
-  console.error(
-    "DATABASE ERROR:",
-    error
-  );
-
+  console.error("DATABASE ERROR:", error);
   process.exit(1);
 }
 
 
 /* ==================================================
-   TABLES
+   CREATE TABLES
 ================================================== */
 
-db.exec(`
+try {
 
-CREATE TABLE IF NOT EXISTS users(
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS users(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT UNIQUE NOT NULL,
+      contact TEXT NOT NULL,
+      password_hash TEXT NOT NULL,
+      balance INTEGER NOT NULL DEFAULT 0,
+      role TEXT NOT NULL DEFAULT 'user',
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
 
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+    CREATE TABLE IF NOT EXISTS products(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      price INTEGER NOT NULL,
+      stock INTEGER NOT NULL DEFAULT 0,
+      active INTEGER NOT NULL DEFAULT 1,
+      image TEXT
+    );
 
-  username TEXT UNIQUE NOT NULL,
+    CREATE TABLE IF NOT EXISTS orders(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      total INTEGER NOT NULL,
+      status TEXT NOT NULL DEFAULT 'PENDING',
+      game_username TEXT,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
 
-  contact TEXT NOT NULL,
+    CREATE TABLE IF NOT EXISTS order_items(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      order_id INTEGER NOT NULL,
+      product_id INTEGER NOT NULL,
+      qty INTEGER NOT NULL,
+      unit_price INTEGER NOT NULL
+    );
 
-  password_hash TEXT NOT NULL,
+    CREATE TABLE IF NOT EXISTS topups(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      method TEXT NOT NULL,
+      amount INTEGER NOT NULL,
+      status TEXT NOT NULL DEFAULT 'PENDING',
+      provider_ref TEXT,
+      credited_amount INTEGER,
+      reject_reason TEXT,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
 
-  balance INTEGER NOT NULL DEFAULT 0,
+    CREATE TABLE IF NOT EXISTS sessions(
+      token TEXT PRIMARY KEY,
+      user_id INTEGER NOT NULL,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
 
-  role TEXT NOT NULL DEFAULT 'user',
+} catch (error) {
 
-  created_at TEXT NOT NULL
-    DEFAULT CURRENT_TIMESTAMP
+  console.error(
+    "DATABASE TABLE ERROR:",
+    error
+  );
 
-);
-
-CREATE TABLE IF NOT EXISTS products(
-
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-  name TEXT NOT NULL,
-
-  price INTEGER NOT NULL,
-
-  stock INTEGER NOT NULL DEFAULT 0,
-
-  active INTEGER NOT NULL DEFAULT 1,
-
-  image TEXT
-
-);
-
-CREATE TABLE IF NOT EXISTS orders(
-
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-  user_id INTEGER NOT NULL,
-
-  total INTEGER NOT NULL,
-
-  status TEXT NOT NULL DEFAULT 'PENDING',
-
-  game_username TEXT,
-
-  created_at TEXT NOT NULL
-    DEFAULT CURRENT_TIMESTAMP
-
-);
-
-CREATE TABLE IF NOT EXISTS order_items(
-
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-  order_id INTEGER NOT NULL,
-
-  product_id INTEGER NOT NULL,
-
-  qty INTEGER NOT NULL,
-
-  unit_price INTEGER NOT NULL
-
-);
-
-CREATE TABLE IF NOT EXISTS topups(
-
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-  user_id INTEGER NOT NULL,
-
-  method TEXT NOT NULL,
-
-  amount INTEGER NOT NULL,
-
-  status TEXT NOT NULL DEFAULT 'PENDING',
-
-  provider_ref TEXT,
-
-  credited_amount INTEGER,
-
-  reject_reason TEXT,
-
-  created_at TEXT NOT NULL
-    DEFAULT CURRENT_TIMESTAMP
-
-);
-
-CREATE TABLE IF NOT EXISTS sessions(
-
-  token TEXT PRIMARY KEY,
-
-  user_id INTEGER NOT NULL,
-
-  created_at TEXT NOT NULL
-    DEFAULT CURRENT_TIMESTAMP
-
-);
-
-`);
+  process.exit(1);
+}
 
 
 /* ==================================================
@@ -192,12 +129,11 @@ function addColumnIfMissing(
   definition
 ) {
 
-  const columns =
-    db
-      .prepare(
-        `PRAGMA table_info(${table})`
-      )
-      .all();
+  const columns = db
+    .prepare(
+      `PRAGMA table_info(${table})`
+    )
+    .all();
 
   if (
     !columns.some(
@@ -210,53 +146,66 @@ function addColumnIfMissing(
       ADD COLUMN ${column} ${definition}
     `);
 
+    console.log(
+      `Added column ${table}.${column}`
+    );
   }
 }
 
+try {
 
-addColumnIfMissing(
-  "products",
-  "image",
-  "TEXT"
-);
+  addColumnIfMissing(
+    "products",
+    "image",
+    "TEXT"
+  );
 
-addColumnIfMissing(
-  "orders",
-  "game_username",
-  "TEXT"
-);
+  addColumnIfMissing(
+    "orders",
+    "game_username",
+    "TEXT"
+  );
 
-addColumnIfMissing(
-  "topups",
-  "credited_amount",
-  "INTEGER"
-);
+  addColumnIfMissing(
+    "topups",
+    "credited_amount",
+    "INTEGER"
+  );
 
-addColumnIfMissing(
-  "topups",
-  "reject_reason",
-  "TEXT"
-);
+  addColumnIfMissing(
+    "topups",
+    "reject_reason",
+    "TEXT"
+  );
+
+} catch (error) {
+
+  console.error(
+    "MIGRATION ERROR:",
+    error
+  );
+
+  process.exit(1);
+}
 
 
 /* ==================================================
    DEFAULT PRODUCTS
+   CHỈ TẠO KHI CHƯA CÓ SẢN PHẨM
 ================================================== */
 
-const productCount =
-  db
+try {
+
+  const count = db
     .prepare(
       "SELECT COUNT(*) AS c FROM products"
     )
     .get()
     .c;
 
-if (
-  productCount === 0
-) {
+  if (count === 0) {
 
-  const insert =
-    db.prepare(`
+    const insert = db.prepare(`
       INSERT INTO products
       (
         name,
@@ -274,98 +223,54 @@ if (
       )
     `);
 
-  const products = [
+    const defaults = [
+      ["Dragon Breath Seed", 4000, 0],
+      ["Star Fruit", 8000, 0],
+      ["Sun Bloom", 3000, 0],
+      ["Super Watering", 1000, 0],
+      ["Super Sprinkler", 1000, 0],
+      ["Hypno Bloom", 2000, 0],
+      ["Moon Bloom", 2000, 0],
+      ["Mega Seed", 1000, 0],
+      ["Rainbow Seed", 1000, 0]
+    ];
 
-    [
-      "Dragon Breath Seed",
-      4000,
-      0
-    ],
-
-    [
-      "Star Fruit",
-      8000,
-      0
-    ],
-
-    [
-      "Sun Bloom",
-      3000,
-      0
-    ],
-
-    [
-      "Super Watering",
-      1000,
-      0
-    ],
-
-    [
-      "Super Sprinkler",
-      1000,
-      0
-    ],
-
-    [
-      "Hypno Bloom",
-      2000,
-      0
-    ],
-
-    [
-      "Moon Bloom",
-      2000,
-      0
-    ],
-
-    [
-      "Mega Seed",
-      1000,
-      0
-    ],
-
-    [
-      "Rainbow Seed",
-      1000,
-      0
-    ]
-
-  ];
-
-  for (
-    const product of products
-  ) {
-
-    insert.run(
-      ...product
-    );
-
+    for (const product of defaults) {
+      insert.run(...product);
+    }
   }
+
+} catch (error) {
+
+  console.error(
+    "PRODUCT ERROR:",
+    error
+  );
+
+  process.exit(1);
 }
 
 
 /* ==================================================
-   ADMIN
+   CREATE ADMIN
 ================================================== */
 
 function createAdmin() {
 
-  const hash =
-    bcrypt.hashSync(
-      ADMIN_PASSWORD,
-      12
-    );
+  const hash = bcrypt.hashSync(
+    ADMIN_PASSWORD,
+    12
+  );
 
-  const admin =
-    db
-      .prepare(`
-        SELECT id
-        FROM users
-        WHERE username=?
-      `)
-      .get(
-        ADMIN_USERNAME
-      );
+  const admin = db
+    .prepare(`
+      SELECT id
+      FROM users
+      WHERE username=?
+    `)
+    .get(
+      ADMIN_USERNAME
+    );
 
   if (!admin) {
 
@@ -384,13 +289,14 @@ function createAdmin() {
         'admin'
       )
     `).run(
-
       ADMIN_USERNAME,
-
       "admin@black-gag2.local",
-
       hash
+    );
 
+    console.log(
+      "Created admin:",
+      ADMIN_USERNAME
     );
 
   } else {
@@ -402,13 +308,9 @@ function createAdmin() {
         password_hash=?
       WHERE username=?
     `).run(
-
       hash,
-
       ADMIN_USERNAME
-
     );
-
   }
 }
 
@@ -443,7 +345,7 @@ app.use(
 
 
 /* ==================================================
-   AUTH
+   AUTH HELPERS
 ================================================== */
 
 function createToken() {
@@ -451,8 +353,8 @@ function createToken() {
   return crypto
     .randomBytes(32)
     .toString("hex");
-
 }
+
 
 function getUser(req) {
 
@@ -460,13 +362,9 @@ function getUser(req) {
     req.headers.authorization || "";
 
   if (
-    !auth.startsWith(
-      "Bearer "
-    )
+    !auth.startsWith("Bearer ")
   ) {
-
     return null;
-
   }
 
   const token =
@@ -475,9 +373,7 @@ function getUser(req) {
       .trim();
 
   if (!token) {
-
     return null;
-
   }
 
   return db
@@ -492,7 +388,6 @@ function getUser(req) {
     .get(
       token
     ) || null;
-
 }
 
 
@@ -513,14 +408,12 @@ function requireUser(
         error:
           "Đăng nhập trước."
       });
-
   }
 
   req.user =
     user;
 
   next();
-
 }
 
 
@@ -544,14 +437,12 @@ function requireAdmin(
         error:
           "Không có quyền Admin."
       });
-
   }
 
   req.user =
     user;
 
   next();
-
 }
 
 
@@ -582,7 +473,6 @@ app.get(
     res.json(
       products
     );
-
   }
 );
 
@@ -622,7 +512,6 @@ app.post(
           error:
             "Vui lòng nhập đủ thông tin. Mật khẩu tối thiểu 6 ký tự."
         });
-
     }
 
     if (
@@ -636,7 +525,6 @@ app.post(
           error:
             "Tên đăng nhập này đã được sử dụng."
         });
-
     }
 
     const exists =
@@ -658,7 +546,6 @@ app.post(
           error:
             "Tên đăng nhập đã tồn tại."
         });
-
     }
 
     const hash =
@@ -709,7 +596,6 @@ app.post(
     res.json({
       token
     });
-
   }
 );
 
@@ -759,7 +645,6 @@ app.post(
           error:
             "Thông tin đăng nhập không đúng."
         });
-
     }
 
     const token =
@@ -781,20 +666,14 @@ app.post(
     );
 
     res.json({
-
       token,
-
       username:
         user.username,
-
       role:
         user.role,
-
       balance:
         user.balance
-
     });
-
   }
 );
 
@@ -809,21 +688,15 @@ app.get(
   (req, res) => {
 
     res.json({
-
       username:
         req.user.username,
-
       contact:
         req.user.contact,
-
       balance:
         req.user.balance,
-
       role:
         req.user.role
-
     });
-
   }
 );
 
@@ -858,13 +731,12 @@ app.post(
     res.json({
       ok: true
     });
-
   }
 );
 
 
 /* ==================================================
-   ORDERS
+   CREATE ORDER
 ================================================== */
 
 app.post(
@@ -893,7 +765,6 @@ app.post(
           error:
             "Vui lòng nhập tên tài khoản game."
         });
-
     }
 
     if (!items.length) {
@@ -904,13 +775,11 @@ app.post(
           error:
             "Giỏ hàng trống."
         });
-
     }
 
     let total = 0;
 
     const checked = [];
-
 
     for (
       const item of items
@@ -948,7 +817,6 @@ app.post(
             error:
               "Sản phẩm không tồn tại."
           });
-
       }
 
       if (
@@ -962,7 +830,6 @@ app.post(
             error:
               `Không đủ hàng: ${product.name}`
           });
-
       }
 
       total +=
@@ -973,9 +840,7 @@ app.post(
         product,
         qty
       });
-
     }
-
 
     if (
       req.user.balance <
@@ -988,106 +853,105 @@ app.post(
           error:
             "Số dư không đủ."
         });
-
     }
 
-
     const transaction =
-      db.transaction(() => {
+      db.transaction(
+        () => {
 
-        db.prepare(`
-          UPDATE users
-          SET balance=balance-?
-          WHERE id=?
-        `).run(
-          total,
-          req.user.id
-        );
+          db.prepare(`
+            UPDATE users
+            SET
+              balance=balance-?
+            WHERE id=?
+          `).run(
+            total,
+            req.user.id
+          );
 
-        const order =
-          db
-            .prepare(`
-              INSERT INTO orders
-              (
-                user_id,
+          const order =
+            db
+              .prepare(`
+                INSERT INTO orders
+                (
+                  user_id,
+                  total,
+                  status,
+                  game_username
+                )
+                VALUES(
+                  ?,
+                  ?,
+                  'PENDING',
+                  ?
+                )
+              `)
+              .run(
+                req.user.id,
                 total,
-                status,
-                game_username
+                gameUsername
+              );
+
+          const insertItem =
+            db.prepare(`
+              INSERT INTO order_items
+              (
+                order_id,
+                product_id,
+                qty,
+                unit_price
               )
               VALUES(
                 ?,
                 ?,
-                'PENDING',
+                ?,
                 ?
               )
-            `)
-            .run(
-              req.user.id,
-              total,
-              gameUsername
-            );
+            `);
 
-        const insertItem =
-          db.prepare(`
-            INSERT INTO order_items
-            (
-              order_id,
-              product_id,
-              qty,
-              unit_price
-            )
-            VALUES(
-              ?,
-              ?,
-              ?,
-              ?
-            )
-          `);
-
-        for (
-          const item of checked
-        ) {
-
-          insertItem.run(
-            order.lastInsertRowid,
-            item.product.id,
-            item.qty,
-            item.product.price
-          );
-
-          if (
-            item.product.stock > 0
+          for (
+            const item of checked
           ) {
 
-            db.prepare(`
-              UPDATE products
-              SET stock=stock-?
-              WHERE id=?
-            `).run(
+            insertItem.run(
+              order.lastInsertRowid,
+              item.product.id,
               item.qty,
-              item.product.id
+              item.product.price
             );
 
+            if (
+              item.product.stock > 0
+            ) {
+
+              db.prepare(`
+                UPDATE products
+                SET stock=stock-?
+                WHERE id=?
+              `).run(
+                item.qty,
+                item.product.id
+              );
+            }
           }
 
+          return order.lastInsertRowid;
+
         }
+      );
 
-        return order.lastInsertRowid;
-
-      });
-
+    const orderId =
+      transaction();
 
     res.json({
-      orderId:
-        transaction()
+      orderId
     });
-
   }
 );
 
 
 /* ==================================================
-   USER ORDERS
+   USER ORDER HISTORY
 ================================================== */
 
 app.get(
@@ -1112,7 +976,6 @@ app.get(
           req.user.id
         );
 
-
     const itemQuery =
       db.prepare(`
         SELECT
@@ -1127,22 +990,20 @@ app.get(
         WHERE oi.order_id=?
       `);
 
-
-    res.json(
+    const result =
       orders.map(
         order => ({
-
           ...order,
-
           items:
             itemQuery.all(
               order.id
             )
-
         })
-      )
-    );
+      );
 
+    res.json(
+      result
+    );
   }
 );
 
@@ -1158,9 +1019,11 @@ app.get(
 
     res.json({
 
-      configured: true,
+      configured:
+        true,
 
-      minAmount: 10000,
+      minAmount:
+        10000,
 
       bankName:
         process.env.BANK_NAME || "",
@@ -1188,7 +1051,6 @@ app.get(
       }
 
     });
-
   }
 );
 
@@ -1228,7 +1090,6 @@ app.post(
           error:
             "Mệnh giá Bank không hợp lệ."
         });
-
     }
 
     const result =
@@ -1257,7 +1118,6 @@ app.post(
       id:
         result.lastInsertRowid
     });
-
   }
 );
 
@@ -1309,7 +1169,6 @@ app.post(
           error:
             "Vui lòng nhập đầy đủ thông tin thẻ."
         });
-
     }
 
     const providerRef =
@@ -1348,7 +1207,6 @@ app.post(
       id:
         result.lastInsertRowid
     });
-
   }
 );
 
@@ -1384,7 +1242,6 @@ app.get(
     res.json(
       rows
     );
-
   }
 );
 
@@ -1460,7 +1317,6 @@ app.get(
         itemQuery.all(
           order.id
         );
-
     }
 
     const topups =
@@ -1516,9 +1372,7 @@ app.get(
           topup.code = "";
 
         }
-
       }
-
     }
 
     res.json({
@@ -1532,7 +1386,6 @@ app.get(
       topups
 
     });
-
   }
 );
 
@@ -1584,7 +1437,6 @@ app.post(
           error:
             "Tên hoặc giá không hợp lệ."
         });
-
     }
 
     const result =
@@ -1625,14 +1477,10 @@ app.post(
         );
 
     res.json({
-
       ok: true,
-
       id:
         result.lastInsertRowid
-
     });
-
   }
 );
 
@@ -1658,7 +1506,9 @@ app.patch(
           FROM products
           WHERE id=?
         `)
-        .get(id);
+        .get(
+          id
+        );
 
     if (!old) {
 
@@ -1668,7 +1518,6 @@ app.patch(
           error:
             "Không tìm thấy sản phẩm."
         });
-
     }
 
     const name =
@@ -1711,7 +1560,6 @@ app.patch(
 
       image =
         req.body.image;
-
     }
 
     if (
@@ -1728,7 +1576,6 @@ app.patch(
           error:
             "Tên hoặc giá không hợp lệ."
         });
-
     }
 
     if (
@@ -1744,7 +1591,6 @@ app.patch(
           error:
             "Số lượng không hợp lệ."
         });
-
     }
 
     db.prepare(`
@@ -1757,29 +1603,20 @@ app.patch(
         image=?
       WHERE id=?
     `).run(
-
       name,
-
       Math.floor(
         price
       ),
-
       Math.floor(
         stock
       ),
-
       active,
-
       image,
-
       id
-
     );
 
     res.json({
-
       ok: true,
-
       product:
         db
           .prepare(`
@@ -1787,16 +1624,16 @@ app.patch(
             FROM products
             WHERE id=?
           `)
-          .get(id)
-
+          .get(
+            id
+          )
     });
-
   }
 );
 
 
 /* ==================================================
-   REMOVE IMAGE
+   REMOVE PRODUCT IMAGE
 ================================================== */
 
 app.post(
@@ -1817,7 +1654,6 @@ app.post(
     res.json({
       ok: true
     });
-
   }
 );
 
@@ -1844,7 +1680,6 @@ app.post(
     res.json({
       ok: true
     });
-
   }
 );
 
@@ -1871,13 +1706,14 @@ app.post(
     res.json({
       ok: true
     });
-
   }
 );
 
 
 /* ==================================================
    APPROVE TOPUP
+   CARD = 84%
+   BANK = 100%
 ================================================== */
 
 app.post(
@@ -1897,12 +1733,13 @@ app.post(
           FROM topups
           WHERE id=?
         `)
-        .get(id);
+        .get(
+          id
+        );
 
     if (
       !topup ||
-      topup.status !==
-      "PENDING"
+      topup.status !== "PENDING"
     ) {
 
       return res
@@ -1911,65 +1748,59 @@ app.post(
           error:
             "Yêu cầu không hợp lệ hoặc đã xử lý."
         });
-
     }
 
     const credit =
-      topup.method ===
-      "CARD"
-
+      topup.method === "CARD"
       ? Math.floor(
-          topup.amount *
-          0.84
+          topup.amount * 0.84
         )
-
       : Math.floor(
           topup.amount
         );
 
-
     try {
 
       const transaction =
-        db.transaction(() => {
+        db.transaction(
+          () => {
 
-          const changed =
-            db
-              .prepare(`
-                UPDATE topups
-                SET
-                  status='APPROVED',
-                  credited_amount=?,
-                  reject_reason=NULL
-                WHERE id=?
-                AND status='PENDING'
-              `)
-              .run(
-                credit,
-                id
+            const changed =
+              db
+                .prepare(`
+                  UPDATE topups
+                  SET
+                    status='APPROVED',
+                    credited_amount=?,
+                    reject_reason=NULL
+                  WHERE id=?
+                  AND status='PENDING'
+                `)
+                .run(
+                  credit,
+                  id
+                );
+
+            if (
+              changed.changes === 0
+            ) {
+
+              throw new Error(
+                "Yêu cầu đã được xử lý."
               );
+            }
 
-          if (
-            changed.changes === 0
-          ) {
-
-            throw new Error(
-              "Yêu cầu đã được xử lý."
+            db.prepare(`
+              UPDATE users
+              SET
+                balance=balance+?
+              WHERE id=?
+            `).run(
+              credit,
+              topup.user_id
             );
-
           }
-
-          db.prepare(`
-            UPDATE users
-            SET
-              balance=balance+?
-            WHERE id=?
-          `).run(
-            credit,
-            topup.user_id
-          );
-
-        });
+        );
 
       transaction();
 
@@ -1981,19 +1812,19 @@ app.post(
           error:
             error.message
         });
-
     }
-
 
     res.json({
 
       ok: true,
 
+      status:
+        "APPROVED",
+
       creditedAmount:
         credit
 
     });
-
   }
 );
 
@@ -2019,12 +1850,13 @@ app.post(
           FROM topups
           WHERE id=?
         `)
-        .get(id);
+        .get(
+          id
+        );
 
     if (
       !topup ||
-      topup.status !==
-      "PENDING"
+      topup.status !== "PENDING"
     ) {
 
       return res
@@ -2033,7 +1865,6 @@ app.post(
           error:
             "Yêu cầu không hợp lệ hoặc đã xử lý."
         });
-
     }
 
     const reason =
@@ -2057,9 +1888,9 @@ app.post(
 
     res.json({
       ok: true,
+      status: "REJECTED",
       reason
     });
-
   }
 );
 
@@ -2097,7 +1928,6 @@ app.post(
           error:
             "Nhập username và số tiền."
         });
-
     }
 
     const user =
@@ -2123,12 +1953,10 @@ app.post(
           error:
             "Không tìm thấy tài khoản user."
         });
-
     }
 
     if (
-      user.role ===
-      "admin"
+      user.role === "admin"
     ) {
 
       return res
@@ -2137,12 +1965,12 @@ app.post(
           error:
             "Không thể cộng tiền cho Admin."
         });
-
     }
 
     db.prepare(`
       UPDATE users
-      SET balance=balance+?
+      SET
+        balance=balance+?
       WHERE id=?
     `).run(
       amount,
@@ -2179,7 +2007,6 @@ app.post(
         updated.balance
 
     });
-
   }
 );
 
@@ -2217,7 +2044,6 @@ app.post(
           error:
             "Nhập username và số tiền."
         });
-
     }
 
     const user =
@@ -2242,7 +2068,6 @@ app.post(
           error:
             "Không tìm thấy user."
         });
-
     }
 
     if (
@@ -2256,12 +2081,12 @@ app.post(
           error:
             "Số dư không đủ."
         });
-
     }
 
     db.prepare(`
       UPDATE users
-      SET balance=balance-?
+      SET
+        balance=balance-?
       WHERE id=?
     `).run(
       amount,
@@ -2298,7 +2123,6 @@ app.post(
         updated.balance
 
     });
-
   }
 );
 
@@ -2313,15 +2137,10 @@ app.post(
   (req, res) => {
 
     const allowed = [
-
       "PENDING",
-
       "PROCESSING",
-
       "COMPLETED",
-
       "CANCELLED"
-
     ];
 
     const status =
@@ -2339,7 +2158,6 @@ app.post(
           error:
             "Trạng thái không hợp lệ."
         });
-
     }
 
     const order =
@@ -2363,7 +2181,6 @@ app.post(
           error:
             "Không tìm thấy đơn."
         });
-
     }
 
     if (
@@ -2374,69 +2191,65 @@ app.post(
       return res.json({
         ok: true
       });
-
     }
 
-
     if (
-      status ===
-      "CANCELLED" &&
-      order.status !==
-      "CANCELLED"
+      status === "CANCELLED" &&
+      order.status !== "CANCELLED"
     ) {
 
       const transaction =
-        db.transaction(() => {
-
-          db.prepare(`
-            UPDATE orders
-            SET
-              status='CANCELLED'
-            WHERE id=?
-          `).run(
-            order.id
-          );
-
-          db.prepare(`
-            UPDATE users
-            SET
-              balance=balance+?
-            WHERE id=?
-          `).run(
-            order.total,
-            order.user_id
-          );
-
-          const items =
-            db
-              .prepare(`
-                SELECT
-                  product_id,
-                  qty
-                FROM order_items
-                WHERE order_id=?
-              `)
-              .all(
-                order.id
-              );
-
-          for (
-            const item of items
-          ) {
+        db.transaction(
+          () => {
 
             db.prepare(`
-              UPDATE products
+              UPDATE orders
               SET
-                stock=stock+?
+                status='CANCELLED'
               WHERE id=?
             `).run(
-              item.qty,
-              item.product_id
+              order.id
             );
 
-          }
+            db.prepare(`
+              UPDATE users
+              SET
+                balance=balance+?
+              WHERE id=?
+            `).run(
+              order.total,
+              order.user_id
+            );
 
-        });
+            const items =
+              db
+                .prepare(`
+                  SELECT
+                    product_id,
+                    qty
+                  FROM order_items
+                  WHERE order_id=?
+                `)
+                .all(
+                  order.id
+                );
+
+            for (
+              const item of items
+            ) {
+
+              db.prepare(`
+                UPDATE products
+                SET
+                  stock=stock+?
+                WHERE id=?
+              `).run(
+                item.qty,
+                item.product_id
+              );
+            }
+          }
+        );
 
       transaction();
 
@@ -2451,24 +2264,18 @@ app.post(
         status,
         order.id
       );
-
     }
 
-
     res.json({
-
       ok: true,
-
       status
-
     });
-
   }
 );
 
 
 /* ==================================================
-   HEALTH CHECK
+   HEALTH
 ================================================== */
 
 app.get(
@@ -2506,13 +2313,12 @@ app.get(
         new Date().toISOString()
 
     });
-
   }
 );
 
 
 /* ==================================================
-   FRONTEND
+   FRONTEND FALLBACK
 ================================================== */
 
 app.use(
@@ -2531,7 +2337,7 @@ app.use(
 
 
 /* ==================================================
-   START
+   START SERVER
 ================================================== */
 
 app.listen(
@@ -2565,13 +2371,12 @@ app.listen(
     console.log(
       "================================"
     );
-
   }
 );
 
 
 /* ==================================================
-   GLOBAL ERROR LOG
+   ERROR LOG
 ================================================== */
 
 process.on(
@@ -2597,4 +2402,3 @@ process.on(
 
   }
 );
-```
