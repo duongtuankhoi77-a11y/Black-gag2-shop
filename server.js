@@ -13,90 +13,83 @@ const PORT = process.env.PORT || 3000;
 // DATABASE
 // =========================
 
-const DATA_DIR = path.join(__dirname,"data");
+const DATA_DIR = path.join(__dirname, "data");
 
-if(!fs.existsSync(DATA_DIR)){
-    fs.mkdirSync(DATA_DIR,{recursive:true});
+if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
+const DB_PATH = path.join(DATA_DIR, "black_gag2.db");
 
-const DB_PATH = path.join(DATA_DIR,"black_gag2.db");
-
-console.log("Database:",DB_PATH);
+console.log("Database:", DB_PATH);
 
 
 const db = new Database(DB_PATH);
 
-
-db.pragma("journal_mode=WAL");
-db.pragma("foreign_keys=ON");
-
+db.pragma("journal_mode = WAL");
+db.pragma("foreign_keys = ON");
 
 
 
 // =========================
-// CREATE TABLE
+// TABLES
 // =========================
 
 db.exec(`
 
-CREATE TABLE IF NOT EXISTS users(
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- username TEXT UNIQUE NOT NULL,
- contact TEXT NOT NULL,
- password TEXT NOT NULL,
- balance INTEGER DEFAULT 0,
- created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    contact TEXT DEFAULT '',
+    password TEXT NOT NULL,
+    balance INTEGER DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 
-CREATE TABLE IF NOT EXISTS products(
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- name TEXT NOT NULL,
- price INTEGER DEFAULT 0,
- bank_price INTEGER DEFAULT 0,
- stock INTEGER DEFAULT 0,
- image TEXT DEFAULT '',
- description TEXT DEFAULT ''
+CREATE TABLE IF NOT EXISTS products (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    price INTEGER DEFAULT 0,
+    bank_price INTEGER DEFAULT 0,
+    stock INTEGER DEFAULT 0,
+    image TEXT DEFAULT '',
+    description TEXT DEFAULT ''
 );
 
 
-CREATE TABLE IF NOT EXISTS topups(
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- user_id INTEGER,
- method TEXT,
- amount INTEGER,
- provider TEXT DEFAULT '',
- serial TEXT DEFAULT '',
- code TEXT DEFAULT '',
- status TEXT DEFAULT 'pending'
+CREATE TABLE IF NOT EXISTS topups (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    method TEXT,
+    amount INTEGER,
+    provider TEXT DEFAULT '',
+    serial TEXT DEFAULT '',
+    code TEXT DEFAULT '',
+    status TEXT DEFAULT 'pending'
 );
 
 
-CREATE TABLE IF NOT EXISTS orders(
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- user_id INTEGER,
- total INTEGER,
- status TEXT DEFAULT 'pending'
+CREATE TABLE IF NOT EXISTS orders (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    total INTEGER,
+    status TEXT DEFAULT 'pending'
 );
 
 
-CREATE TABLE IF NOT EXISTS sessions(
- token TEXT PRIMARY KEY,
- user_id INTEGER
+CREATE TABLE IF NOT EXISTS sessions (
+    token TEXT PRIMARY KEY,
+    user_id INTEGER
 );
-
 
 `);
 
 
 
-
-
 // =========================
-// PASSWORD
+// FUNCTION
 // =========================
-
 
 function hashPassword(password){
 
@@ -108,99 +101,166 @@ function hashPassword(password){
 }
 
 
-
 function createToken(){
 
     return crypto
     .randomBytes(32)
     .toString("hex");
 
-}
-
-
-
-
-
+}// =========================
+// TẠO ADMIN MẶC ĐỊNH
 // =========================
-// DEFAULT PRODUCTS
-// =========================
-
-
-const count = db
-.prepare("SELECT COUNT(*) c FROM products")
-.get().c;
-
-
-
-if(count===0){
-
-const add=db.prepare(`
-
-INSERT INTO products
-(name,price,bank_price,stock,image,description)
-
-VALUES(?,?,?,?,?,?)
-
-`);
-
-
-[
-["Dragon Breath Seed",4000,4000,0,"",""],
-["Star Fruit",8000,8000,0,"",""],
-["Sun Bloom",3000,3000,0,"",""],
-["Super Watering",1000,1000,0,"",""],
-["Super Sprinkler",1000,1000,0,"",""],
-["Hypno Bloom",2000,2000,0,"",""],
-["Moon Bloom",2000,2000,0,"",""],
-["Mega Seed",1000,1000,0,"",""],
-["Rainbow Seed",1000,1000,0,"",""]
-
-].forEach(p=>add.run(...p));
-
-}
-
-
-
-
-
-
-// =========================
-// DEFAULT ADMIN
-// =========================
-
 
 const admin = db.prepare(`
-
-SELECT id FROM users WHERE username=?
-
+SELECT *
+FROM users
+WHERE username=?
 `).get("blackadmin");
-
 
 
 if(!admin){
 
-db.prepare(`
+    db.prepare(`
+    INSERT INTO users
+    (username,contact,password,balance)
+    VALUES(?,?,?,?)
+    `).run(
+        "blackadmin",
+        "admin",
+        hashPassword("tuankhoi123"),
+        0
+    );
 
-INSERT INTO users
-(username,contact,password,balance)
-
-VALUES(?,?,?,?)
-
-`).run(
-
-"blackadmin",
-"admin",
-hashPassword("tuankhoi123"),
-0
-
-);
-
-
-console.log("Created admin");
-
+    console.log("Đã tạo admin: blackadmin");
 }
 
 
+
+// =========================
+// TẠO SẢN PHẨM MẶC ĐỊNH
+// =========================
+
+
+const productCount = db.prepare(`
+SELECT COUNT(*) AS count
+FROM products
+`).get().count;
+
+
+
+if(productCount === 0){
+
+    const add = db.prepare(`
+
+    INSERT INTO products
+    (name,price,bank_price,stock,image,description)
+
+    VALUES(?,?,?,?,?,?)
+
+    `);
+
+
+    const products = [
+
+        [
+        "Dragon Breath Seed",
+        4000,
+        4000,
+        0,
+        "",
+        ""
+        ],
+
+        [
+        "Star Fruit",
+        8000,
+        8000,
+        0,
+        "",
+        ""
+        ],
+
+        [
+        "Sun Bloom",
+        3000,
+        3000,
+        0,
+        "",
+        ""
+        ],
+
+        [
+        "Super Watering",
+        1000,
+        1000,
+        0,
+        "",
+        ""
+        ],
+
+        [
+        "Super Sprinkler",
+        1000,
+        1000,
+        0,
+        "",
+        ""
+        ],
+
+        [
+        "Hypno Bloom",
+        2000,
+        2000,
+        0,
+        "",
+        ""
+        ],
+
+        [
+        "Moon Bloom",
+        2000,
+        2000,
+        0,
+        "",
+        ""
+        ],
+
+        [
+        "Mega Seed",
+        1000,
+        1000,
+        0,
+        "",
+        ""
+        ],
+
+        [
+        "Rainbow Seed",
+        1000,
+        1000,
+        0,
+        "",
+        ""
+        ]
+
+    ];
+
+
+
+    const insert = db.transaction(()=>{
+
+        for(const p of products){
+
+            add.run(...p);
+
+        }
+
+    });
+
+
+    insert();
+
+}
 
 
 
@@ -210,17 +270,20 @@ console.log("Created admin");
 // =========================
 
 
-app.use(express.json());
+app.use(express.json({
+    limit:"2mb"
+}));
+
 
 app.use(express.urlencoded({
-extended:true
+    extended:true
 }));
 
 
 app.use(express.static(
-path.join(__dirname,"public")
+    path.join(__dirname,"public")
 ));// =========================
-// AUTH FUNCTIONS
+// AUTH FUNCTION
 // =========================
 
 
@@ -250,7 +313,8 @@ function getUserFromToken(token){
 
 function auth(req,res,next){
 
-    const token=req.headers.authorization?.replace("Bearer ","");
+    const token =
+    req.headers.authorization?.replace("Bearer ","");
 
 
     const user=getUserFromToken(token);
@@ -261,6 +325,7 @@ function auth(req,res,next){
         return res.status(401).json({
 
             success:false,
+
             message:"Chưa đăng nhập"
 
         });
@@ -269,7 +334,9 @@ function auth(req,res,next){
 
 
     req.user=user;
+
     req.token=token;
+
 
     next();
 
@@ -278,9 +345,11 @@ function auth(req,res,next){
 
 
 
+
 function adminAuth(req,res,next){
 
-    const token=req.headers.authorization?.replace("Bearer ","");
+    const token =
+    req.headers.authorization?.replace("Bearer ","");
 
 
     const user=getUserFromToken(token);
@@ -292,6 +361,7 @@ function adminAuth(req,res,next){
         return res.status(403).json({
 
             success:false,
+
             message:"Không có quyền admin"
 
         });
@@ -299,7 +369,12 @@ function adminAuth(req,res,next){
     }
 
 
+
     req.user=user;
+
+    req.token=token;
+
+
     next();
 
 }
@@ -316,12 +391,13 @@ function adminAuth(req,res,next){
 app.get("/api/health",(req,res)=>{
 
 
-res.json({
+    res.json({
 
-success:true,
-status:"online"
+        success:true,
 
-});
+        status:"online"
+
+    });
 
 
 });
@@ -350,11 +426,12 @@ password
 
 
 
-if(!username||!contact||!password){
+if(!username || !password){
 
 return res.status(400).json({
 
 success:false,
+
 message:"Thiếu thông tin"
 
 });
@@ -365,7 +442,11 @@ message:"Thiếu thông tin"
 
 const old=db.prepare(`
 
-SELECT id FROM users WHERE username=?
+SELECT id
+
+FROM users
+
+WHERE username=?
 
 `).get(username);
 
@@ -376,6 +457,7 @@ if(old){
 return res.status(400).json({
 
 success:false,
+
 message:"Tài khoản đã tồn tại"
 
 });
@@ -384,20 +466,26 @@ message:"Tài khoản đã tồn tại"
 
 
 
+
 const result=db.prepare(`
 
 INSERT INTO users
-(username,contact,password,balance)
 
-VALUES(?,?,?,0)
+(username,contact,password)
+
+VALUES(?,?,?)
 
 `).run(
 
 username,
-contact,
+
+contact || "",
+
 hashPassword(password)
 
 );
+
+
 
 
 
@@ -408,6 +496,7 @@ const token=createToken();
 db.prepare(`
 
 INSERT INTO sessions
+
 (token,user_id)
 
 VALUES(?,?)
@@ -415,9 +504,12 @@ VALUES(?,?)
 `).run(
 
 token,
+
 result.lastInsertRowid
 
 );
+
+
 
 
 
@@ -430,7 +522,9 @@ token,
 user:{
 
 id:result.lastInsertRowid,
+
 username,
+
 balance:0
 
 }
@@ -441,22 +535,23 @@ balance:0
 
 }catch(e){
 
+
 console.log(e);
+
 
 res.status(500).json({
 
 success:false,
+
 message:"Lỗi server"
 
 });
+
 
 }
 
 
 });
-
-
-
 
 
 
@@ -477,6 +572,7 @@ password
 
 
 
+
 const user=db.prepare(`
 
 SELECT *
@@ -489,18 +585,23 @@ WHERE username=?
 
 
 
+
+
 if(!user || user.password!==hashPassword(password)){
 
 
 return res.status(401).json({
 
 success:false,
+
 message:"Sai tài khoản hoặc mật khẩu"
 
 });
 
 
 }
+
+
 
 
 
@@ -519,9 +620,12 @@ VALUES(?,?)
 `).run(
 
 token,
+
 user.id
 
 );
+
+
 
 
 
@@ -531,51 +635,37 @@ success:true,
 
 token,
 
+
 user:{
 
 id:user.id,
+
 username:user.username,
+
 balance:user.balance
 
 }
 
-});
-
 
 });
 
 
-
-
-
-
-
-
-// =========================
+});// =========================
 // GET USER
 // =========================
 
-
 app.get("/api/me",auth,(req,res)=>{
-
 
 res.json({
 
 success:true,
 
-user:{
-
-id:req.user.id,
-username:req.user.username,
-balance:req.user.balance
-
-}
+user:req.user
 
 });
 
 
 });
-
 
 
 
@@ -583,7 +673,6 @@ balance:req.user.balance
 // =========================
 // LOGOUT
 // =========================
-
 
 app.post("/api/logout",auth,(req,res)=>{
 
@@ -601,14 +690,23 @@ WHERE token=?
 res.json({
 
 success:true,
+
 message:"Đã đăng xuất"
 
 });
 
 
-});// =========================
+});
+
+
+
+
+
+
+// =========================
 // PRODUCTS
 // =========================
+
 
 app.get("/api/products",(req,res)=>{
 
@@ -628,6 +726,7 @@ ORDER BY id ASC
 res.json({
 
 success:true,
+
 products
 
 });
@@ -639,8 +738,9 @@ products
 
 
 
+
 // =========================
-// TOPUP CARD
+// NẠP THẺ
 // =========================
 
 
@@ -658,15 +758,17 @@ code
 
 if(!provider || !value || !serial || !code){
 
+
 return res.status(400).json({
 
 success:false,
+
 message:"Thiếu thông tin thẻ"
 
 });
 
-}
 
+}
 
 
 
@@ -674,19 +776,23 @@ const result=db.prepare(`
 
 INSERT INTO topups
 
-(user_id,method,amount,provider,serial,code,status)
+(user_id,method,amount,provider,serial,code)
 
-VALUES(?,?,?,?,?,?,?)
+VALUES(?,?,?,?,?,?)
 
 `).run(
 
 req.user.id,
+
 "CARD",
+
 Number(value),
+
 provider,
+
 serial,
-code,
-"pending"
+
+code
 
 );
 
@@ -711,9 +817,8 @@ id:result.lastInsertRowid
 
 
 
-
 // =========================
-// TOPUP BANK
+// NẠP BANK
 // =========================
 
 
@@ -724,17 +829,19 @@ const amount=Number(req.body.amount);
 
 
 
-if(!amount || amount<10000){
+if(!Number.isFinite(amount) || amount < 10000){
+
 
 return res.status(400).json({
 
 success:false,
+
 message:"Nạp tối thiểu 10.000đ"
 
 });
 
-}
 
+}
 
 
 
@@ -742,17 +849,20 @@ const result=db.prepare(`
 
 INSERT INTO topups
 
-(user_id,method,amount,status)
+(user_id,method,amount)
 
-VALUES(?,?,?,'pending')
+VALUES(?,?,?)
 
 `).run(
 
 req.user.id,
+
 "BANK",
+
 amount
 
 );
+
 
 
 
@@ -760,7 +870,7 @@ res.json({
 
 success:true,
 
-message:"Đã tạo yêu cầu",
+message:"Đã tạo yêu cầu nạp",
 
 id:result.lastInsertRowid
 
@@ -775,42 +885,9 @@ id:result.lastInsertRowid
 
 
 
-
 // =========================
-// ORDERS
+// ĐẶT HÀNG
 // =========================
-
-
-app.get("/api/orders",auth,(req,res)=>{
-
-
-const orders=db.prepare(`
-
-SELECT *
-
-FROM orders
-
-WHERE user_id=?
-
-ORDER BY id DESC
-
-`).all(req.user.id);
-
-
-
-res.json({
-
-success:true,
-
-orders
-
-});
-
-
-});
-
-
-
 
 
 app.post("/api/orders",auth,(req,res)=>{
@@ -822,14 +899,10 @@ try{
 const items=req.body.items;
 
 
-if(!Array.isArray(items)||items.length===0){
 
-return res.status(400).json({
+if(!Array.isArray(items) || items.length===0){
 
-success:false,
-message:"Giỏ hàng trống"
-
-});
+throw new Error("Giỏ hàng trống");
 
 }
 
@@ -856,7 +929,7 @@ WHERE id=?
 
 if(!product){
 
-throw Error("Không có sản phẩm");
+throw new Error("Không có sản phẩm");
 
 }
 
@@ -866,6 +939,7 @@ total += product.price * Number(item.quantity);
 
 
 }
+
 
 
 
@@ -887,9 +961,10 @@ WHERE id=?
 
 if(user.balance < total){
 
-throw Error("Không đủ tiền");
+throw new Error("Không đủ tiền");
 
 }
+
 
 
 
@@ -906,7 +981,9 @@ VALUES(?,?,?)
 `).run(
 
 user.id,
+
 total,
+
 "completed"
 
 );
@@ -926,9 +1003,12 @@ WHERE id=?
 `).run(
 
 total,
+
 user.id
 
 );
+
+
 
 
 
@@ -941,6 +1021,7 @@ message:"Mua thành công",
 order_id:order.lastInsertRowid
 
 });
+
 
 
 
@@ -963,27 +1044,40 @@ message:e.message
 // ADMIN OVERVIEW
 // =========================
 
+
 app.get("/api/admin/overview",adminAuth,(req,res)=>{
 
 
-const users=db.prepare(
-"SELECT COUNT(*) c FROM users"
-).get().c;
+const users=db.prepare(`
+
+SELECT COUNT(*) AS count
+
+FROM users
+
+`).get().count;
 
 
-const products=db.prepare(
-"SELECT COUNT(*) c FROM products"
-).get().c;
+
+const products=db.prepare(`
+
+SELECT COUNT(*) AS count
+
+FROM products
+
+`).get().count;
 
 
-const orders=db.prepare(
-"SELECT COUNT(*) c FROM orders"
-).get().c;
 
+const topups=db.prepare(`
 
-const topups=db.prepare(
-"SELECT COUNT(*) c FROM topups WHERE status='pending'"
-).get().c;
+SELECT COUNT(*) AS count
+
+FROM topups
+
+WHERE status='pending'
+
+`).get().count;
+
 
 
 
@@ -992,16 +1086,21 @@ res.json({
 success:true,
 
 overview:{
+
 users,
+
 products,
-orders,
+
 topups
+
 }
 
 });
 
 
 });
+
+
 
 
 
@@ -1044,20 +1143,20 @@ products
 
 
 
-// ADD PRODUCT
+
+// THÊM SẢN PHẨM
+
 
 app.post("/api/admin/products",adminAuth,(req,res)=>{
 
 
 const {
-
 name,
 price,
 bank_price,
 stock,
 image,
 description
-
 }=req.body;
 
 
@@ -1067,11 +1166,13 @@ if(!name){
 return res.status(400).json({
 
 success:false,
+
 message:"Thiếu tên"
 
 });
 
 }
+
 
 
 
@@ -1086,13 +1187,19 @@ VALUES(?,?,?,?,?,?)
 `).run(
 
 name,
+
 Number(price)||0,
-Number(bank_price)||Number(price)||0,
+
+Number(bank_price)||0,
+
 Number(stock)||0,
+
 image||"",
+
 description||""
 
 );
+
 
 
 
@@ -1113,7 +1220,8 @@ id:result.lastInsertRowid
 
 
 
-// EDIT PRODUCT
+// SỬA SẢN PHẨM
+
 
 app.patch("/api/admin/products/:id",adminAuth,(req,res)=>{
 
@@ -1149,10 +1257,11 @@ message:"Không tìm thấy"
 
 
 
-
 db.prepare(`
 
-UPDATE products SET
+UPDATE products
+
+SET
 
 name=?,
 
@@ -1205,7 +1314,8 @@ message:"Đã sửa"
 
 
 
-// DELETE PRODUCT
+// XÓA SẢN PHẨM
+
 
 app.delete("/api/admin/products/:id",adminAuth,(req,res)=>{
 
@@ -1241,22 +1351,29 @@ message:"Đã xóa"
 
 
 
-
 // =========================
-// ADMIN TOPUPS
+// ADMIN TOPUP
 // =========================
 
 
 app.get("/api/admin/topups",adminAuth,(req,res)=>{
 
 
-const topups=db.prepare(`
+const data=db.prepare(`
 
-SELECT *
+SELECT 
+
+topups.*,
+
+users.username
 
 FROM topups
 
-ORDER BY id DESC
+JOIN users
+
+ON users.id=topups.user_id
+
+ORDER BY topups.id DESC
 
 `).all();
 
@@ -1266,7 +1383,7 @@ res.json({
 
 success:true,
 
-topups
+topups:data
 
 });
 
@@ -1278,7 +1395,9 @@ topups
 
 
 
-// APPROVE TOPUP
+
+// DUYỆT NẠP
+
 
 app.post("/api/admin/topups/:id/approve",adminAuth,(req,res)=>{
 
@@ -1299,18 +1418,18 @@ WHERE id=?
 
 
 
+
 if(!topup){
 
 return res.status(404).json({
 
 success:false,
 
-message:"Không có yêu cầu"
+message:"Không tìm thấy"
 
 });
 
 }
-
 
 
 
@@ -1324,6 +1443,7 @@ SET status='approved'
 WHERE id=?
 
 `).run(id);
+
 
 
 
@@ -1346,6 +1466,8 @@ topup.user_id
 
 
 
+
+
 res.json({
 
 success:true,
@@ -1355,15 +1477,9 @@ message:"Đã duyệt"
 });
 
 
-});
-
-
-
-
-
-
-
-// REJECT TOPUP
+});// =========================
+// TỪ CHỐI NẠP
+// =========================
 
 app.post("/api/admin/topups/:id/reject",adminAuth,(req,res)=>{
 
@@ -1393,9 +1509,16 @@ message:"Đã từ chối"
 });
 
 
-});// =========================
+});
+
+
+
+
+
+// =========================
 // ADMIN USERS
 // =========================
+
 
 app.get("/api/admin/users",adminAuth,(req,res)=>{
 
@@ -1449,39 +1572,11 @@ return res.status(400).json({
 
 success:false,
 
-message:"Số tiền không hợp lệ"
+message:"Số tiền sai"
 
 });
 
 }
-
-
-
-const user=db.prepare(`
-
-SELECT *
-
-FROM users
-
-WHERE id=?
-
-`).get(id);
-
-
-
-if(!user){
-
-return res.status(404).json({
-
-success:false,
-
-message:"Không tìm thấy user"
-
-});
-
-}
-
-
 
 
 
@@ -1521,7 +1616,7 @@ message:"Đã cộng tiền"
 
 
 // =========================
-// FALLBACK
+// TRANG CHÍNH
 // =========================
 
 
