@@ -1185,12 +1185,10 @@ res.send("BLACK GAG2 SHOP SERVER ONLINE");
 // START
 // =========================
 
-app.listen(PORT,"0.0.0.0",()=>{
-
-console.log("==============================");
-console.log(" BLACK GAG2 SHOP");
-console.log(" SERVER RUNNING:",PORT);
-console.log(" DATABASE:",DB_PATH);
-console.log("==============================");
-
+app.listen(PORT, "0.0.0.0", () => {
+  console.log("==============================");
+  console.log(" BLACK GAG2 SHOP");
+  console.log(" SERVER RUNNING:", PORT);
+  console.log(" DATABASE:", DB_PATH);
+  console.log("==============================");
 });
