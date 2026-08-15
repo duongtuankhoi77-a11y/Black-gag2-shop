@@ -1,3002 +1,2902 @@
 <!doctype html>
-<html lang="vi">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BLACK GAG2 SHOP</title>
 
-<style>
-*{box-sizing:border-box}
-
-body{
-  margin:0;
-  background:#080a13;
-  color:#fff;
-  font-family:Arial,sans-serif
-}
-
-.wrap{
-  max-width:1100px;
-  margin:auto;
-  padding:18px 16px 100px
-}
-
-header{
-  position:sticky;
-  top:0;
-  z-index:5;
-  background:#0b0d18ee;
-  border-bottom:1px solid #292d48
-}
-
-.nav{
-  max-width:1100px;
-  margin:auto;
-  padding:13px 16px;
-  display:flex;
-  gap:8px;
-  align-items:center
-}
-
-.logo{
-  font-size:20px;
-  font-weight:900;
-  margin-right:auto
-}
-
-.logo span{
-  color:#8b6cff
-}
-
-button{
-  border:0;
-  border-radius:11px;
-  padding:11px 14px;
-  cursor:pointer;
-  font-weight:800
-}
-
-.primary{
-  background:linear-gradient(100deg,#6657ff,#aa5cff);
-  color:#fff
-}
-
-.dark{
-  background:#171a2c;
-  color:#fff;
-  border:1px solid #303451
-}
-
-.danger{
-  background:#3b1820;
-  color:#fff
-}
-
-.hero,
-.panel,
-.card{
-  background:#10121e;
-  border:1px solid #292d48;
-  border-radius:20px
-}
-
-.hero{
-  padding:35px;
-  background:radial-gradient(
-    circle at 85% 15%,
-    #4c2c86,
-    #15162a 40%,
-    #10121e 72%
-  )
-}
-
-.hero h1{
-  font-size:clamp(40px,8vw,70px);
-  line-height:1;
-  margin:18px 0
-}
-
-.grad{
-  background:linear-gradient(
-    90deg,
-    #7667ff,
-    #d96cff
-  );
-  -webkit-background-clip:text;
-  color:transparent
-}
-
-.muted{
-  color:#989db7
-}
-
-.tag{
-  display:inline-block;
-  background:#1a1d31;
-  color:#a49aff;
-  padding:6px 9px;
-  border-radius:8px;
-  font-size:12px
-}
-
-.section{
-  margin-top:25px
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:
-    repeat(auto-fit,minmax(210px,1fr));
-  gap:13px
-}
-
-.card{
-  padding:16px
-}
-
-.product-img{
-  width:100%;
-  height:170px;
-  object-fit:contain;
-  border-radius:14px;
-  background:#090b14;
-  margin-bottom:12px
-}
-
-.price{
-  font-size:19px;
-  font-weight:900;
-  margin:12px 0
-}
-
-.stock{
-  font-size:13px;
-  color:#989db7;
-  margin-bottom:10px
-}
-
-input,
-select{
-  width:100%;
-  padding:12px;
-  margin:6px 0 12px;
-  border-radius:10px;
-  border:1px solid #303451;
-  background:#0b0d17;
-  color:#fff
-}
-
-textarea{
-  width:100%;
-  min-height:90px;
-  padding:12px;
-  margin:6px 0 12px;
-  border-radius:10px;
-  border:1px solid #303451;
-  background:#0b0d17;
-  color:#fff;
-  resize:vertical
-}
-
-.row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  padding:12px 0;
-  border-bottom:1px solid #292d48
-}
-
-.hide{
-  display:none!important
-}
-
-.modal{
-  position:fixed;
-  inset:0;
-  background:#000b;
-  z-index:30;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:18px
-}
-
-.modal.show{
-  display:flex
-}
-
-.modalbox{
-  width:min(480px,100%);
-  max-height:90vh;
-  overflow:auto;
-  background:#111426;
-  border:1px solid #383c64;
-  border-radius:20px;
-  padding:20px
-}
-
-.bottom{
-  position:fixed;
-  bottom:10px;
-  left:50%;
-  transform:translateX(-50%);
-  width:min(720px,calc(100% - 24px));
-  z-index:10;
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:5px;
-  padding:7px;
-  border:1px solid #292d48;
-  border-radius:18px;
-  background:#0d0f1af5
-}
-
-.bottom button{
-  background:transparent;
-  color:#aeb3ca
-}
-
-.bottom .on{
-  background:#29214e;
-  color:#fff
-}
-
-.admin{
-  border-color:#6f5cff
-}
-
-.admin-grid{
-  display:grid;
-  grid-template-columns:
-    repeat(auto-fit,minmax(240px,1fr));
-  gap:15px
-}
-
-.qr{
-  width:100%;
-  max-width:320px;
-  display:block;
-  margin:15px auto;
-  border-radius:15px;
-  background:#fff;
-  padding:8px
-}
-
-.small{
-  font-size:12px
-}
-
-@media(max-width:600px){
-
-  .nav .logo{
-    font-size:16px
-  }
-
-  .nav #hello{
-    display:none
-  }
-
-  .nav button{
-    padding:9px
-  }
-
-  .bottom{
-    grid-template-columns:repeat(5,1fr)
-  }
-
-  .bottom button{
-    padding:8px 3px;
-    font-size:11px
-  }
-
-}
-</style>
-</head>
-
-<body>
-
-<header>
-
-  <div class="nav">
-
-    <div class="logo">
-      🎮 <span>BLACK</span> GAG2 SHOP
-    </div>
-
-    <span
-      id="hello"
-      class="muted">
-    </span>
-
-    <button
-      id="loginBtn"
-      class="dark"
-      onclick="modal('login')">
-      Đăng nhập
-    </button>
-
-    <button
-      id="regBtn"
-      class="primary"
-      onclick="modal('register')">
-      Đăng ký
-    </button>
-
-    <button
-      id="logoutBtn"
-      class="dark hide"
-      onclick="logout()">
-      Đăng xuất
-    </button>
-
-  </div>
-
-</header>
-
-
-<main class="wrap">
-
-
-<section class="hero">
-
-  <span class="tag">
-    GROW A GARDEN 2
-  </span>
-
-  <h1>
-    Mua bán GAG2<br>
-    <span class="grad">
-      nhanh & tiện
-    </span>
-  </h1>
-
-  <p class="muted">
-    BLACK GAG2 SHOP — chỉ có Grow a Garden 2.
-  </p>
-
-  <button
-    class="primary"
-    onclick="scrollToId('products')">
-    🛒 Xem sản phẩm
-  </button>
-
-</section>
-
-
-<!-- =========================
-     SẢN PHẨM
-========================= -->
-
-<section
-  id="products"
-  class="section">
-
-  <h2>
-    🌱 Sản phẩm
-  </h2>
-
-  <div
-    id="productGrid"
-    class="grid">
-  </div>
-
-</section>
-
-
-<!-- =========================
-     NẠP TIỀN
-========================= -->
-
-<section
-  id="topupSection"
-  class="section">
-
-  <div
-    class="panel"
-    style="padding:20px">
-
-    <h2>
-      💰 Nạp tiền
-    </h2>
-
-    <button
-      class="dark"
-      onclick="topupCard()">
-      💳 Thẻ cào
-    </button>
-
-    <button
-      class="dark"
-      onclick="topupBank()">
-      🏦 Bank / QR
-    </button>
-
-    <p
-      id="topupMsg"
-      class="muted">
-    </p>
-
-  </div>
-
-</section>
-
-
-<!-- =========================
-     ĐƠN HÀNG
-========================= -->
-
-<section
-  id="ordersSection"
-  class="section">
-
-  <div
-    class="panel"
-    style="padding:20px">
-
-    <h2>
-      📦 Đơn hàng
-    </h2>
-
-    <div id="orders">
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- =========================
-     HỒ SƠ
-========================= -->
-
-<section
-  id="profileSection"
-  class="section">
-
-  <div
-    class="panel"
-    style="padding:20px">
-
-    <h2>
-      👤 Hồ sơ
-    </h2>
-
-    <div id="profile">
-
-      <p class="muted">
-        Đăng nhập để xem hồ sơ.
-      </p>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- =========================
-     ADMIN
-========================= -->
-
-<section
-  id="adminSection"
-  class="section hide">
-
-  <div
-    class="panel admin"
-    style="padding:20px">
-
-    <h2>
-      👑 Admin
-    </h2>
-
-    <div id="admin">
-    </div>
-
-  </div>
-
-</section>
-
-
-</main>
-
-
-<!-- =========================
-     THANH DƯỚI
-========================= -->
-
-<nav class="bottom">
-
-  <button
-    id="navShop"
-    class="on"
-    onclick="scrollToId('products')">
-    🏠<br>Shop
-  </button>
-
-  <button
-    id="navTopup"
-    onclick="topupCard()">
-    💳<br>Nạp tiền
-  </button>
-
-  <button
-    id="navOrders"
-    onclick="
-      loadOrders();
-      scrollToId('ordersSection')
-    ">
-    ☷<br>Đơn hàng
-  </button>
-
-  <button
-    id="navProfile"
-    onclick="
-      scrollToId('profileSection')
-    ">
-    👤<br>Hồ sơ
-  </button>
-
-  <button
-    id="navAdmin"
-    class="hide"
-    onclick="adminLogin()">
-    👑<br>Admin
-  </button>
-
-</nav>
-
-
-<!-- =========================
-     MODAL
-========================= -->
-
-<div
-  class="modal"
-  id="modal">
-
-  <div
-    class="modalbox"
-    id="modalbox">
-  </div>
+<html lang="vi">  
+<head>  
+<meta charset="utf-8">  
+<meta name="viewport" content="width=device-width,initial-scale=1">  
+<title>BLACK GAG2 SHOP</title>  <style>  
+*{box-sizing:border-box}  
+  
+body{  
+  margin:0;  
+  background:#080a13;  
+  color:#fff;  
+  font-family:Arial,sans-serif  
+}  
+  
+.wrap{  
+  max-width:1100px;  
+  margin:auto;  
+  padding:18px 16px 100px  
+}  
+  
+header{  
+  position:sticky;  
+  top:0;  
+  z-index:5;  
+  background:#0b0d18ee;  
+  border-bottom:1px solid #292d48  
+}  
+  
+.nav{  
+  max-width:1100px;  
+  margin:auto;  
+  padding:13px 16px;  
+  display:flex;  
+  gap:8px;  
+  align-items:center  
+}  
+  
+.logo{  
+  font-size:20px;  
+  font-weight:900;  
+  margin-right:auto  
+}  
+  
+.logo span{  
+  color:#8b6cff  
+}  
+  
+button{  
+  border:0;  
+  border-radius:11px;  
+  padding:11px 14px;  
+  cursor:pointer;  
+  font-weight:800  
+}  
+  
+.primary{  
+  background:linear-gradient(100deg,#6657ff,#aa5cff);  
+  color:#fff  
+}  
+  
+.dark{  
+  background:#171a2c;  
+  color:#fff;  
+  border:1px solid #303451  
+}  
+  
+.danger{  
+  background:#3b1820;  
+  color:#fff  
+}  
+  
+.hero,  
+.panel,  
+.card{  
+  background:#10121e;  
+  border:1px solid #292d48;  
+  border-radius:20px  
+}  
+  
+.hero{  
+  padding:35px;  
+  background:radial-gradient(  
+    circle at 85% 15%,  
+    #4c2c86,  
+    #15162a 40%,  
+    #10121e 72%  
+  )  
+}  
+  
+.hero h1{  
+  font-size:clamp(40px,8vw,70px);  
+  line-height:1;  
+  margin:18px 0  
+}  
+  
+.grad{  
+  background:linear-gradient(  
+    90deg,  
+    #7667ff,  
+    #d96cff  
+  );  
+  -webkit-background-clip:text;  
+  color:transparent  
+}  
+  
+.muted{  
+  color:#989db7  
+}  
+  
+.tag{  
+  display:inline-block;  
+  background:#1a1d31;  
+  color:#a49aff;  
+  padding:6px 9px;  
+  border-radius:8px;  
+  font-size:12px  
+}  
+  
+.section{  
+  margin-top:25px  
+}  
+  
+.grid{  
+  display:grid;  
+  grid-template-columns:  
+    repeat(auto-fit,minmax(210px,1fr));  
+  gap:13px  
+}  
+  
+.card{  
+  padding:16px  
+}  
+  
+.product-img{  
+  width:100%;  
+  height:170px;  
+  object-fit:contain;  
+  border-radius:14px;  
+  background:#090b14;  
+  margin-bottom:12px  
+}  
+  
+.price{  
+  font-size:19px;  
+  font-weight:900;  
+  margin:12px 0  
+}  
+  
+.stock{  
+  font-size:13px;  
+  color:#989db7;  
+  margin-bottom:10px  
+}  
+  
+input,  
+select{  
+  width:100%;  
+  padding:12px;  
+  margin:6px 0 12px;  
+  border-radius:10px;  
+  border:1px solid #303451;  
+  background:#0b0d17;  
+  color:#fff  
+}  
+  
+textarea{  
+  width:100%;  
+  min-height:90px;  
+  padding:12px;  
+  margin:6px 0 12px;  
+  border-radius:10px;  
+  border:1px solid #303451;  
+  background:#0b0d17;  
+  color:#fff;  
+  resize:vertical  
+}  
+  
+.row{  
+  display:flex;  
+  justify-content:space-between;  
+  align-items:center;  
+  gap:10px;  
+  padding:12px 0;  
+  border-bottom:1px solid #292d48  
+}  
+  
+.hide{  
+  display:none!important  
+}  
+  
+.modal{  
+  position:fixed;  
+  inset:0;  
+  background:#000b;  
+  z-index:30;  
+  display:none;  
+  align-items:center;  
+  justify-content:center;  
+  padding:18px  
+}  
+  
+.modal.show{  
+  display:flex  
+}  
+  
+.modalbox{  
+  width:min(480px,100%);  
+  max-height:90vh;  
+  overflow:auto;  
+  background:#111426;  
+  border:1px solid #383c64;  
+  border-radius:20px;  
+  padding:20px  
+}  
+  
+.bottom{  
+  position:fixed;  
+  bottom:10px;  
+  left:50%;  
+  transform:translateX(-50%);  
+  width:min(720px,calc(100% - 24px));  
+  z-index:10;  
+  display:grid;  
+  grid-template-columns:repeat(5,1fr);  
+  gap:5px;  
+  padding:7px;  
+  border:1px solid #292d48;  
+  border-radius:18px;  
+  background:#0d0f1af5  
+}  
+  
+.bottom button{  
+  background:transparent;  
+  color:#aeb3ca  
+}  
+  
+.bottom .on{  
+  background:#29214e;  
+  color:#fff  
+}  
+  
+.admin{  
+  border-color:#6f5cff  
+}  
+  
+.admin-grid{  
+  display:grid;  
+  grid-template-columns:  
+    repeat(auto-fit,minmax(240px,1fr));  
+  gap:15px  
+}  
+  
+.qr{  
+  width:100%;  
+  max-width:320px;  
+  display:block;  
+  margin:15px auto;  
+  border-radius:15px;  
+  background:#fff;  
+  padding:8px  
+}  
+  
+.small{  
+  font-size:12px  
+}  
+  
+@media(max-width:600px){  
+  
+  .nav .logo{  
+    font-size:16px  
+  }  
+  
+  .nav #hello{  
+    display:none  
+  }  
+  
+  .nav button{  
+    padding:9px  
+  }  
+  
+  .bottom{  
+    grid-template-columns:repeat(5,1fr)  
+  }  
+  
+  .bottom button{  
+    padding:8px 3px;  
+    font-size:11px  
+  }  
+  
+}  
+</style>  </head>  <body>  <header>    <div class="nav">  <div class="logo">  
+  🎮 <span>BLACK</span> GAG2 SHOP  
+</div>  
+
+<span  
+  id="hello"  
+  class="muted">  
+</span>  
+
+<button  
+  id="loginBtn"  
+  class="dark"  
+  onclick="modal('login')">  
+  Đăng nhập  
+</button>  
+
+<button  
+  id="regBtn"  
+  class="primary"  
+  onclick="modal('register')">  
+  Đăng ký  
+</button>  
+
+<button  
+  id="logoutBtn"  
+  class="dark hide"  
+  onclick="logout()">  
+  Đăng xuất  
+</button>
+
+  </div>  </header>  <main class="wrap">  <section class="hero">    <span class="tag">  
+    GROW A GARDEN 2  
+  </span>    <h1>  
+    Mua bán GAG2<br>  
+    <span class="grad">  
+      nhanh & tiện  
+    </span>  
+  </h1>    <p class="muted">  
+    BLACK GAG2 SHOP — chỉ có Grow a Garden 2.  
+  </p>  <button  
+class="primary"  
+onclick="scrollToId('products')">
+🛒 Xem sản phẩm
+</button>
+
+</section>  <!-- =========================  
+     SẢN PHẨM  
+========================= -->  <section  
+  id="products"  
+  class="section">    <h2>  
+    🌱 Sản phẩm  
+  </h2>    <div  
+    id="productGrid"  
+    class="grid">  
+  </div>  </section>  <!-- =========================  
+     NẠP TIỀN  
+========================= -->  <section  
+  id="topupSection"  
+  class="section">    <div  
+    class="panel"  
+    style="padding:20px">  <h2>  
+  💰 Nạp tiền  
+</h2>  
+
+<button  
+  class="dark"  
+  onclick="topupCard()">  
+  💳 Thẻ cào  
+</button>  
+
+<button  
+  class="dark"  
+  onclick="topupBank()">  
+  🏦 Bank / QR  
+</button>  
+
+<p  
+  id="topupMsg"  
+  class="muted">  
+</p>
+
+  </div>  </section>  <!-- =========================  
+     ĐƠN HÀNG  
+========================= -->  <section  
+  id="ordersSection"  
+  class="section">    <div  
+    class="panel"  
+    style="padding:20px">  <h2>  
+  📦 Đơn hàng  
+</h2>  
+
+<div id="orders">  
+</div>
+
+  </div>  </section>  <!-- =========================  
+     HỒ SƠ  
+========================= -->  <section  
+  id="profileSection"  
+  class="section">    <div  
+    class="panel"  
+    style="padding:20px">  <h2>  
+  👤 Hồ sơ  
+</h2>  
+
+<div id="profile">  
+
+  <p class="muted">  
+    Đăng nhập để xem hồ sơ.  
+  </p>  
 
 </div>
 
+  </div>  </section>  <!-- =========================  
+     ADMIN  
+========================= -->  <section  
+  id="adminSection"  
+  class="section hide">    <div  
+    class="panel admin"  
+    style="padding:20px">  <h2>  
+  👑 Admin  
+</h2>  
 
-<script>
+<div id="admin">  
+</div>
 
-let token =
-  localStorage.getItem(
-    "black_token"
-  ) || "";
+  </div>  </section>  </main>  <!-- =========================  
+     THANH DƯỚI  
+========================= -->  <nav class="bottom">  <button  
+id="navShop"  
+class="on"  
+onclick="scrollToId('products')">
+🏠<br>Shop
+</button>
 
-let products = [];
+<button  
+id="navTopup"  
+onclick="topupCard()">
+💳<br>Nạp tiền
+</button>
 
-let cart = [];
+<button  
+id="navOrders"  
+onclick="  
+loadOrders();  
+scrollToId('ordersSection')  
+">
+☷<br>Đơn hàng
+</button>
 
+<button  
+id="navProfile"  
+onclick="  
+scrollToId('profileSection')  
+">
+👤<br>Hồ sơ
+</button>
 
-const $ =
-  id =>
-  document.getElementById(id);
+<button  
+id="navAdmin"  
+class="hide"  
+onclick="adminLogin()">
+👑<br>Admin
+</button>
 
-
-const money =
-  n =>
-  Number(n)
-    .toLocaleString("vi-VN")
-    + "đ";
-
-
-function escapeHtml(value){
-
-  return String(value ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-
+</nav>  <!-- =========================  
+     MODAL  
+========================= -->  <div  
+  class="modal"  
+  id="modal">    <div  
+    class="modalbox"  
+    id="modalbox">  
+  </div>  </div>  <script>  
+  
+let token =  
+  localStorage.getItem(  
+    "black_token"  
+  ) || "";  
+  
+let products = [];  
+  
+let cart = [];  
+  
+  
+const $ =  
+  id =>  
+  document.getElementById(id);  
+  
+  
+const money =  
+  n =>  
+  Number(n)  
+    .toLocaleString("vi-VN")  
+    + "đ";  
+  
+  
+function escapeHtml(value){  
+  
+  return String(value ?? "")  
+    .replaceAll("&","&amp;")  
+    .replaceAll("<","&lt;")  
+    .replaceAll(">","&gt;")  
+    .replaceAll('"',"&quot;")  
+    .replaceAll("'","&#039;");  
+  
+}  
+  
+  
+/* =========================  
+   API  
+========================= */  
+  
+async function api(  
+  url,  
+  opt={}  
+){  
+  
+  opt.headers = {  
+  
+    ...(opt.headers || {}),  
+  
+    ...(token  
+      ? {  
+          Authorization:  
+            "Bearer " + token  
+        }  
+      : {})  
+  
+  };  
+  
+  
+  if(  
+    opt.body &&  
+    typeof opt.body !== "string"  
+  ){  
+  
+    opt.headers[  
+      "Content-Type"  
+    ] =  
+      "application/json";  
+  
+    opt.body =  
+      JSON.stringify(  
+        opt.body  
+      );  
+  
+  }  
+  
+  
+  const r =  
+    await fetch(  
+      url,  
+      opt  
+    );  
+  
+  
+  const d =  
+    await r  
+      .json()  
+      .catch(  
+        () => ({})  
+      );  
+  
+  
+  if(!r.ok){  
+  
+    throw Error(  
+      d.error ||  
+      "Có lỗi xảy ra."  
+    );  
+  
+  }  
+  
+  
+  return d;  
+  
+}  
+  
+  
+/* =========================  
+   SẢN PHẨM  
+========================= */  
+  
+async function loadProducts(){  
+  
+  try{  
+  
+    products =  
+      await api(  
+        "/api/products"  
+      );  
+  
+  
+    $("productGrid").innerHTML =  
+  
+      products.map(  
+        p => `  
+  
+        <div class="card">  
+  
+          ${  
+            p.image  
+            ? `  
+              <img  
+                class="product-img"  
+                src="${p.image}"  
+                alt="${escapeHtml(p.name)}">  
+            `  
+            : `  
+              <div  
+                class="product-img"  
+                style="  
+                  display:flex;  
+                  align-items:center;  
+                  justify-content:center;  
+                  font-size:50px;  
+                ">  
+                🌱  
+              </div>  
+            `  
+          }  
+  
+  
+          <span class="tag">  
+            GAG2  
+          </span>  
+  
+  
+          <h3>  
+            ${escapeHtml(p.name)}  
+          </h3>  
+  
+  
+          <div class="muted">  
+            Grow a Garden 2  
+          </div>  
+  
+  
+          <div class="price">  
+            ${money(p.price)} / 1  
+          </div>  
+  
+  
+          <div class="stock">  
+  
+            ${  
+              Number(p.stock) > 0  
+              ? `Còn ${p.stock}`  
+              : "Còn hàng"  
+  
+            }  
+  
+          </div>  
+  
+  
+          <button  
+            class="dark"  
+            onclick="  
+              buy(${p.id})  
+            ">  
+            🛒 Thêm giỏ  
+          </button>  
+  
+  
+          <button  
+            class="primary"  
+            onclick="  
+              buy(${p.id},true)  
+            ">  
+            ⚡ Mua ngay  
+          </button>  
+  
+        </div>  
+  
+      `  
+      ).join("");  
+  
+  
+  }catch(e){  
+  
+    $("productGrid").innerHTML = `  
+      <p class="muted">  
+        Không tải được sản phẩm.  
+      </p>  
+    `;  
+  
+  }  
+  
+}  
+  
+  
+/* =========================  
+   MODAL  
+========================= */  
+  
+function modal(type){  
+  
+  $("modalbox").innerHTML =  
+  
+    type === "login"  
+  
+    ? `  
+  
+      <h2>  
+        🔐 Đăng nhập  
+      </h2>  
+  
+      <input  
+        id="login"  
+        placeholder="Tên đăng nhập hoặc Email">  
+  
+      <input  
+        id="pass"  
+        type="password"  
+        placeholder="Mật khẩu">  
+  
+      <button  
+        class="primary"  
+        style="width:100%"  
+        onclick="doLogin()">  
+        Đăng nhập  
+      </button>  
+  
+      <p class="muted">  
+  
+        Chưa có tài khoản?  
+  
+        <a  
+          href="#"  
+          onclick="  
+            modal('register');  
+            return false  
+          ">  
+          Đăng ký  
+        </a>  
+  
+      </p>  
+  
+    `  
+  
+    :  
+  
+    `  
+  
+      <h2>  
+        👤 Đăng ký  
+      </h2>  
+  
+      <input  
+        id="user"  
+        placeholder="Tên đăng nhập">  
+  
+      <input  
+        id="contact"  
+        placeholder="Số điện thoại hoặc Email">  
+  
+      <input  
+        id="pass"  
+        type="password"  
+        placeholder="Mật khẩu">  
+  
+      <button  
+        class="primary"  
+        style="width:100%"  
+        onclick="doRegister()">  
+        Tạo tài khoản  
+      </button>  
+  
+      <p class="muted">  
+        Không cần OTP.  
+      </p>  
+  
+    `;  
+  
+  
+  $("modal")  
+    .classList  
+    .add("show");  
+  
+}  
+  
+  
+function close(){  
+  
+  $("modal")  
+    .classList  
+    .remove("show");  
+  
+}  
+  
+  
+/* =========================  
+   ĐĂNG KÝ  
+========================= */  
+  
+async function doRegister(){  
+  
+  try{  
+  
+    const d =  
+      await api(  
+        "/api/register",  
+        {  
+          method:"POST",  
+  
+          body:{  
+            username:  
+              $("user").value,  
+  
+            contact:  
+              $("contact").value,  
+  
+            password:  
+              $("pass").value  
+          }  
+        }  
+      );  
+  
+  
+    token =  
+      d.token;  
+  
+  
+    localStorage.setItem(  
+      "black_token",  
+      token  
+    );  
+  
+  
+    close();  
+  
+    refresh();  
+  
+  
+  }catch(e){  
+  
+    alert(  
+      e.message  
+    );  
+  
+  }  
+  
+}  
+  
+  
+/* =========================  
+   ĐĂNG NHẬP  
+========================= */  
+  
+async function doLogin(){  
+  
+  try{  
+  
+    const d =  
+      await api(  
+        "/api/login",  
+        {  
+          method:"POST",  
+  
+          body:{  
+            login:  
+              $("login").value,  
+  
+            password:  
+              $("pass").value  
+          }  
+        }  
+      );  
+  
+  
+    token =  
+      d.token;  
+  
+  
+    localStorage.setItem(  
+      "black_token",  
+      token  
+    );  
+  
+  
+    close();  
+  
+    refresh();  
+  
+  
+  }catch(e){  
+  
+    alert(  
+      e.message  
+    );  
+  
+  }  
+  
+}  
+  
+  
+/* =========================  
+   LOGOUT  
+========================= */  
+  
+async function logout(){  
+  
+  try{  
+  
+    if(token){  
+  
+      await api(  
+        "/api/logout",  
+        {  
+          method:"POST"  
+        }  
+      );  
+  
+    }  
+  
+  }catch(e){}  
+  
+  
+  token = "";  
+  
+  
+  localStorage.removeItem(  
+    "black_token"  
+  );  
+  
+  
+  $("hello").textContent = "";  
+  
+  
+  $("loginBtn")  
+    .classList  
+    .remove("hide");  
+  
+  
+  $("regBtn")  
+    .classList  
+    .remove("hide");  
+  
+  
+  $("logoutBtn")  
+    .classList  
+    .add("hide");  
+  
+  
+  $("adminSection")  
+    .classList  
+    .add("hide");  
+  
+  
+  $("navAdmin")  
+    .classList  
+    .add("hide");  
+  
+  
+  $("profile").innerHTML = `  
+    <p class="muted">  
+      Đăng nhập để xem hồ sơ.  
+    </p>  
+  `;  
+  
+  
+  loadOrders();  
+  
+}  
+  
+  
+/* =========================  
+   REFRESH  
+========================= */  
+  
+async function refresh(){  
+  
+  try{  
+  
+    const u =  
+      await api(  
+        "/api/me"  
+      );  
+  
+  
+    $("hello").textContent =  
+      `👤 ${u.username} · ${money(u.balance)}`;  
+  
+  
+    $("loginBtn")  
+      .classList  
+      .add("hide");  
+  
+  
+    $("regBtn")  
+      .classList  
+      .add("hide");  
+  
+  
+    $("logoutBtn")  
+      .classList  
+      .remove("hide");  
+  
+  
+    $("profile").innerHTML = `  
+  
+      <div class="row">  
+        <span>Tài khoản</span>  
+        <b>  
+          ${escapeHtml(u.username)}  
+        </b>  
+      </div>  
+  
+      <div class="row">  
+        <span>Liên hệ</span>  
+        <b>  
+          ${escapeHtml(u.contact)}  
+        </b>  
+      </div>  
+  
+      <div class="row">  
+        <span>Số dư</span>  
+        <b>  
+          ${money(u.balance)}  
+        </b>  
+      </div>  
+  
+      <div class="row">  
+        <span>Quyền</span>  
+        <b>  
+          ${  
+            u.role === "admin"  
+            ? "👑 ADMIN"  
+            : "👤 USER"  
+          }  
+        </b>  
+      </div>  
+  
+      <br>  
+  
+      <button  
+        class="danger"  
+        onclick="logout()">  
+        Đăng xuất  
+      </button>  
+  
+    `;  
+  
+  
+    if(  
+      u.role === "admin"  
+    ){  
+  
+      $("adminSection")  
+        .classList  
+        .remove("hide");  
+  
+      $("navAdmin")  
+        .classList  
+        .remove("hide");  
+  
+      loadAdmin();  
+  
+    }else{  
+  
+      $("adminSection")  
+        .classList  
+        .add("hide");  
+  
+      $("navAdmin")  
+        .classList  
+        .add("hide");  
+  
+    }  
+  
+  
+    loadOrders();  
+  
+  
+  }catch(e){  
+  
+    logout();  
+  
+  }  
+  
+}  
+  
+  
+/* =========================  
+   MUA SẢN PHẨM  
+========================= */  
+  
+function buy(  
+  id,  
+  now=false  
+){  
+  
+  const p =  
+    products.find(  
+      x => x.id === id  
+    );  
+  
+  
+  if(!p){  
+  
+    alert(  
+      "Không tìm thấy sản phẩm."  
+    );  
+  
+    return;  
+  
+  }  
+  
+  
+  $("modalbox").innerHTML = `  
+  
+    <h2>  
+      🛒 ${escapeHtml(p.name)}  
+    </h2>  
+  
+  
+    ${  
+      p.image  
+      ? `  
+        <img  
+          class="product-img"  
+          src="${p.image}"  
+          alt="${escapeHtml(p.name)}">  
+      `  
+      : ""  
+    }  
+  
+  
+    <p class="muted">  
+      Giá:  
+      <b>  
+        ${money(p.price)}  
+      </b>  
+      / 1  
+    </p>  
+  
+  
+    <label>  
+      Số lượng  
+    </label>  
+  
+    <input  
+      id="buyQty"  
+      type="number"  
+      min="1"  
+      value="1">  
+  
+  
+    <label>  
+      🎮 Tên tài khoản game  
+    </label>  
+  
+    <input  
+      id="gameUsername"  
+      type="text"  
+      placeholder="Nhập tên tài khoản game"  
+      autocomplete="off">  
+  
+  
+    <p>  
+      Tổng:  
+      <b id="buyTotal">  
+        ${money(p.price)}  
+      </b>  
+    </p>  
+  
+  
+    <button  
+      class="primary"  
+      style="width:100%"  
+      onclick="  
+        confirmBuy(  
+          ${p.id},  
+          ${now}  
+        )  
+      ">  
+      ${  
+        now  
+        ? "⚡ Mua ngay"  
+        : "🛒 Thêm vào giỏ"  
+      }  
+    </button>  
+  
+  
+    <button  
+      class="dark"  
+      style="  
+        width:100%;  
+        margin-top:8px  
+      "  
+      onclick="close()">  
+      Hủy  
+    </button>  
+  
+  `;  
+  
+  
+  $("modal")  
+    .classList  
+    .add("show");  
+  
+  
+  $("buyQty").oninput =  
+    () => {  
+  
+      let q =  
+        Number(  
+          $("buyQty").value  
+        ) || 1;  
+  
+      if(q < 1)  
+        q = 1;  
+  
+      $("buyTotal")  
+        .textContent =  
+        money(  
+          p.price * q  
+        );  
+  
+    };  
+  
+}  
+  
+  
+/* =========================  
+   XÁC NHẬN MUA  
+========================= */  
+  
+function confirmBuy(  
+  id,  
+  now  
+){  
+  
+  const p =  
+    products.find(  
+      x => x.id === id  
+    );  
+  
+  
+  const qty =  
+    Math.max(  
+      1,  
+      Math.floor(  
+        Number(  
+          $("buyQty").value  
+        ) || 1  
+      )  
+    );  
+  
+  
+  const gameUsername =  
+    $("gameUsername")  
+      .value  
+      .trim();  
+  
+  
+  if(!gameUsername){  
+  
+    alert(  
+      "Vui lòng nhập tên tài khoản game."  
+    );  
+  
+    $("gameUsername")  
+      .focus();  
+  
+    return;  
+  
+  }  
+  
+  
+  if(  
+    p.stock > 0 &&  
+    qty > p.stock  
+  ){  
+  
+    alert(  
+      "Số lượng vượt quá tồn kho."  
+    );  
+  
+    return;  
+  
+  }  
+  
+  
+  if(now){  
+  
+    checkout(  
+      [  
+        {  
+          productId:id,  
+          qty:qty  
+        }  
+      ],  
+      gameUsername  
+    );  
+  
+  }else{  
+  
+    cart.push({  
+  
+      productId:id,  
+  
+      qty:qty,  
+  
+      gameUsername:  
+        gameUsername  
+  
+    });  
+  
+  
+    close();  
+  
+  
+    alert(  
+      "Đã thêm vào giỏ."  
+    );  
+  
+  }  
+  
+}  
+  
+  
+/* =========================  
+   CHECKOUT  
+========================= */  
+  
+async function checkout(  
+  items,  
+  gameUsername  
+){  
+  
+  try{  
+  
+    if(!token){  
+  
+      close();  
+  
+      modal("login");  
+  
+      return;  
+  
+    }  
+  
+  
+    if(!gameUsername){  
+  
+      alert(  
+        "Vui lòng nhập tên tài khoản game."  
+      );  
+  
+      return;  
+  
+    }  
+  
+  
+    const d =  
+      await api(  
+        "/api/orders",  
+        {  
+          method:"POST",  
+  
+          body:{  
+            items,  
+  
+            gameUsername  
+          }  
+        }  
+      );  
+  
+  
+    alert(  
+      "Đặt hàng thành công. Mã đơn #" +  
+      d.orderId  
+    );  
+  
+  
+    cart = [];  
+  
+  
+    close();  
+  
+  
+    refresh();  
+  
+  
+  }catch(e){  
+  
+    alert(  
+      e.message  
+    );  
+  
+  }  
+  
+}/* =========================  
+   ĐƠN HÀNG  
+========================= */  
+  
+async function loadOrders(){  
+  
+  if(!token){  
+  
+    $("orders").innerHTML = `  
+      <p class="muted">  
+        Đăng nhập để xem đơn hàng.  
+      </p>  
+    `;  
+  
+    return;  
+  }  
+  
+  
+  try{  
+  
+    const orders =  
+      await api(  
+        "/api/orders"  
+      );  
+  
+  
+    if(!orders.length){  
+  
+      $("orders").innerHTML = `  
+        <p class="muted">  
+          Chưa có đơn hàng.  
+        </p>  
+      `;  
+  
+      return;  
+  
+    }  
+  
+  
+    $("orders").innerHTML =  
+      orders.map(  
+        o => `  
+  
+        <div class="card"  
+             style="margin-bottom:12px">  
+  
+          <div class="row">  
+  
+            <b>  
+              Đơn #${o.id}  
+            </b>  
+  
+            <span class="tag">  
+              ${escapeHtml(o.status)}  
+            </span>  
+  
+          </div>  
+  
+  
+          <div class="row">  
+  
+            <span>  
+              🎮 Tài khoản game  
+            </span>  
+  
+            <b>  
+              ${escapeHtml(  
+                o.game_username || "-"  
+              )}  
+            </b>  
+  
+          </div>  
+  
+  
+          <div class="row">  
+  
+            <span>  
+              Tổng tiền  
+            </span>  
+  
+            <b>  
+              ${money(o.total)}  
+            </b>  
+  
+          </div>  
+  
+  
+          <div style="margin-top:10px">  
+  
+            ${  
+              (o.items || [])  
+                .map(  
+                  i => `  
+  
+                  <div class="row">  
+  
+                    <span>  
+                      ${escapeHtml(i.name)}  
+                    </span>  
+  
+                    <b>  
+                      x${i.qty}  
+                    </b>  
+  
+                  </div>  
+  
+                `  
+                )  
+                .join("")  
+            }  
+  
+          </div>  
+  
+  
+          <div class="small muted"  
+               style="margin-top:10px">  
+  
+            ${escapeHtml(  
+              o.created_at || ""  
+            )}  
+  
+          </div>  
+  
+        </div>  
+  
+      `  
+      ).join("");  
+  
+  
+  }catch(e){  
+  
+    $("orders").innerHTML = `  
+      <p class="muted">  
+        ${escapeHtml(e.message)}  
+      </p>  
+    `;  
+  
+  }  
+  
+}  
+  
+  
+/* =========================  
+   NẠP THẺ  
+========================= */  
+  
+function topupCard(){  
+  
+  if(!token){  
+  
+    modal("login");  
+  
+    return;  
+  
+  }  
+  
+  
+  $("modalbox").innerHTML = `  
+  
+    <h2>  
+      💳 Nạp thẻ cào  
+    </h2>  
+  
+  
+    <label>  
+      Nhà mạng  
+    </label>  
+  
+    <select id="cardProvider">  
+  
+      <option value="VIETTEL">  
+        Viettel  
+      </option>  
+  
+      <option value="VINAPHONE">  
+        Vinaphone  
+      </option>  
+  
+      <option value="MOBIFONE">  
+        Mobifone  
+      </option>  
+  
+    </select>  
+  
+  
+    <label>  
+      Mệnh giá  
+    </label>  
+  
+    <select id="cardValue">  
+  
+      <option value="10000">  
+        10.000đ  
+      </option>  
+  
+      <option value="20000">  
+        20.000đ  
+      </option>  
+  
+      <option value="50000">  
+        50.000đ  
+      </option>  
+  
+      <option value="100000">  
+        100.000đ  
+      </option>  
+  
+    </select>  
+  
+  
+    <input  
+      id="cardSerial"  
+      placeholder="Số serial">  
+  
+  
+    <input  
+      id="cardCode"  
+      placeholder="Mã thẻ">  
+  
+  
+    <button  
+      class="primary"  
+      style="width:100%"  
+      onclick="sendCard()">  
+  
+      Gửi yêu cầu nạp  
+  
+    </button>  
+  
+  
+    <button  
+      class="dark"  
+      style="  
+        width:100%;  
+        margin-top:8px  
+      "  
+      onclick="close()">  
+  
+      Hủy  
+  
+    </button>  
+  
+  `;  
+  
+  
+  $("modal")  
+    .classList  
+    .add("show");  
+  
+}  
+  
+  
+async function sendCard(){  
+  
+  try{  
+  
+    await api(  
+      "/api/topups/card",  
+      {  
+        method:"POST",  
+  
+        body:{  
+  
+          provider:  
+            $("cardProvider")  
+              .value,  
+  
+          value:  
+            Number(  
+              $("cardValue")  
+                .value  
+            ),  
+  
+          serial:  
+            $("cardSerial")  
+              .value  
+              .trim(),  
+  
+          code:  
+            $("cardCode")  
+              .value  
+              .trim()  
+  
+        }  
+  
+      }  
+    );  
+  
+  
+    alert(  
+      "Đã gửi yêu cầu nạp thẻ."  
+    );  
+  
+  
+    close();  
+  
+    refresh();  
+  
+  
+  }catch(e){  
+  
+    alert(  
+      e.message  
+    );  
+  
+  }  
+  
+}  
+  
+  
+/* =========================  
+   BANK / QR  
+========================= */  
+  
+function topupBank(){  
+  
+  if(!token){  
+  
+    modal("login");  
+  
+    return;  
+  
+  }  
+  
+  
+  $("modalbox").innerHTML = `  
+  
+    <h2>  
+      🏦 Nạp tiền Bank / QR  
+    </h2>  
+  
+  
+    <p class="muted">  
+      Chọn đúng mệnh giá để dùng QR  
+      tương ứng.  
+    </p>  
+  
+  
+    <div  
+      class="grid"  
+      style="  
+        grid-template-columns:  
+        repeat(2,1fr)  
+      ">  
+  
+      <button  
+        class="dark"  
+        onclick="showQR(10000)">  
+        10.000đ  
+      </button>  
+  
+      <button  
+        class="dark"  
+        onclick="showQR(20000)">  
+        20.000đ  
+      </button>  
+  
+      <button  
+        class="dark"  
+        onclick="showQR(50000)">  
+        50.000đ  
+      </button>  
+  
+      <button  
+        class="dark"  
+        onclick="showQR(100000)">  
+        100.000đ  
+      </button>  
+  
+    </div>  
+  
+  
+    <button  
+      class="dark"  
+      style="  
+        width:100%;  
+        margin-top:12px  
+      "  
+      onclick="close()">  
+  
+      Hủy  
+  
+    </button>  
+  
+  `;  
+  
+  
+  $("modal")  
+    .classList  
+    .add("show");  
+  
+}  
+  
+  
+/* =========================  
+   QR THEO MỆNH GIÁ  
+========================= */  
+  
+const qrImages = {  
+  
+  10000:  
+    "qr-10k.png",  
+  
+  20000:  
+    "qr-20k.png",  
+  
+  50000:  
+    "qr-50k.png",  
+  
+  100000:  
+    "qr-100k.png"  
+  
+};  
+  
+  
+function showQR(amount){  
+  
+  const qr =  
+    qrImages[amount];  
+  
+  
+  $("modalbox").innerHTML = `  
+  
+    <h2>  
+      🏦 QR ${money(amount)}  
+    </h2>  
+  
+  
+    <p class="muted">  
+      Quét đúng QR ${money(amount)}  
+      để chuyển khoản.  
+    </p>  
+  
+  
+    <img  
+      class="qr"  
+      src="${qr}"  
+      alt="QR ${money(amount)}">  
+  
+  
+    <div  
+      class="panel"  
+      style="padding:12px">  
+  
+      <b>  
+        Số tiền:  
+      </b>  
+  
+      ${money(amount)}  
+  
+    </div>  
+  
+  
+    <button  
+      class="primary"  
+      style="  
+        width:100%;  
+        margin-top:12px  
+      "  
+      onclick="  
+        submitBank(${amount})  
+      ">  
+  
+      Tôi đã chuyển ${money(amount)}  
+  
+    </button>  
+  
+  
+    <button  
+      class="dark"  
+      style="  
+        width:100%;  
+        margin-top:8px  
+      "  
+      onclick="topupBank()">  
+  
+      Đổi mệnh giá  
+  
+    </button>  
+  
+  `;  
+  
+}  
+  
+  
+/* =========================  
+   GỬI YÊU CẦU BANK  
+========================= */  
+  
+async function submitBank(amount){  
+  
+  try{  
+  
+    await api(  
+      "/api/topups/bank",  
+      {  
+        method:"POST",  
+  
+        body:{  
+          amount:amount  
+        }  
+      }  
+    );  
+  
+  
+    alert(  
+      `Đã gửi yêu cầu nạp ${money(amount)}.`  
+    );  
+  
+  
+    close();  
+  
+    refresh();  
+  
+  
+  }catch(e){  
+  
+    alert(  
+      e.message  
+    );  
+  
+  }  
+  
+}  
+  
+  
+/* =========================  
+   ADMIN  
+========================= */  
+  
+async function loadAdmin(){  
+  
+  try{  
+  
+    const data =  
+      await api(  
+        "/api/admin/overview"  
+      );  
+  
+  
+    renderAdmin(data);  
+  
+  
+  }catch(e){  
+  
+    $("admin").innerHTML = `  
+      <p class="muted">  
+        Không tải được Admin.  
+      </p>  
+    `;  
+  
+  }  
+  
+}  
+  
+  
+function renderAdmin(data){  
+  
+  $("admin").innerHTML = `  
+  
+    <div class="admin-grid">  
+  
+  
+      <!-- THÊM SẢN PHẨM -->  
+  
+      <div class="card">  
+  
+        <h3>  
+          ➕ Thêm sản phẩm  
+        </h3>  
+  
+  
+        <input  
+          id="newName"  
+          placeholder="Tên sản phẩm">  
+  
+  
+        <input  
+          id="newPrice"  
+          type="number"  
+          placeholder="Giá">  
+  
+  
+        <input  
+          id="newStock"  
+          type="number"  
+          min="0"  
+          value="0"  
+          placeholder="Số lượng">  
+  
+  
+        <input  
+          id="newImage"  
+          type="file"  
+          accept="image/*">  
+  
+  
+        <button  
+          class="primary"  
+          style="width:100%"  
+          onclick="addProduct()">  
+  
+          Thêm sản phẩm  
+  
+        </button>  
+  
+      </div>  
+  
+  
+      <!-- DANH SÁCH SẢN PHẨM -->  
+  
+      <div class="card">  
+  
+        <h3>  
+          📦 Sản phẩm  
+        </h3>  
+  
+  
+        <div id="adminProducts">  
+  
+          ${data.products.map(  
+            p => `  
+  
+            <div  
+              class="row"  
+              style="  
+                display:block  
+              ">  
+  
+              <b>  
+                ${escapeHtml(p.name)}  
+              </b>  
+  
+              <div class="small muted">  
+  
+                ${money(p.price)}  
+                · tồn ${p.stock}  
+  
+              </div>  
+  
+  
+              <button  
+                class="dark"  
+                style="  
+                  margin-top:6px  
+                "  
+                onclick="  
+                  editProduct(${p.id})  
+                ">  
+  
+                ✏️ Sửa  
+  
+              </button>  
+  
+  
+              <button  
+                class="dark"  
+                style="  
+                  margin-top:6px  
+                "  
+                onclick="  
+                  toggleProduct(  
+                    ${p.id},  
+                    ${p.active}  
+                  )  
+                ">  
+  
+                ${  
+                  p.active  
+                  ? "Ẩn"  
+                  : "Hiện"  
+                }  
+  
+              </button>  
+  
+            </div>  
+  
+          `  
+          ).join("")}  
+  
+        </div>  
+  
+      </div>  
+  
+  
+      <!-- ĐƠN HÀNG -->  
+  
+      <div class="card">  
+  
+        <h3>  
+          🛒 Đơn hàng  
+        </h3>  
+  
+  
+        ${  
+          data.orders.length  
+          ? data.orders.map(  
+            o => `  
+  
+            <div  
+              class="row"  
+              style="  
+                display:block  
+              ">  
+  
+              <b>  
+                #${o.id}  
+              </b>  
+  
+  
+              <div>  
+                🎮  
+                ${escapeHtml(  
+                  o.game_username || "-"  
+                )}  
+              </div>  
+  
+  
+              <div>  
+                💰  
+                ${money(o.total)}  
+              </div>  
+  
+  
+              <div>  
+                ${  
+                  (o.items || [])  
+                    .map(  
+                      i =>  
+                        `${escapeHtml(i.name)}  
+                         x${i.qty}`  
+                    )  
+                    .join("<br>")  
+                }  
+              </div>  
+  
+  
+              <select  
+                onchange="  
+                  changeOrderStatus(  
+                    ${o.id},  
+                    this.value  
+                  )">  
+  
+                <option  
+                  value="PENDING"  
+                  ${  
+                    o.status ===  
+                    "PENDING"  
+                    ? "selected"  
+                    : ""  
+                  }>  
+                  PENDING  
+                </option>  
+  
+                <option  
+                  value="PROCESSING"  
+                  ${  
+                    o.status ===  
+                    "PROCESSING"  
+                    ? "selected"  
+                    : ""  
+                  }>  
+                  PROCESSING  
+                </option>  
+  
+                <option  
+                  value="COMPLETED"  
+                  ${  
+                    o.status ===  
+                    "COMPLETED"  
+                    ? "selected"  
+                    : ""  
+                  }>  
+                  COMPLETED  
+                </option>  
+  
+                <option  
+                  value="CANCELLED"  
+                  ${  
+                    o.status ===  
+                    "CANCELLED"  
+                    ? "selected"  
+                    : ""  
+                  }>  
+                  CANCELLED  
+                </option>  
+  
+              </select>  
+  
+            </div>  
+  
+          `  
+          ).join("")  
+          :  
+          `<p class="muted">  
+            Chưa có đơn.  
+          </p>`  
+        }  
+  
+      </div>  
+  
+  
+      <!-- NẠP TIỀN -->  
+  
+      <div class="card">  
+  
+        <h3>  
+          💰 Yêu cầu nạp  
+        </h3>  
+  
+  
+        ${  
+          data.topups.length  
+          ? data.topups.map(  
+            t => `  
+  
+            <div  
+              class="row"  
+              style="  
+                display:block  
+              ">  
+  
+              <b>  
+                #${t.id}  
+              </b>  
+  
+  
+              <div>  
+                👤  
+                ${escapeHtml(  
+                  t.username  
+                )}  
+              </div>  
+  
+  
+              <div>  
+                ${t.method}  
+                ·  
+                ${money(t.amount)}  
+              </div>  
+  
+  
+              <div>  
+                Trạng thái:  
+                ${t.status}  
+              </div>  
+  
+  
+              ${  
+                t.status === "PENDING"  
+                ? `  
+  
+                  <button  
+                    class="primary"  
+                    onclick="  
+                      approveTopup(  
+                        ${t.id}  
+                      )  
+                    ">  
+  
+                    Duyệt  
+  
+                  </button>  
+  
+  
+                  <button  
+                    class="danger"  
+                    onclick="  
+                      rejectTopup(  
+                        ${t.id}  
+                      )  
+                    ">  
+  
+                    Từ chối  
+  
+                  </button>  
+  
+                `  
+                : ""  
+              }  
+  
+            </div>  
+  
+          `  
+          ).join("")  
+          :  
+          `<p class="muted">  
+            Không có yêu cầu.  
+          </p>`  
+        }  
+  
+      </div>  
+  
+    </div>  
+  
+  `;  
+  
+}/* =========================  
+   THÊM SẢN PHẨM ADMIN  
+========================= */  
+  
+async function addProduct(){  
+  
+  try{  
+  
+    const name =  
+      $("newName")  
+        .value  
+        .trim();  
+  
+    const price =  
+      Number(  
+        $("newPrice")  
+          .value  
+      );  
+  
+    const stock =  
+      Number(  
+        $("newStock")  
+          .value  
+      ) || 0;  
+  
+    const file =  
+      $("newImage")  
+        .files[0];  
+  
+  
+    if(!name){  
+  
+      alert(  
+        "Nhập tên sản phẩm."  
+      );  
+  
+      return;  
+  
+    }  
+  
+  
+    if(  
+      !Number.isFinite(price) ||  
+      price <= 0  
+    ){  
+  
+      alert(  
+        "Giá không hợp lệ."  
+      );  
+  
+      return;  
+  
+    }  
+  
+  
+    let image = "";  
+  
+  
+    if(file){  
+  
+      image =  
+        await fileToDataURL(  
+          file  
+        );  
+  
+    }  
+  
+  
+    await api(  
+      "/api/admin/products",  
+      {  
+        method:"POST",  
+  
+        body:{  
+          name:name,  
+          price:Math.floor(price),  
+          stock:Math.max(  
+            0,  
+            Math.floor(stock)  
+          ),  
+          image:image  
+        }  
+      }  
+    );  
+  
+  
+    alert(  
+      "Đã thêm sản phẩm."  
+    );  
+  
+  
+    loadProducts();  
+    loadAdmin();  
+  
+  
+  }catch(e){  
+  
+    alert(  
+      e.message  
+    );  
+  
+  }  
+  
+}  
+  
+  
+/* =========================  
+   ĐỌC ẢNH  
+========================= */  
+  
+function fileToDataURL(file){  
+  
+  return new Promise(  
+    (resolve,reject)=>{  
+  
+      const reader =  
+        new FileReader();  
+  
+  
+      reader.onload =  
+        () =>  
+        resolve(  
+          reader.result  
+        );  
+  
+  
+      reader.onerror =  
+        reject;  
+  
+  
+      reader.readAsDataURL(  
+        file  
+      );  
+  
+    }  
+  );  
+  
+}  
+  
+  
+/* =========================  
+   SỬA SẢN PHẨM  
+========================= */  
+  
+async function editProduct(id){  
+  
+  const p =  
+    products.find(  
+      x => x.id === id  
+    );  
+  
+  
+  if(!p){  
+  
+    alert(  
+      "Không tìm thấy sản phẩm."  
+    );  
+  
+    return;  
+  
+  }  
+  
+  
+  $("modalbox").innerHTML = `  
+  
+    <h2>  
+      ✏️ Sửa sản phẩm  
+    </h2>  
+  
+  
+    ${  
+      p.image  
+      ? `  
+        <img  
+          class="product-img"  
+          src="${p.image}">  
+      `  
+      : ""  
+    }  
+  
+  
+    <input  
+      id="editName"  
+      value="${escapeHtml(p.name)}"  
+      placeholder="Tên sản phẩm">  
+  
+  
+    <input  
+      id="editPrice"  
+      type="number"  
+      value="${p.price}"  
+      placeholder="Giá">  
+  
+  
+    <input  
+      id="editStock"  
+      type="number"  
+      min="0"  
+      value="${p.stock}"  
+      placeholder="Số lượng">  
+  
+  
+    <input  
+      id="editImage"  
+      type="file"  
+      accept="image/*">  
+  
+  
+    <button  
+      class="primary"  
+      style="width:100%"  
+      onclick="  
+        saveProduct(${id})  
+      ">  
+  
+      💾 Lưu thay đổi  
+  
+    </button>  
+  
+  
+    <button  
+      class="dark"  
+      style="  
+        width:100%;  
+        margin-top:8px  
+      "  
+      onclick="close()">  
+  
+      Hủy  
+  
+    </button>  
+  
+  `;  
+  
+  
+  $("modal")  
+    .classList  
+    .add("show");  
+  
+}  
+  
+  
+/* =========================  
+   LƯU SẢN PHẨM  
+========================= */  
+  
+async function saveProduct(id){  
+  
+  try{  
+  
+    const name =  
+      $("editName")  
+        .value  
+        .trim();  
+  
+    const price =  
+      Number(  
+        $("editPrice")  
+          .value  
+      );  
+  
+    const stock =  
+      Number(  
+        $("editStock")  
+          .value  
+      );  
+  
+  
+    const file =  
+      $("editImage")  
+        .files[0];  
+  
+  
+    let body = {  
+  
+      name:name,  
+  
+      price:  
+        Math.floor(price),  
+  
+      stock:  
+        Math.max(  
+          0,  
+          Math.floor(stock)  
+        )  
+  
+    };  
+  
+  
+    if(file){  
+  
+      body.image =  
+        await fileToDataURL(  
+          file  
+        );  
+  
+    }  
+  
+  
+    await api(  
+      `/api/admin/products/${id}`,  
+      {  
+        method:"PATCH",  
+        body:body  
+      }  
+    );  
+  
+  
+    alert(  
+      "Đã lưu sản phẩm."  
+    );  
+  
+  
+    close();  
+  
+    await loadProducts();  
+  
+    await loadAdmin();  
+  
+  
+  }catch(e){  
+  
+    alert(  
+      e.message  
+    );  
+  
+  }  
+  
+}  
+  
+  
+/* =========================  
+   ẨN / HIỆN SẢN PHẨM  
+========================= */  
+  
+async function toggleProduct(  
+  id,  
+  active  
+){  
+  
+  try{  
+  
+    await api(  
+      `/api/admin/products/${id}/${  
+        active  
+          ? "hide"  
+          : "show"  
+      }`,  
+      {  
+        method:"POST"  
+      }  
+    );  
+  
+  
+    await loadProducts();  
+  
+    await loadAdmin();  
+  
+  
+  }catch(e){  
+  
+    alert(  
+      e.message  
+    );  
+  
+  }  
+  
+}  
+  
+  
+/* =========================  
+   DUYỆT NẠP  
+========================= */  
+  
+async function approveTopup(  
+  id  
+){  
+  
+  try{  
+  
+    await api(  
+      `/api/admin/topups/${id}/approve`,  
+      {  
+        method:"POST"  
+      }  
+    );  
+  
+  
+    alert(  
+      "Đã duyệt nạp tiền."  
+    );  
+  
+  
+    loadAdmin();  
+  
+    refresh();  
+  
+  
+  }catch(e){  
+  
+    alert(  
+      e.message  
+    );  
+  
+  }  
+  
+}  
+  
+  
+/* =========================  
+   TỪ CHỐI NẠP  
+========================= */  
+  
+async function rejectTopup(  
+  id  
+){  
+  
+  try{  
+  
+    await api(  
+      `/api/admin/topups/${id}/reject`,  
+      {  
+        method:"POST"  
+      }  
+    );  
+  
+  
+    alert(  
+      "Đã từ chối."  
+    );  
+  
+  
+    loadAdmin();  
+  
+  
+  }catch(e){  
+  
+    alert(  
+      e.message  
+    );  
+  
+  }  
+  
+}  
+  
+  
+/* =========================  
+   ĐỔI TRẠNG THÁI ĐƠN  
+========================= */  
+  
+async function changeOrderStatus(  
+  id,  
+  status  
+){  
+  
+  try{  
+  
+    await api(  
+      `/api/admin/orders/${id}/status`,  
+      {  
+        method:"POST",  
+  
+        body:{  
+          status:status  
+        }  
+      }  
+    );  
+  
+  
+    loadAdmin();  
+  
+    loadOrders();  
+  
+  
+  }catch(e){  
+  
+    alert(  
+      e.message  
+    );  
+  
+  }  
+  
+}  
+  
+  
+/* =========================  
+   ADMIN LOGIN  
+========================= */  
+  
+function adminLogin(){  
+  
+  if(!token){  
+  
+    modal("login");  
+  
+    return;  
+  
+  }  
+  
+  
+  $("adminSection")  
+    .classList  
+    .remove("hide");  
+  
+  
+  loadAdmin();  
+  
+  
+  scrollToId(  
+    "adminSection"  
+  );  
+  
+}  
+  
+  
+/* =========================  
+   SCROLL  
+========================= */  
+  
+function scrollToId(id){  
+  
+  const el =  
+    $(id);  
+  
+  if(el){  
+  
+    el.scrollIntoView({  
+      behavior:"smooth",  
+      block:"start"  
+    });  
+  
+  }  
+  
+}  
+  
+  
+/* =========================  
+   ĐÓNG MODAL KHI BẤM NGOÀI  
+========================= */  
+  
+$("modal")  
+  .addEventListener(  
+    "click",  
+    e => {  
+  
+      if(  
+        e.target ===  
+        $("modal")  
+      ){  
+  
+        close();  
+  
+      }  
+  
+    }  
+  );  
+  
+  
+/* =========================  
+   KHỞI ĐỘNG  
+========================= */  
+  
+loadProducts();  
+  
+if(token){  
+  
+  refresh();  
+  
+}else{  
+  
+  loadOrders();  
+  
+}  
+  
+  
+/* =========================  
+   ĐỔI NAV  
+========================= */  
+  
+function setNav(  
+  active  
+){  
+  
+  [  
+    "navShop",  
+    "navTopup",  
+    "navOrders",  
+    "navProfile",  
+    "navAdmin"  
+  ].forEach(  
+    id => {  
+  
+      const el =  
+        $(id);  
+  
+      if(el){  
+  
+        el.classList  
+          .remove("on");  
+  
+      }  
+  
+    }  
+  );  
+  
+  
+  const el =  
+    $(active);  
+  
+  if(el){  
+  
+    el.classList  
+      .add("on");  
+  
+  }  
+  
 }
-
-
-/* =========================
-   API
-========================= */
-
-async function api(
-  url,
-  opt={}
-){
-
-  opt.headers = {
-
-    ...(opt.headers || {}),
-
-    ...(token
-      ? {
-          Authorization:
-            "Bearer " + token
-        }
-      : {})
-
-  };
-
-
-  if(
-    opt.body &&
-    typeof opt.body !== "string"
-  ){
-
-    opt.headers[
-      "Content-Type"
-    ] =
-      "application/json";
-
-    opt.body =
-      JSON.stringify(
-        opt.body
-      );
-
-  }
-
-
-  const r =
-    await fetch(
-      url,
-      opt
-    );
-
-
-  const d =
-    await r
-      .json()
-      .catch(
-        () => ({})
-      );
-
-
-  if(!r.ok){
-
-    throw Error(
-      d.error ||
-      "Có lỗi xảy ra."
-    );
-
-  }
-
-
-  return d;
-
-}
-
-
-/* =========================
-   SẢN PHẨM
-========================= */
-
-async function loadProducts(){
-
-  try{
-
-    products =
-      await api(
-        "/api/products"
-      );
-
-
-    $("productGrid").innerHTML =
-
-      products.map(
-        p => `
-
-        <div class="card">
-
-          ${
-            p.image
-            ? `
-              <img
-                class="product-img"
-                src="${p.image}"
-                alt="${escapeHtml(p.name)}">
-            `
-            : `
-              <div
-                class="product-img"
-                style="
-                  display:flex;
-                  align-items:center;
-                  justify-content:center;
-                  font-size:50px;
-                ">
-                🌱
-              </div>
-            `
-          }
-
-
-          <span class="tag">
-            GAG2
-          </span>
-
-
-          <h3>
-            ${escapeHtml(p.name)}
-          </h3>
-
-
-          <div class="muted">
-            Grow a Garden 2
-          </div>
-
-
-          <div class="price">
-            ${money(p.price)} / 1
-          </div>
-
-
-          <div class="stock">
-
-            ${
-              Number(p.stock) > 0
-              ? `Còn ${p.stock}`
-              : "Còn hàng"
-
-            }
-
-          </div>
-
-
-          <button
-            class="dark"
-            onclick="
-              buy(${p.id})
-            ">
-            🛒 Thêm giỏ
-          </button>
-
-
-          <button
-            class="primary"
-            onclick="
-              buy(${p.id},true)
-            ">
-            ⚡ Mua ngay
-          </button>
-
-        </div>
-
-      `
-      ).join("");
-
-
-  }catch(e){
-
-    $("productGrid").innerHTML = `
-      <p class="muted">
-        Không tải được sản phẩm.
-      </p>
-    `;
-
-  }
-
-}
-
-
-/* =========================
-   MODAL
-========================= */
-
-function modal(type){
-
-  $("modalbox").innerHTML =
-
-    type === "login"
-
-    ? `
-
-      <h2>
-        🔐 Đăng nhập
-      </h2>
-
-      <input
-        id="login"
-        placeholder="Tên đăng nhập hoặc Email">
-
-      <input
-        id="pass"
-        type="password"
-        placeholder="Mật khẩu">
-
-      <button
-        class="primary"
-        style="width:100%"
-        onclick="doLogin()">
-        Đăng nhập
-      </button>
-
-      <p class="muted">
-
-        Chưa có tài khoản?
-
-        <a
-          href="#"
-          onclick="
-            modal('register');
-            return false
-          ">
-          Đăng ký
-        </a>
-
-      </p>
-
-    `
-
-    :
-
-    `
-
-      <h2>
-        👤 Đăng ký
-      </h2>
-
-      <input
-        id="user"
-        placeholder="Tên đăng nhập">
-
-      <input
-        id="contact"
-        placeholder="Số điện thoại hoặc Email">
-
-      <input
-        id="pass"
-        type="password"
-        placeholder="Mật khẩu">
-
-      <button
-        class="primary"
-        style="width:100%"
-        onclick="doRegister()">
-        Tạo tài khoản
-      </button>
-
-      <p class="muted">
-        Không cần OTP.
-      </p>
-
-    `;
-
-
-  $("modal")
-    .classList
-    .add("show");
-
-}
-
-
-function close(){
-
-  $("modal")
-    .classList
-    .remove("show");
-
-}
-
-
-/* =========================
-   ĐĂNG KÝ
-========================= */
-
-async function doRegister(){
-
-  try{
-
-    const d =
-      await api(
-        "/api/register",
-        {
-          method:"POST",
-
-          body:{
-            username:
-              $("user").value,
-
-            contact:
-              $("contact").value,
-
-            password:
-              $("pass").value
-          }
-        }
-      );
-
-
-    token =
-      d.token;
-
-
-    localStorage.setItem(
-      "black_token",
-      token
-    );
-
-
-    close();
-
-    refresh();
-
-
-  }catch(e){
-
-    alert(
-      e.message
-    );
-
-  }
-
-}
-
-
-/* =========================
-   ĐĂNG NHẬP
-========================= */
-
-async function doLogin(){
-
-  try{
-
-    const d =
-      await api(
-        "/api/login",
-        {
-          method:"POST",
-
-          body:{
-            login:
-              $("login").value,
-
-            password:
-              $("pass").value
-          }
-        }
-      );
-
-
-    token =
-      d.token;
-
-
-    localStorage.setItem(
-      "black_token",
-      token
-    );
-
-
-    close();
-
-    refresh();
-
-
-  }catch(e){
-
-    alert(
-      e.message
-    );
-
-  }
-
-}
-
-
-/* =========================
-   LOGOUT
-========================= */
-
-async function logout(){
-
-  try{
-
-    if(token){
-
-      await api(
-        "/api/logout",
-        {
-          method:"POST"
-        }
-      );
-
-    }
-
-  }catch(e){}
-
-
-  token = "";
-
-
-  localStorage.removeItem(
-    "black_token"
-  );
-
-
-  $("hello").textContent = "";
-
-
-  $("loginBtn")
-    .classList
-    .remove("hide");
-
-
-  $("regBtn")
-    .classList
-    .remove("hide");
-
-
-  $("logoutBtn")
-    .classList
-    .add("hide");
-
-
-  $("adminSection")
-    .classList
-    .add("hide");
-
-
-  $("navAdmin")
-    .classList
-    .add("hide");
-
-
-  $("profile").innerHTML = `
-    <p class="muted">
-      Đăng nhập để xem hồ sơ.
-    </p>
-  `;
-
-
-  loadOrders();
-
-}
-
-
-/* =========================
-   REFRESH
-========================= */
-
-async function refresh(){
-
-  try{
-
-    const u =
-      await api(
-        "/api/me"
-      );
-
-
-    $("hello").textContent =
-      `👤 ${u.username} · ${money(u.balance)}`;
-
-
-    $("loginBtn")
-      .classList
-      .add("hide");
-
-
-    $("regBtn")
-      .classList
-      .add("hide");
-
-
-    $("logoutBtn")
-      .classList
-      .remove("hide");
-
-
-    $("profile").innerHTML = `
-
-      <div class="row">
-        <span>Tài khoản</span>
-        <b>
-          ${escapeHtml(u.username)}
-        </b>
-      </div>
-
-      <div class="row">
-        <span>Liên hệ</span>
-        <b>
-          ${escapeHtml(u.contact)}
-        </b>
-      </div>
-
-      <div class="row">
-        <span>Số dư</span>
-        <b>
-          ${money(u.balance)}
-        </b>
-      </div>
-
-      <div class="row">
-        <span>Quyền</span>
-        <b>
-          ${
-            u.role === "admin"
-            ? "👑 ADMIN"
-            : "👤 USER"
-          }
-        </b>
-      </div>
-
-      <br>
-
-      <button
-        class="danger"
-        onclick="logout()">
-        Đăng xuất
-      </button>
-
-    `;
-
-
-    if(
-      u.role === "admin"
-    ){
-
-      $("adminSection")
-        .classList
-        .remove("hide");
-
-      $("navAdmin")
-        .classList
-        .remove("hide");
-
-      loadAdmin();
-
-    }else{
-
-      $("adminSection")
-        .classList
-        .add("hide");
-
-      $("navAdmin")
-        .classList
-        .add("hide");
-
-    }
-
-
-    loadOrders();
-
-
-  }catch(e){
-
-    logout();
-
-  }
-
-}
-
-
-/* =========================
-   MUA SẢN PHẨM
-========================= */
-
-function buy(
-  id,
-  now=false
-){
-
-  const p =
-    products.find(
-      x => x.id === id
-    );
-
-
-  if(!p){
-
-    alert(
-      "Không tìm thấy sản phẩm."
-    );
-
-    return;
-
-  }
-
-
-  $("modalbox").innerHTML = `
-
-    <h2>
-      🛒 ${escapeHtml(p.name)}
-    </h2>
-
-
-    ${
-      p.image
-      ? `
-        <img
-          class="product-img"
-          src="${p.image}"
-          alt="${escapeHtml(p.name)}">
-      `
-      : ""
-    }
-
-
-    <p class="muted">
-      Giá:
-      <b>
-        ${money(p.price)}
-      </b>
-      / 1
-    </p>
-
-
-    <label>
-      Số lượng
-    </label>
-
-    <input
-      id="buyQty"
-      type="number"
-      min="1"
-      value="1">
-
-
-    <label>
-      🎮 Tên tài khoản game
-    </label>
-
-    <input
-      id="gameUsername"
-      type="text"
-      placeholder="Nhập tên tài khoản game"
-      autocomplete="off">
-
-
-    <p>
-      Tổng:
-      <b id="buyTotal">
-        ${money(p.price)}
-      </b>
-    </p>
-
-
-    <button
-      class="primary"
-      style="width:100%"
-      onclick="
-        confirmBuy(
-          ${p.id},
-          ${now}
-        )
-      ">
-      ${
-        now
-        ? "⚡ Mua ngay"
-        : "🛒 Thêm vào giỏ"
-      }
-    </button>
-
-
-    <button
-      class="dark"
-      style="
-        width:100%;
-        margin-top:8px
-      "
-      onclick="close()">
-      Hủy
-    </button>
-
-  `;
-
-
-  $("modal")
-    .classList
-    .add("show");
-
-
-  $("buyQty").oninput =
-    () => {
-
-      let q =
-        Number(
-          $("buyQty").value
-        ) || 1;
-
-      if(q < 1)
-        q = 1;
-
-      $("buyTotal")
-        .textContent =
-        money(
-          p.price * q
-        );
-
-    };
-
-}
-
-
-/* =========================
-   XÁC NHẬN MUA
-========================= */
-
-function confirmBuy(
-  id,
-  now
-){
-
-  const p =
-    products.find(
-      x => x.id === id
-    );
-
-
-  const qty =
-    Math.max(
-      1,
-      Math.floor(
-        Number(
-          $("buyQty").value
-        ) || 1
-      )
-    );
-
-
-  const gameUsername =
-    $("gameUsername")
-      .value
-      .trim();
-
-
-  if(!gameUsername){
-
-    alert(
-      "Vui lòng nhập tên tài khoản game."
-    );
-
-    $("gameUsername")
-      .focus();
-
-    return;
-
-  }
-
-
-  if(
-    p.stock > 0 &&
-    qty > p.stock
-  ){
-
-    alert(
-      "Số lượng vượt quá tồn kho."
-    );
-
-    return;
-
-  }
-
-
-  if(now){
-
-    checkout(
-      [
-        {
-          productId:id,
-          qty:qty
-        }
-      ],
-      gameUsername
-    );
-
-  }else{
-
-    cart.push({
-
-      productId:id,
-
-      qty:qty,
-
-      gameUsername:
-        gameUsername
-
-    });
-
-
-    close();
-
-
-    alert(
-      "Đã thêm vào giỏ."
-    );
-
-  }
-
-}
-
-
-/* =========================
-   CHECKOUT
-========================= */
-
-async function checkout(
-  items,
-  gameUsername
-){
-
-  try{
-
-    if(!token){
-
-      close();
-
-      modal("login");
-
-      return;
-
-    }
-
-
-    if(!gameUsername){
-
-      alert(
-        "Vui lòng nhập tên tài khoản game."
-      );
-
-      return;
-
-    }
-
-
-    const d =
-      await api(
-        "/api/orders",
-        {
-          method:"POST",
-
-          body:{
-            items,
-
-            gameUsername
-          }
-        }
-      );
-
-
-    alert(
-      "Đặt hàng thành công. Mã đơn #" +
-      d.orderId
-    );
-
-
-    cart = [];
-
-
-    close();
-
-
-    refresh();
-
-
-  }catch(e){
-
-    alert(
-      e.message
-    );
-
-  }
-/* =========================
-   ĐƠN HÀNG
-========================= */
-
-async function loadOrders(){
-
-  if(!token){
-
-    $("orders").innerHTML = `
-      <p class="muted">
-        Đăng nhập để xem đơn hàng.
-      </p>
-    `;
-
-    return;
-  }
-
-
-  try{
-
-    const orders =
-      await api(
-        "/api/orders"
-      );
-
-
-    if(!orders.length){
-
-      $("orders").innerHTML = `
-        <p class="muted">
-          Chưa có đơn hàng.
-        </p>
-      `;
-
-      return;
-
-    }
-
-
-    $("orders").innerHTML =
-      orders.map(
-        o => `
-
-        <div class="card"
-             style="margin-bottom:12px">
-
-          <div class="row">
-
-            <b>
-              Đơn #${o.id}
-            </b>
-
-            <span class="tag">
-              ${escapeHtml(o.status)}
-            </span>
-
-          </div>
-
-
-          <div class="row">
-
-            <span>
-              🎮 Tài khoản game
-            </span>
-
-            <b>
-              ${escapeHtml(
-                o.game_username || "-"
-              )}
-            </b>
-
-          </div>
-
-
-          <div class="row">
-
-            <span>
-              Tổng tiền
-            </span>
-
-            <b>
-              ${money(o.total)}
-            </b>
-
-          </div>
-
-
-          <div style="margin-top:10px">
-
-            ${
-              (o.items || [])
-                .map(
-                  i => `
-
-                  <div class="row">
-
-                    <span>
-                      ${escapeHtml(i.name)}
-                    </span>
-
-                    <b>
-                      x${i.qty}
-                    </b>
-
-                  </div>
-
-                `
-                )
-                .join("")
-            }
-
-          </div>
-
-
-          <div class="small muted"
-               style="margin-top:10px">
-
-            ${escapeHtml(
-              o.created_at || ""
-            )}
-
-          </div>
-
-        </div>
-
-      `
-      ).join("");
-
-
-  }catch(e){
-
-    $("orders").innerHTML = `
-      <p class="muted">
-        ${escapeHtml(e.message)}
-      </p>
-    `;
-
-  }
-
-}
-
-
-/* =========================
-   NẠP THẺ
-========================= */
-
-function topupCard(){
-
-  if(!token){
-
-    modal("login");
-
-    return;
-
-  }
-
-
-  $("modalbox").innerHTML = `
-
-    <h2>
-      💳 Nạp thẻ cào
-    </h2>
-
-
-    <label>
-      Nhà mạng
-    </label>
-
-    <select id="cardProvider">
-
-      <option value="VIETTEL">
-        Viettel
-      </option>
-
-      <option value="VINAPHONE">
-        Vinaphone
-      </option>
-
-      <option value="MOBIFONE">
-        Mobifone
-      </option>
-
-    </select>
-
-
-    <label>
-      Mệnh giá
-    </label>
-
-    <select id="cardValue">
-
-      <option value="10000">
-        10.000đ
-      </option>
-
-      <option value="20000">
-        20.000đ
-      </option>
-
-      <option value="50000">
-        50.000đ
-      </option>
-
-      <option value="100000">
-        100.000đ
-      </option>
-
-    </select>
-
-
-    <input
-      id="cardSerial"
-      placeholder="Số serial">
-
-
-    <input
-      id="cardCode"
-      placeholder="Mã thẻ">
-
-
-    <button
-      class="primary"
-      style="width:100%"
-      onclick="sendCard()">
-
-      Gửi yêu cầu nạp
-
-    </button>
-
-
-    <button
-      class="dark"
-      style="
-        width:100%;
-        margin-top:8px
-      "
-      onclick="close()">
-
-      Hủy
-
-    </button>
-
-  `;
-
-
-  $("modal")
-    .classList
-    .add("show");
-
-}
-
-
-async function sendCard(){
-
-  try{
-
-    await api(
-      "/api/topups/card",
-      {
-        method:"POST",
-
-        body:{
-
-          provider:
-            $("cardProvider")
-              .value,
-
-          value:
-            Number(
-              $("cardValue")
-                .value
-            ),
-
-          serial:
-            $("cardSerial")
-              .value
-              .trim(),
-
-          code:
-            $("cardCode")
-              .value
-              .trim()
-
-        }
-
-      }
-    );
-
-
-    alert(
-      "Đã gửi yêu cầu nạp thẻ."
-    );
-
-
-    close();
-
-    refresh();
-
-
-  }catch(e){
-
-    alert(
-      e.message
-    );
-
-  }
-
-}
-
-
-/* =========================
-   BANK / QR
-========================= */
-
-function topupBank(){
-
-  if(!token){
-
-    modal("login");
-
-    return;
-
-  }
-
-
-  $("modalbox").innerHTML = `
-
-    <h2>
-      🏦 Nạp tiền Bank / QR
-    </h2>
-
-
-    <p class="muted">
-      Chọn đúng mệnh giá để dùng QR
-      tương ứng.
-    </p>
-
-
-    <div
-      class="grid"
-      style="
-        grid-template-columns:
-        repeat(2,1fr)
-      ">
-
-      <button
-        class="dark"
-        onclick="showQR(10000)">
-        10.000đ
-      </button>
-
-      <button
-        class="dark"
-        onclick="showQR(20000)">
-        20.000đ
-      </button>
-
-      <button
-        class="dark"
-        onclick="showQR(50000)">
-        50.000đ
-      </button>
-
-      <button
-        class="dark"
-        onclick="showQR(100000)">
-        100.000đ
-      </button>
-
-    </div>
-
-
-    <button
-      class="dark"
-      style="
-        width:100%;
-        margin-top:12px
-      "
-      onclick="close()">
-
-      Hủy
-
-    </button>
-
-  `;
-
-
-  $("modal")
-    .classList
-    .add("show");
-
-}
-
-
-/* =========================
-   QR THEO MỆNH GIÁ
-========================= */
-
-const qrImages = {
-
-  10000:
-    "qr-10k.png",
-
-  20000:
-    "qr-20k.png",
-
-  50000:
-    "qr-50k.png",
-
-  100000:
-    "qr-100k.png"
-
-};
-
-
-function showQR(amount){
-
-  const qr =
-    qrImages[amount];
-
-
-  $("modalbox").innerHTML = `
-
-    <h2>
-      🏦 QR ${money(amount)}
-    </h2>
-
-
-    <p class="muted">
-      Quét đúng QR ${money(amount)}
-      để chuyển khoản.
-    </p>
-
-
-    <img
-      class="qr"
-      src="${qr}"
-      alt="QR ${money(amount)}">
-
-
-    <div
-      class="panel"
-      style="padding:12px">
-
-      <b>
-        Số tiền:
-      </b>
-
-      ${money(amount)}
-
-    </div>
-
-
-    <button
-      class="primary"
-      style="
-        width:100%;
-        margin-top:12px
-      "
-      onclick="
-        submitBank(${amount})
-      ">
-
-      Tôi đã chuyển ${money(amount)}
-
-    </button>
-
-
-    <button
-      class="dark"
-      style="
-        width:100%;
-        margin-top:8px
-      "
-      onclick="topupBank()">
-
-      Đổi mệnh giá
-
-    </button>
-
-  `;
-
-}
-
-
-/* =========================
-   GỬI YÊU CẦU BANK
-========================= */
-
-async function submitBank(amount){
-
-  try{
-
-    await api(
-      "/api/topups/bank",
-      {
-        method:"POST",
-
-        body:{
-          amount:amount
-        }
-      }
-    );
-
-
-    alert(
-      `Đã gửi yêu cầu nạp ${money(amount)}.`
-    );
-
-
-    close();
-
-    refresh();
-
-
-  }catch(e){
-
-    alert(
-      e.message
-    );
-
-  }
-
-}
-
-
-/* =========================
-   ADMIN
-========================= */
-
-async function loadAdmin(){
-
-  try{
-
-    const data =
-      await api(
-        "/api/admin/overview"
-      );
-
-
-    renderAdmin(data);
-
-
-  }catch(e){
-
-    $("admin").innerHTML = `
-      <p class="muted">
-        Không tải được Admin.
-      </p>
-    `;
-
-  }
-
-}
-
-
-function renderAdmin(data){
-
-  $("admin").innerHTML = `
-
-    <div class="admin-grid">
-
-
-      <!-- THÊM SẢN PHẨM -->
-
-      <div class="card">
-
-        <h3>
-          ➕ Thêm sản phẩm
-        </h3>
-
-
-        <input
-          id="newName"
-          placeholder="Tên sản phẩm">
-
-
-        <input
-          id="newPrice"
-          type="number"
-          placeholder="Giá">
-
-
-        <input
-          id="newStock"
-          type="number"
-          min="0"
-          value="0"
-          placeholder="Số lượng">
-
-
-        <input
-          id="newImage"
-          type="file"
-          accept="image/*">
-
-
-        <button
-          class="primary"
-          style="width:100%"
-          onclick="addProduct()">
-
-          Thêm sản phẩm
-
-        </button>
-
-      </div>
-
-
-      <!-- DANH SÁCH SẢN PHẨM -->
-
-      <div class="card">
-
-        <h3>
-          📦 Sản phẩm
-        </h3>
-
-
-        <div id="adminProducts">
-
-          ${data.products.map(
-            p => `
-
-            <div
-              class="row"
-              style="
-                display:block
-              ">
-
-              <b>
-                ${escapeHtml(p.name)}
-              </b>
-
-              <div class="small muted">
-
-                ${money(p.price)}
-                · tồn ${p.stock}
-
-              </div>
-
-
-              <button
-                class="dark"
-                style="
-                  margin-top:6px
-                "
-                onclick="
-                  editProduct(${p.id})
-                ">
-
-                ✏️ Sửa
-
-              </button>
-
-
-              <button
-                class="dark"
-                style="
-                  margin-top:6px
-                "
-                onclick="
-                  toggleProduct(
-                    ${p.id},
-                    ${p.active}
-                  )
-                ">
-
-                ${
-                  p.active
-                  ? "Ẩn"
-                  : "Hiện"
-                }
-
-              </button>
-
-            </div>
-
-          `
-          ).join("")}
-
-        </div>
-
-      </div>
-
-
-      <!-- ĐƠN HÀNG -->
-
-      <div class="card">
-
-        <h3>
-          🛒 Đơn hàng
-        </h3>
-
-
-        ${
-          data.orders.length
-          ? data.orders.map(
-            o => `
-
-            <div
-              class="row"
-              style="
-                display:block
-              ">
-
-              <b>
-                #${o.id}
-              </b>
-
-
-              <div>
-                🎮
-                ${escapeHtml(
-                  o.game_username || "-"
-                )}
-              </div>
-
-
-              <div>
-                💰
-                ${money(o.total)}
-              </div>
-
-
-              <div>
-                ${
-                  (o.items || [])
-                    .map(
-                      i =>
-                        `${escapeHtml(i.name)}
-                         x${i.qty}`
-                    )
-                    .join("<br>")
-                }
-              </div>
-
-
-              <select
-                onchange="
-                  changeOrderStatus(
-                    ${o.id},
-                    this.value
-                  )">
-
-                <option
-                  value="PENDING"
-                  ${
-                    o.status ===
-                    "PENDING"
-                    ? "selected"
-                    : ""
-                  }>
-                  PENDING
-                </option>
-
-                <option
-                  value="PROCESSING"
-                  ${
-                    o.status ===
-                    "PROCESSING"
-                    ? "selected"
-                    : ""
-                  }>
-                  PROCESSING
-                </option>
-
-                <option
-                  value="COMPLETED"
-                  ${
-                    o.status ===
-                    "COMPLETED"
-                    ? "selected"
-                    : ""
-                  }>
-                  COMPLETED
-                </option>
-
-                <option
-                  value="CANCELLED"
-                  ${
-                    o.status ===
-                    "CANCELLED"
-                    ? "selected"
-                    : ""
-                  }>
-                  CANCELLED
-                </option>
-
-              </select>
-
-            </div>
-
-          `
-          ).join("")
-          :
-          `<p class="muted">
-            Chưa có đơn.
-          </p>`
-        }
-
-      </div>
-
-
-      <!-- NẠP TIỀN -->
-
-      <div class="card">
-
-        <h3>
-          💰 Yêu cầu nạp
-        </h3>
-
-
-        ${
-          data.topups.length
-          ? data.topups.map(
-            t => `
-
-            <div
-              class="row"
-              style="
-                display:block
-              ">
-
-              <b>
-                #${t.id}
-              </b>
-
-
-              <div>
-                👤
-                ${escapeHtml(
-                  t.username
-                )}
-              </div>
-
-
-              <div>
-                ${t.method}
-                ·
-                ${money(t.amount)}
-              </div>
-
-
-              <div>
-                Trạng thái:
-                ${t.status}
-              </div>
-
-
-              ${
-                t.status === "PENDING"
-                ? `
-
-                  <button
-                    class="primary"
-                    onclick="
-                      approveTopup(
-                        ${t.id}
-                      )
-                    ">
-
-                    Duyệt
-
-                  </button>
-
-
-                  <button
-                    class="danger"
-                    onclick="
-                      rejectTopup(
-                        ${t.id}
-                      )
-                    ">
-
-                    Từ chối
-
-                  </button>
-
-                `
-                : ""
-              }
-
-            </div>
-
-          `
-          ).join("")
-          :
-          `<p class="muted">
-            Không có yêu cầu.
-          </p>`
-        }
-
-      </div>
-
-    </div>
-
-  `;
-
-}/* =========================
-   THÊM SẢN PHẨM ADMIN
-========================= */
-
-async function addProduct(){
-
-  try{
-
-    const name =
-      $("newName")
-        .value
-        .trim();
-
-    const price =
-      Number(
-        $("newPrice")
-          .value
-      );
-
-    const stock =
-      Number(
-        $("newStock")
-          .value
-      ) || 0;
-
-    const file =
-      $("newImage")
-        .files[0];
-
-
-    if(!name){
-
-      alert(
-        "Nhập tên sản phẩm."
-      );
-
-      return;
-
-    }
-
-
-    if(
-      !Number.isFinite(price) ||
-      price <= 0
-    ){
-
-      alert(
-        "Giá không hợp lệ."
-      );
-
-      return;
-
-    }
-
-
-    let image = "";
-
-
-    if(file){
-
-      image =
-        await fileToDataURL(
-          file
-        );
-
-    }
-
-
-    await api(
-      "/api/admin/products",
-      {
-        method:"POST",
-
-        body:{
-          name:name,
-          price:Math.floor(price),
-          stock:Math.max(
-            0,
-            Math.floor(stock)
-          ),
-          image:image
-        }
-      }
-    );
-
-
-    alert(
-      "Đã thêm sản phẩm."
-    );
-
-
-    loadProducts();
-    loadAdmin();
-
-
-  }catch(e){
-
-    alert(
-      e.message
-    );
-
-  }
-
-}
-
-
-/* =========================
-   ĐỌC ẢNH
-========================= */
-
-function fileToDataURL(file){
-
-  return new Promise(
-    (resolve,reject)=>{
-
-      const reader =
-        new FileReader();
-
-
-      reader.onload =
-        () =>
-        resolve(
-          reader.result
-        );
-
-
-      reader.onerror =
-        reject;
-
-
-      reader.readAsDataURL(
-        file
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================
-   SỬA SẢN PHẨM
-========================= */
-
-async function editProduct(id){
-
-  const p =
-    products.find(
-      x => x.id === id
-    );
-
-
-  if(!p){
-
-    alert(
-      "Không tìm thấy sản phẩm."
-    );
-
-    return;
-
-  }
-
-
-  $("modalbox").innerHTML = `
-
-    <h2>
-      ✏️ Sửa sản phẩm
-    </h2>
-
-
-    ${
-      p.image
-      ? `
-        <img
-          class="product-img"
-          src="${p.image}">
-      `
-      : ""
-    }
-
-
-    <input
-      id="editName"
-      value="${escapeHtml(p.name)}"
-      placeholder="Tên sản phẩm">
-
-
-    <input
-      id="editPrice"
-      type="number"
-      value="${p.price}"
-      placeholder="Giá">
-
-
-    <input
-      id="editStock"
-      type="number"
-      min="0"
-      value="${p.stock}"
-      placeholder="Số lượng">
-
-
-    <input
-      id="editImage"
-      type="file"
-      accept="image/*">
-
-
-    <button
-      class="primary"
-      style="width:100%"
-      onclick="
-        saveProduct(${id})
-      ">
-
-      💾 Lưu thay đổi
-
-    </button>
-
-
-    <button
-      class="dark"
-      style="
-        width:100%;
-        margin-top:8px
-      "
-      onclick="close()">
-
-      Hủy
-
-    </button>
-
-  `;
-
-
-  $("modal")
-    .classList
-    .add("show");
-
-}
-
-
-/* =========================
-   LƯU SẢN PHẨM
-========================= */
-
-async function saveProduct(id){
-
-  try{
-
-    const name =
-      $("editName")
-        .value
-        .trim();
-
-    const price =
-      Number(
-        $("editPrice")
-          .value
-      );
-
-    const stock =
-      Number(
-        $("editStock")
-          .value
-      );
-
-
-    const file =
-      $("editImage")
-        .files[0];
-
-
-    let body = {
-
-      name:name,
-
-      price:
-        Math.floor(price),
-
-      stock:
-        Math.max(
-          0,
-          Math.floor(stock)
-        )
-
-    };
-
-
-    if(file){
-
-      body.image =
-        await fileToDataURL(
-          file
-        );
-
-    }
-
-
-    await api(
-      `/api/admin/products/${id}`,
-      {
-        method:"PATCH",
-        body:body
-      }
-    );
-
-
-    alert(
-      "Đã lưu sản phẩm."
-    );
-
-
-    close();
-
-    await loadProducts();
-
-    await loadAdmin();
-
-
-  }catch(e){
-
-    alert(
-      e.message
-    );
-
-  }
-
-}
-
-
-/* =========================
-   ẨN / HIỆN SẢN PHẨM
-========================= */
-
-async function toggleProduct(
-  id,
-  active
-){
-
-  try{
-
-    await api(
-      `/api/admin/products/${id}/${
-        active
-          ? "hide"
-          : "show"
-      }`,
-      {
-        method:"POST"
-      }
-    );
-
-
-    await loadProducts();
-
-    await loadAdmin();
-
-
-  }catch(e){
-
-    alert(
-      e.message
-    );
-
-  }
-
-}
-
-
-/* =========================
-   DUYỆT NẠP
-========================= */
-
-async function approveTopup(
-  id
-){
-
-  try{
-
-    await api(
-      `/api/admin/topups/${id}/approve`,
-      {
-        method:"POST"
-      }
-    );
-
-
-    alert(
-      "Đã duyệt nạp tiền."
-    );
-
-
-    loadAdmin();
-
-    refresh();
-
-
-  }catch(e){
-
-    alert(
-      e.message
-    );
-
-  }
-
-}
-
-
-/* =========================
-   TỪ CHỐI NẠP
-========================= */
-
-async function rejectTopup(
-  id
-){
-
-  try{
-
-    await api(
-      `/api/admin/topups/${id}/reject`,
-      {
-        method:"POST"
-      }
-    );
-
-
-    alert(
-      "Đã từ chối."
-    );
-
-
-    loadAdmin();
-
-
-  }catch(e){
-
-    alert(
-      e.message
-    );
-
-  }
-
-}
-
-
-/* =========================
-   ĐỔI TRẠNG THÁI ĐƠN
-========================= */
-
-async function changeOrderStatus(
-  id,
-  status
-){
-
-  try{
-
-    await api(
-      `/api/admin/orders/${id}/status`,
-      {
-        method:"POST",
-
-        body:{
-          status:status
-        }
-      }
-    );
-
-
-    loadAdmin();
-
-    loadOrders();
-
-
-  }catch(e){
-
-    alert(
-      e.message
-    );
-
-  }
-
-}
-
-
-/* =========================
-   ADMIN LOGIN
-========================= */
-
-function adminLogin(){
-
-  if(!token){
-
-    modal("login");
-
-    return;
-
-  }
-
-
-  $("adminSection")
-    .classList
-    .remove("hide");
-
-
-  loadAdmin();
-
-
-  scrollToId(
-    "adminSection"
-  );
-
-}
-
-
-/* =========================
-   SCROLL
-========================= */
-
-function scrollToId(id){
-
-  const el =
-    $(id);
-
-  if(el){
-
-    el.scrollIntoView({
-      behavior:"smooth",
-      block:"start"
-    });
-
-  }
-
-}
-
-
-/* =========================
-   ĐÓNG MODAL KHI BẤM NGOÀI
-========================= */
-
-$("modal")
-  .addEventListener(
-    "click",
-    e => {
-
-      if(
-        e.target ===
-        $("modal")
-      ){
-
-        close();
-
-      }
-
-    }
-  );
-
-
-/* =========================
-   KHỞI ĐỘNG
-========================= */
-
-loadProducts();
-
-if(token){
-
-  refresh();
-
-}else{
-
-  loadOrders();
-
-}
-
-
-/* =========================
-   ĐỔI NAV
-========================= */
-
-function setNav(
-  active
-){
-
-  [
-    "navShop",
-    "navTopup",
-    "navOrders",
-    "navProfile",
-    "navAdmin"
-  ].forEach(
-    id => {
-
-      const el =
-        $(id);
-
-      if(el){
-
-        el.classList
-          .remove("on");
-
-      }
-
-    }
-  );
-
-
-  const el =
-    $(active);
-
-  if(el){
-
-    el.classList
-      .add("on");
-
-  }
-
-}
-}
+    </script>
+</body>
+</html>
