@@ -1,4438 +1,715 @@
-```html
 <!doctype html>
 <html lang="vi">
-
 <head>
-
 <meta charset="utf-8">
-
-<meta
-  name="viewport"
-  content="width=device-width,initial-scale=1">
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BLACK GAG2 SHOP</title>
-
 <style>
-
-*{
-  box-sizing:border-box;
+:root{
+  --bg:#070a13;
+  --panel:#0d1220;
+  --panel2:#101629;
+  --line:#242d46;
+  --text:#f6f7fb;
+  --muted:#929bb2;
+  --purple:#7b5cff;
+  --purple2:#a15cff;
+  --green:#16d88b;
+  --yellow:#ffbc35;
+  --red:#ff6277;
 }
-
+*{box-sizing:border-box}
 body{
   margin:0;
-  background:#080a13;
-  color:#fff;
-  font-family:Arial,sans-serif;
+  background:radial-gradient(circle at 15% 0,#141a33 0,#070a13 35%);
+  color:var(--text);
+  font-family:Inter,Arial,sans-serif;
 }
-
-.wrap{
-  max-width:1100px;
-  margin:auto;
-  padding:18px 16px 110px;
+a{color:inherit}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.hide{display:none!important}
+.wrap{max-width:1180px;margin:auto;padding:26px 16px 110px}
+.top{
+  position:sticky;top:0;z-index:50;
+  backdrop-filter:blur(15px);
+  background:#070a13dd;border-bottom:1px solid var(--line)
 }
-
-header{
-  position:sticky;
-  top:0;
-  z-index:5;
-  background:#0b0d18ee;
-  border-bottom:1px solid #292d48;
-}
-
 .nav{
-  max-width:1100px;
-  margin:auto;
-  padding:13px 16px;
-  display:flex;
-  gap:8px;
-  align-items:center;
+  max-width:1180px;margin:auto;padding:13px 16px;
+  display:flex;align-items:center;gap:10px
 }
-
-.logo{
-  font-size:20px;
-  font-weight:900;
-  margin-right:auto;
+.brand{font-weight:900;font-size:21px;margin-right:auto}
+.brand b{color:#8e72ff}
+.navbtn{
+  border:1px solid var(--line);background:#12182a;color:#fff;
+  padding:10px 14px;border-radius:12px;font-weight:800
 }
-
-.logo span{
-  color:#8b6cff;
-}
-
-button{
-  border:0;
-  border-radius:11px;
-  padding:11px 14px;
-  cursor:pointer;
-  font-weight:800;
-}
-
-.primary{
-  background:linear-gradient(
-    100deg,
-    #6657ff,
-    #aa5cff
-  );
-  color:#fff;
-}
-
-.dark{
-  background:#171a2c;
-  color:#fff;
-  border:1px solid #303451;
-}
-
-.danger{
-  background:#3b1820;
-  color:#fff;
-}
-
-.success{
-  background:#173b25;
-  color:#fff;
-}
-
-.hero,
-.panel,
-.card{
-  background:#10121e;
-  border:1px solid #292d48;
-  border-radius:20px;
-}
-
+.navbtn.primary{background:linear-gradient(100deg,var(--purple),var(--purple2));border:0}
+.balance{padding:10px 13px;border-radius:12px;background:#0c2c25;color:#27e6a1;font-weight:900}
 .hero{
-  padding:35px;
-  background:radial-gradient(
-    circle at 85% 15%,
-    #4c2c86,
-    #15162a 40%,
-    #10121e 72%
-  );
+  padding:36px;border:1px solid var(--line);border-radius:24px;
+  background:radial-gradient(circle at 82% 15%,#34225d 0,#15182b 34%,#0d1220 72%);
 }
-
-.hero h1{
-  font-size:clamp(40px,8vw,70px);
-  line-height:1;
-  margin:18px 0;
+.kicker{color:#8d78ff;letter-spacing:4px;font-size:12px;font-weight:900}
+.hero h1{font-size:clamp(38px,7vw,70px);line-height:1;margin:14px 0}
+.grad{background:linear-gradient(90deg,#8174ff,#d978ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.muted{color:var(--muted)}
+.btn{
+  border:0;border-radius:12px;padding:11px 15px;font-weight:900
 }
-
-.grad{
-  background:linear-gradient(
-    90deg,
-    #7667ff,
-    #d96cff
-  );
-  -webkit-background-clip:text;
-  color:transparent;
-}
-
-.muted{
-  color:#989db7;
-}
-
-.tag{
-  display:inline-block;
-  background:#1a1d31;
-  color:#a49aff;
-  padding:6px 9px;
-  border-radius:8px;
-  font-size:12px;
-}
-
-.section{
-  margin-top:25px;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:
-    repeat(auto-fit,minmax(210px,1fr));
-  gap:13px;
-}
-
+.btn.primary{background:linear-gradient(100deg,var(--purple),var(--purple2));color:#fff}
+.btn.dark{background:#13192b;color:#fff;border:1px solid var(--line)}
+.btn.green{background:#103f2e;color:#69f2b5}
+.btn.red{background:#451726;color:#ff9cac}
+.section{margin-top:24px}
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.section-title h2{margin:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
 .card{
-  padding:16px;
+  background:linear-gradient(180deg,#0e1424,#0b101d);
+  border:1px solid var(--line);border-radius:20px;padding:16px
 }
-
-.product-img{
-  width:100%;
-  height:170px;
-  object-fit:cover;
-  border-radius:14px;
-  border:1px solid #292d48;
-  margin-bottom:10px;
-  background:#0b0d17;
+.product-img{width:100%;height:180px;object-fit:cover;border-radius:14px;background:#090d17;border:1px solid var(--line)}
+.price{font-size:20px;font-weight:900;margin:10px 0}
+.stock{font-size:13px;color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tab{
+  border:1px solid var(--line);background:#11172a;color:#b8c0d3;
+  padding:10px 14px;border-radius:12px;font-weight:900
 }
-
-.admin-img{
-  width:65px;
-  height:65px;
-  object-fit:cover;
-  border-radius:10px;
-  border:1px solid #303451;
-  background:#0b0d17;
+.tab.on{background:#6f57ff;color:#fff;border-color:#6f57ff}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{
+  border:1px solid var(--line);border-radius:18px;padding:16px;background:#0d1322
 }
-
-.price{
-  font-size:19px;
-  font-weight:900;
-  margin:12px 0;
-}
-
-input,
-select{
-  width:100%;
-  padding:12px;
-  margin:6px 0 12px;
-  border-radius:10px;
-  border:1px solid #303451;
-  background:#0b0d17;
-  color:#fff;
-}
-
-.row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  padding:12px 0;
-  border-bottom:1px solid #292d48;
-}
-
-.hide{
-  display:none!important;
-}
-
-.modal{
-  position:fixed;
-  inset:0;
-  background:#000b;
-  z-index:30;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
-}
-
-.modal.show{
-  display:flex;
-}
-
-.modalbox{
-  width:min(480px,100%);
-  max-height:90vh;
-  overflow:auto;
-  background:#111426;
-  border:1px solid #383c64;
-  border-radius:20px;
-  padding:20px;
-}
-
-.bottom{
-  position:fixed;
-  bottom:10px;
-  left:50%;
-  transform:translateX(-50%);
-  width:min(720px,calc(100% - 24px));
-  z-index:10;
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:5px;
-  padding:7px;
-  border:1px solid #292d48;
-  border-radius:18px;
-  background:#0d0f1af5;
-}
-
-.bottom button{
-  background:transparent;
-  color:#aeb3ca;
-}
-
-.bottom .on{
-  background:#29214e;
-  color:#fff;
-}
-
-.admin{
-  border-color:#6f5cff;
-}
-
-.admin-form{
-  background:#0b0d17;
-  border:1px solid #303451;
-  border-radius:14px;
-  padding:14px;
-  margin:10px 0;
-}
-
-.amount-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:8px;
-  margin:10px 0;
-}
-
-.amount-grid button{
-  width:100%;
-}
-
-.qr-box{
-  text-align:center;
-  padding:15px;
-  background:#0b0d17;
-  border:1px solid #303451;
-  border-radius:16px;
-  margin-top:12px;
-}
-
-.qr-box img{
-  width:min(280px,100%);
-  max-width:280px;
-  border-radius:12px;
-  background:#fff;
-}
-
+.stat small{display:block;color:var(--muted);margin-bottom:6px}
+.stat strong{font-size:22px}
+.stat.green strong{color:var(--green)}
+.stat.yellow strong{color:var(--yellow)}
+.stat.purple strong{color:#a78bff}
+.list{display:flex;flex-direction:column}
+.list-item{padding:14px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}
 .status{
-  display:inline-block;
-  padding:5px 9px;
-  border-radius:8px;
-  font-size:12px;
-  font-weight:800;
-  margin-top:6px;
+  display:inline-flex;padding:5px 9px;border-radius:8px;font-size:12px;font-weight:900
 }
-
-.status-pending{
-  background:#3b3517;
-  color:#ffe37a;
+.pending{background:#3d3518;color:#ffd95f}
+.approved{background:#103927;color:#6df3b6}
+.rejected{background:#451725;color:#ff8d9f}
+.qrbox{text-align:center}
+.qrbox img{width:min(300px,100%);border-radius:14px;background:#fff}
+.amounts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.amounts button{width:100%}
+.admin-nav{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
+.admin-pane{display:none}
+.admin-pane.on{display:block}
+.admin-card{
+  border:1px solid var(--line);background:#0c1220;border-radius:18px;padding:14px;margin-bottom:12px
 }
-
-.status-approved{
-  background:#173b25;
-  color:#7cff9d;
+input,select,textarea{
+  width:100%;padding:11px 12px;margin:6px 0 10px;border-radius:11px;
+  border:1px solid var(--line);background:#0a0f1c;color:#fff
 }
-
-.status-rejected{
-  background:#3b1820;
-  color:#ff8e9b;
+.modal{
+  position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;
+  padding:16px;z-index:100
 }
-
-.history-tabs{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-bottom:15px;
+.modal.show{display:flex}
+.modalbox{
+  width:min(480px,100%);max-height:90vh;overflow:auto;background:#0f1626;
+  border:1px solid #35405e;border-radius:22px;padding:20px
 }
-
-.admin-actions{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
+.bottom{
+  position:fixed;left:50%;bottom:10px;transform:translateX(-50%);
+  width:min(760px,calc(100% - 24px));z-index:60;
+  display:grid;grid-template-columns:repeat(5,1fr);gap:5px;padding:7px;
+  background:#0c1020f2;border:1px solid var(--line);border-radius:18px
 }
-
-.small{
-  font-size:12px;
+.bottom button{border:0;background:transparent;color:#aeb7cc;padding:10px 6px;border-radius:12px;font-weight:900}
+.bottom button.on{background:#2a2155;color:#fff}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+@media(max-width:850px){
+  .profile-grid{grid-template-columns:1fr}
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .admin-nav{grid-template-columns:repeat(3,1fr)}
 }
-
 @media(max-width:600px){
-
-  .nav .logo{
-    font-size:16px;
-  }
-
-  .nav #hello{
-    display:none;
-  }
-
-  .nav button{
-    padding:9px;
-  }
-
-  .bottom{
-    grid-template-columns:repeat(5,1fr);
-  }
-
-  .bottom button{
-    padding:8px 3px;
-    font-size:11px;
-  }
-
+  .nav .balance{display:none}
+  .nav .brand{font-size:17px}
+  .hero{padding:26px}
+  .bottom button{font-size:11px}
+  .amounts{grid-template-columns:1fr 1fr}
 }
-
 </style>
-
 </head>
-
 <body>
 
-<header>
-
-<div class="nav">
-
-<div class="logo">
-🎮 <span>BLACK</span> GAG2 SHOP
+<div class="top">
+  <div class="nav">
+    <div class="brand">🎮 <b>BLACK</b> GAG2 SHOP</div>
+    <span id="hello" class="muted"></span>
+    <span id="balance" class="balance hide"></span>
+    <button id="loginBtn" class="navbtn" onclick="modal('login')">Đăng nhập</button>
+    <button id="regBtn" class="navbtn primary" onclick="modal('register')">Đăng ký</button>
+    <button id="logoutBtn" class="navbtn hide" onclick="logout()">Đăng xuất</button>
+  </div>
 </div>
-
-<span
-  id="hello"
-  class="muted">
-</span>
-
-<button
-  id="loginBtn"
-  class="dark"
-  onclick="modal('login')">
-
-Đăng nhập
-
-</button>
-
-<button
-  id="regBtn"
-  class="primary"
-  onclick="modal('register')">
-
-Đăng ký
-
-</button>
-
-<button
-  id="logoutBtn"
-  class="dark hide"
-  onclick="logout()">
-
-Đăng xuất
-
-</button>
-
-</div>
-
-</header>
-
 
 <main class="wrap">
 
-
-<!-- =========================
-     HERO
-========================= -->
-
 <section class="hero">
-
-<span class="tag">
-GROW A GARDEN 2
-</span>
-
-<h1>
-Mua bán GAG2<br>
-<span class="grad">
-nhanh & tiện
-</span>
-</h1>
-
-<p class="muted">
-BLACK GAG2 SHOP — chỉ có Grow a Garden 2.
-</p>
-
-<button
-  class="primary"
-  onclick="scrollToId('products')">
-
-🛒 Xem sản phẩm
-
-</button>
-
+  <div class="kicker">GROW A GARDEN 2</div>
+  <h1>Mua bán GAG2<br><span class="grad">nhanh & tiện</span></h1>
+  <p class="muted">BLACK GAG2 SHOP — shop game, nạp tiền và quản lý đơn hàng.</p>
+  <div class="actions">
+    <button class="btn primary" onclick="go('shop')">🛒 Xem shop</button>
+    <button class="btn dark" onclick="go('profile')">👤 Hồ sơ</button>
+  </div>
 </section>
 
-
-<!-- =========================
-     PRODUCTS
-========================= -->
-
-<section
-  id="products"
-  class="section">
-
-<h2>
-🌱 Sản phẩm
-</h2>
-
-<div
-  id="productGrid"
-  class="grid">
-</div>
-
+<section id="shop" class="section">
+  <div class="section-title">
+    <h2>🛍️ Shop</h2>
+    <span class="muted">Grow a Garden 2</span>
+  </div>
+  <div id="productGrid" class="grid"></div>
 </section>
 
-
-<!-- =========================
-     TOPUP
-========================= -->
-
-<section
-  id="topupSection"
-  class="section">
-
-<div
-  class="panel"
-  style="padding:20px">
-
-<h2>
-💰 Nạp tiền
-</h2>
-
-<button
-  class="dark"
-  onclick="topupCard()">
-
-💳 Thẻ cào
-
-</button>
-
-<button
-  class="dark"
-  onclick="topupBank()">
-
-🏦 Bank / QR
-
-</button>
-
-<div
-  id="topupMsg">
-</div>
-
-</div>
-
+<section id="topup" class="section">
+  <div class="card">
+    <div class="section-title">
+      <h2>💰 Nạp tiền</h2>
+      <span class="muted">Tối thiểu 10.000đ</span>
+    </div>
+    <div class="tabs">
+      <button id="topupCardTab" class="tab on" onclick="showTopupMode('card')">💳 Thẻ cào</button>
+      <button id="topupBankTab" class="tab" onclick="showTopupMode('bank')">🏦 Bank / QR</button>
+    </div>
+    <div id="topupArea" style="margin-top:14px"></div>
+  </div>
 </section>
 
-
-<!-- =========================
-     HISTORY
-========================= -->
-
-<section
-  id="ordersSection"
-  class="section">
-
-<div
-  class="panel"
-  style="padding:20px">
-
-<h2>
-📜 Lịch sử giao dịch
-</h2>
-
-<div
-  class="history-tabs">
-
-<button
-  id="historyBuyBtn"
-  class="primary"
-  onclick="showHistory('buy')">
-
-📦 Lịch sử mua
-
-</button>
-
-<button
-  id="historyTopupBtn"
-  class="dark"
-  onclick="showHistory('topup')">
-
-💰 Lịch sử nạp
-
-</button>
-
-</div>
-
-<div
-  id="buyHistory">
-</div>
-
-<div
-  id="topupHistory"
-  class="hide">
-</div>
-
-</div>
-
+<section id="history" class="section">
+  <div class="card">
+    <div class="section-title">
+      <h2>📜 Lịch sử giao dịch</h2>
+      <div class="tabs">
+        <button id="buyHistTab" class="tab on" onclick="showHistory('buy')">📦 Mua hàng</button>
+        <button id="topHistTab" class="tab" onclick="showHistory('topup')">💰 Nạp tiền</button>
+      </div>
+    </div>
+    <div id="buyHistory"></div>
+    <div id="topupHistory" class="hide"></div>
+  </div>
 </section>
 
-
-<!-- =========================
-     PROFILE
-========================= -->
-
-<section
-  id="profileSection"
-  class="section">
-
-<div
-  class="panel"
-  style="padding:20px">
-
-<h2>
-👤 Hồ sơ
-</h2>
-
-<div
-  id="profile">
-
-<p class="muted">
-Đăng nhập để xem hồ sơ.
-</p>
-
-</div>
-
-</div>
-
+<section id="profile" class="section">
+  <div class="section-title">
+    <h2>👤 Hồ sơ</h2>
+    <span class="muted">Tài khoản và hoạt động</span>
+  </div>
+  <div id="profileContent"></div>
 </section>
 
+<section id="adminSection" class="section hide">
+  <div class="card">
+    <div class="section-title">
+      <h2>👑 Admin Center</h2>
+      <span class="muted">Quản lý shop</span>
+    </div>
 
-<!-- =========================
-     ADMIN
-========================= -->
+    <div class="admin-nav">
+      <button class="tab on" data-pane="dash">Tổng quan</button>
+      <button class="tab" data-pane="products">Sản phẩm</button>
+      <button class="tab" data-pane="topups">Nạp tiền</button>
+      <button class="tab" data-pane="orders">Đơn hàng</button>
+      <button class="tab" data-pane="users">Users</button>
+    </div>
 
-<section
-  id="adminSection"
-  class="section hide">
-
-<div
-  class="panel admin"
-  style="padding:20px">
-
-<h2>
-👑 Admin
-</h2>
-
-<div
-  id="admin">
-</div>
-
-</div>
-
+    <div id="pane-dash" class="admin-pane on"></div>
+    <div id="pane-products" class="admin-pane"></div>
+    <div id="pane-topups" class="admin-pane"></div>
+    <div id="pane-orders" class="admin-pane"></div>
+    <div id="pane-users" class="admin-pane"></div>
+  </div>
 </section>
-
 
 </main>
 
-
-<!-- =========================
-     BOTTOM NAV
-========================= -->
-
 <nav class="bottom">
-
-<button
-  id="navShop"
-  class="on"
-  onclick="
-    setNav(this);
-    scrollToId('products');
-  ">
-
-🏠<br>Shop
-
-</button>
-
-<button
-  id="navTopup"
-  onclick="
-    setNav(this);
-    topupCard();
-  ">
-
-💳<br>Nạp tiền
-
-</button>
-
-<button
-  id="navOrders"
-  onclick="
-    setNav(this);
-    showHistory('buy');
-    scrollToId('ordersSection');
-  ">
-
-☷<br>Đơn hàng
-
-</button>
-
-<button
-  id="navProfile"
-  onclick="
-    setNav(this);
-    scrollToId('profileSection');
-  ">
-
-👤<br>Hồ sơ
-
-</button>
-
-<button
-  id="navAdmin"
-  class="hide"
-  onclick="
-    setNav(this);
-    adminLogin();
-  ">
-
-👑<br>Admin
-
-</button>
-
+  <button class="on" id="navShop" onclick="activateNav(this);go('shop')">🏠<br>Shop</button>
+  <button id="navTopup" onclick="activateNav(this);go('topup')">💳<br>Nạp tiền</button>
+  <button id="navHistory" onclick="activateNav(this);go('history')">☷<br>Giao dịch</button>
+  <button id="navProfile" onclick="activateNav(this);go('profile')">👤<br>Hồ sơ</button>
+  <button id="navAdmin" class="hide" onclick="activateNav(this);go('adminSection')">👑<br>Admin</button>
 </nav>
 
-
-<!-- =========================
-     MODAL
-========================= -->
-
-<div
-  class="modal"
-  id="modal">
-
-<div
-  class="modalbox"
-  id="modalbox">
+<div class="modal" id="modal">
+  <div class="modalbox" id="modalbox"></div>
 </div>
-
-</div>
-
 
 <script>
+let token=localStorage.getItem("black_token")||"";
+let products=[];
+let adminData=null;
+const $=id=>document.getElementById(id);
+const money=n=>Number(n||0).toLocaleString("vi-VN")+"đ";
 
-/* ==================================================
-   STATE
-================================================== */
-
-let token =
-  localStorage.getItem(
-    "black_token"
-  ) || "";
-
-let products = [];
-
-const $ =
-  id =>
-  document.getElementById(id);
-
-const money =
-  n =>
-  Number(
-    n || 0
-  ).toLocaleString(
-    "vi-VN"
-  ) + "đ";
-
-
-/* ==================================================
-   ESCAPE
-================================================== */
-
-function escapeHtml(value){
-
-  return String(
-    value ?? ""
-  )
-  .replaceAll(
-    "&",
-    "&amp;"
-  )
-  .replaceAll(
-    "<",
-    "&lt;"
-  )
-  .replaceAll(
-    ">",
-    "&gt;"
-  )
-  .replaceAll(
-    '"',
-    "&quot;"
-  )
-  .replaceAll(
-    "'",
-    "&#039;"
-  );
-
+function escapeHtml(v){
+  return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
 }
+function escapeAttr(v){return escapeHtml(v)}
 
-function escapeAttr(value){
-
-  return String(
-    value ?? ""
-  )
-  .replaceAll(
-    "&",
-    "&amp;"
-  )
-  .replaceAll(
-    '"',
-    "&quot;"
-  )
-  .replaceAll(
-    "<",
-    "&lt;"
-  )
-  .replaceAll(
-    ">",
-    "&gt;"
-  );
-
-}
-
-
-/* ==================================================
-   API
-================================================== */
-
-async function api(
-  url,
-  opt={}
-){
-
-  opt.headers = {
-
-    ...(opt.headers || {}),
-
-    ...(token
-      ? {
-          Authorization:
-            "Bearer " + token
-        }
-      : {})
-
-  };
-
-
-  if(
-    opt.body &&
-    typeof opt.body !== "string"
-  ){
-
-    opt.headers[
-      "Content-Type"
-    ] =
-      "application/json";
-
-    opt.body =
-      JSON.stringify(
-        opt.body
-      );
-
+async function api(url,opt={}){
+  opt.headers={...(opt.headers||{}),...(token?{Authorization:"Bearer "+token}:{})};
+  if(opt.body&&typeof opt.body!=="string"){
+    opt.headers["Content-Type"]="application/json";
+    opt.body=JSON.stringify(opt.body);
   }
-
-
-  const response =
-    await fetch(
-      url,
-      opt
-    );
-
-
-  const data =
-    await response
-      .json()
-      .catch(
-        () => ({})
-      );
-
-
-  if(!response.ok){
-
-    throw Error(
-      data.error ||
-      "Có lỗi xảy ra."
-    );
-
-  }
-
-
-  return data;
-
+  const r=await fetch(url,opt);
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok)throw Error(d.error||"Có lỗi.");
+  return d;
 }
 
-
-/* ==================================================
-   NAV
-================================================== */
-
-function setNav(button){
-
-  document
-    .querySelectorAll(
-      ".bottom button"
-    )
-    .forEach(
-      x =>
-        x.classList.remove(
-          "on"
-        )
-    );
-
-  button.classList.add(
-    "on"
-  );
-
+function go(id){$(id)?.scrollIntoView({behavior:"smooth",block:"start"})}
+function activateNav(btn){
+  document.querySelectorAll(".bottom button").forEach(x=>x.classList.remove("on"));
+  btn.classList.add("on");
 }
-
-function scrollToId(id){
-
-  const el =
-    $(id);
-
-  if(el){
-
-    el.scrollIntoView({
-      behavior:"smooth",
-      block:"start"
-    });
-
-  }
-
-}
-
-
-/* ==================================================
-   PRODUCTS
-================================================== */
-
-async function loadProducts(){
-
-  try{
-
-    products =
-      await api(
-        "/api/products"
-      );
-
-
-    if(!products.length){
-
-      $("productGrid").innerHTML = `
-        <p class="muted">
-          Chưa có sản phẩm.
-        </p>
-      `;
-
-      return;
-
-    }
-
-
-    $("productGrid").innerHTML =
-      products
-        .map(
-          p => `
-
-          <div
-            class="card">
-
-            ${
-              p.image
-              ?
-              `
-              <img
-                class="product-img"
-                src="${escapeAttr(p.image)}"
-                alt="${escapeAttr(p.name)}">
-              `
-              :
-              `
-              <div
-                class="product-img"
-                style="
-                  display:flex;
-                  align-items:center;
-                  justify-content:center;
-                  font-size:45px;
-                ">
-                🌱
-              </div>
-              `
-            }
-
-
-            <span class="tag">
-              GAG2
-            </span>
-
-
-            <h3>
-              ${escapeHtml(p.name)}
-            </h3>
-
-
-            <div class="muted">
-              Grow a Garden 2
-            </div>
-
-
-            <div class="price">
-              ${money(p.price)} / 1
-            </div>
-
-
-            <div class="muted">
-              ${
-                Number(p.stock) > 0
-                ? `Còn ${p.stock}`
-                : "Còn hàng"
-              }
-            </div>
-
-
-            <br>
-
-
-            <button
-              class="primary"
-              onclick="buy(${p.id})">
-
-              ⚡ Mua ngay
-
-            </button>
-
-          </div>
-
-          `
-        )
-        .join("");
-
-
-  }catch(error){
-
-    $("productGrid").innerHTML = `
-      <p class="muted">
-        Không tải được sản phẩm.
-      </p>
-    `;
-
-  }
-
-}
-
-
-/* ==================================================
-   MODAL
-================================================== */
 
 function modal(type){
-
-  if(
-    type === "login"
-  ){
-
-    const savedLogin =
-      localStorage.getItem(
-        "black_saved_login"
-      ) || "";
-
-
-    const savedPassword =
-      localStorage.getItem(
-        "black_saved_password"
-      ) || "";
-
-
-    const remembered =
-      Boolean(
-        savedLogin &&
-        savedPassword
-      );
-
-
-    $("modalbox").innerHTML = `
-
-      <h2>
-        🔐 Đăng nhập
-      </h2>
-
-
-      <input
-        id="login"
-        value="${escapeAttr(savedLogin)}"
-        placeholder="Tên đăng nhập hoặc Email">
-
-
-      <input
-        id="pass"
-        type="password"
-        value="${escapeAttr(savedPassword)}"
-        placeholder="Mật khẩu">
-
-
-      <label
-        style="
-          display:flex;
-          align-items:center;
-          gap:8px;
-          margin:6px 0 15px;
-          color:#aeb3ca;
-        ">
-
-        <input
-          id="rememberPassword"
-          type="checkbox"
-          style="
-            width:auto;
-            margin:0;
-          "
-          ${
-            remembered
-            ? "checked"
-            : ""
-          }>
-
+  if(type==="login"){
+    const l=localStorage.getItem("black_saved_login")||"";
+    const p=localStorage.getItem("black_saved_password")||"";
+    $("modalbox").innerHTML=`
+      <h2>🔐 Đăng nhập</h2>
+      <input id="login" value="${escapeAttr(l)}" placeholder="Tên đăng nhập hoặc Email">
+      <input id="pass" type="password" value="${escapeAttr(p)}" placeholder="Mật khẩu">
+      <label style="display:flex;gap:8px;align-items:center;color:#aeb7cc;margin:4px 0 14px">
+        <input id="rememberPassword" type="checkbox" style="width:auto;margin:0" ${l&&p?"checked":""}>
         Nhớ mật khẩu
-
       </label>
-
-
-      <button
-        class="primary"
-        style="width:100%"
-        onclick="doLogin()">
-
-        Đăng nhập
-
-      </button>
-
-
-      <p
-        class="muted">
-
-        Chưa có tài khoản?
-
-        <a
-          href="#"
-          onclick="
-            modal('register');
-            return false;
-          ">
-
-          Đăng ký
-
-        </a>
-
-      </p>
-
-    `;
-
+      <button class="btn primary" style="width:100%" onclick="doLogin()">Đăng nhập</button>
+      <p class="muted">Chưa có tài khoản?
+        <a href="#" onclick="modal('register');return false">Đăng ký</a>
+      </p>`;
   }else{
-
-    $("modalbox").innerHTML = `
-
-      <h2>
-        👤 Đăng ký
-      </h2>
-
-
-      <input
-        id="user"
-        placeholder="Tên đăng nhập">
-
-
-      <input
-        id="contact"
-        placeholder="Số điện thoại hoặc Email">
-
-
-      <input
-        id="pass"
-        type="password"
-        placeholder="Mật khẩu">
-
-
-      <button
-        class="primary"
-        style="width:100%"
-        onclick="doRegister()">
-
-        Tạo tài khoản
-
-      </button>
-
-
-      <p
-        class="muted">
-
-        Mật khẩu tối thiểu 6 ký tự.
-
-      </p>
-
-    `;
-
+    $("modalbox").innerHTML=`
+      <h2>👤 Đăng ký</h2>
+      <input id="user" placeholder="Tên đăng nhập">
+      <input id="contact" placeholder="Số điện thoại hoặc Email">
+      <input id="pass" type="password" placeholder="Mật khẩu">
+      <button class="btn primary" style="width:100%" onclick="doRegister()">Tạo tài khoản</button>
+      <p class="muted">Mật khẩu tối thiểu 6 ký tự.</p>`;
   }
-
-
-  $("modal")
-    .classList
-    .add("show");
-
+  $("modal").classList.add("show");
 }
-
-
-function close(){
-
-  $("modal")
-    .classList
-    .remove("show");
-
-}
-
-
-/* ==================================================
-   LOGIN
-================================================== */
+function close(){ $("modal").classList.remove("show") }
 
 async function doLogin(){
-
-  const login =
-    $("login")
-      .value
-      .trim();
-
-  const password =
-    $("pass")
-      .value;
-
-  const remember =
-    $("rememberPassword")
-      .checked;
-
-
   try{
-
-    const data =
-      await api(
-        "/api/login",
-        {
-          method:"POST",
-          body:{
-            login,
-            password
-          }
-        }
-      );
-
-
-    token =
-      data.token;
-
-
-    localStorage.setItem(
-      "black_token",
-      token
-    );
-
-
+    const login=$("login").value.trim();
+    const password=$("pass").value;
+    const remember=$("rememberPassword").checked;
+    const d=await api("/api/login",{method:"POST",body:{login,password}});
+    token=d.token;
+    localStorage.setItem("black_token",token);
     if(remember){
-
-      localStorage.setItem(
-        "black_saved_login",
-        login
-      );
-
-      localStorage.setItem(
-        "black_saved_password",
-        password
-      );
-
+      localStorage.setItem("black_saved_login",login);
+      localStorage.setItem("black_saved_password",password);
     }else{
-
-      localStorage.removeItem(
-        "black_saved_login"
-      );
-
-      localStorage.removeItem(
-        "black_saved_password"
-      );
-
+      localStorage.removeItem("black_saved_login");
+      localStorage.removeItem("black_saved_password");
     }
-
-
-    close();
-
-    await refresh();
-
-
-  }catch(error){
-
-    alert(
-      error.message
-    );
-
-  }
-
+    close(); await refresh();
+  }catch(e){alert(e.message)}
 }
-
-
-/* ==================================================
-   REGISTER
-================================================== */
 
 async function doRegister(){
-
   try{
-
-    const data =
-      await api(
-        "/api/register",
-        {
-          method:"POST",
-          body:{
-            username:
-              $("user").value,
-            contact:
-              $("contact").value,
-            password:
-              $("pass").value
-          }
-        }
-      );
-
-
-    token =
-      data.token;
-
-
-    localStorage.setItem(
-      "black_token",
-      token
-    );
-
-
-    close();
-
-    await refresh();
-
-
-  }catch(error){
-
-    alert(
-      error.message
-    );
-
-  }
-
+    const d=await api("/api/register",{method:"POST",body:{
+      username:$("user").value,contact:$("contact").value,password:$("pass").value
+    }});
+    token=d.token;
+    localStorage.setItem("black_token",token);
+    close(); await refresh();
+  }catch(e){alert(e.message)}
 }
-
-
-/* ==================================================
-   LOGOUT
-================================================== */
 
 async function logout(){
-
-  try{
-
-    if(token){
-
-      await api(
-        "/api/logout",
-        {
-          method:"POST"
-        }
-      );
-
-    }
-
-  }catch(error){}
-
-
-  token = "";
-
-  localStorage.removeItem(
-    "black_token"
-  );
-
-
-  $("hello").textContent =
-    "";
-
-
-  $("loginBtn")
-    .classList
-    .remove("hide");
-
-
-  $("regBtn")
-    .classList
-    .remove("hide");
-
-
-  $("logoutBtn")
-    .classList
-    .add("hide");
-
-
-  $("adminSection")
-    .classList
-    .add("hide");
-
-
-  $("navAdmin")
-    .classList
-    .add("hide");
-
-
-  $("profile").innerHTML = `
-    <p class="muted">
-      Đăng nhập để xem hồ sơ.
-    </p>
-  `;
-
-
-  await loadBuyHistory();
-
-  await loadTopupHistory();
-
+  try{if(token)await api("/api/logout",{method:"POST"})}catch(e){}
+  token=""; localStorage.removeItem("black_token");
+  $("hello").textContent=""; $("balance").classList.add("hide");
+  $("loginBtn").classList.remove("hide");
+  $("regBtn").classList.remove("hide");
+  $("logoutBtn").classList.add("hide");
+  $("navAdmin").classList.add("hide");
+  $("adminSection").classList.add("hide");
+  await loadProfile(); await loadBuyHistory(); await loadTopupHistory();
 }
-
-
-/* ==================================================
-   REFRESH
-================================================== */
 
 async function refresh(){
-
   try{
-
-    const user =
-      await api(
-        "/api/me"
-      );
-
-
-    $("hello").textContent =
-      `👤 ${user.username} · ${money(user.balance)}`;
-
-
-    $("loginBtn")
-      .classList
-      .add("hide");
-
-
-    $("regBtn")
-      .classList
-      .add("hide");
-
-
-    $("logoutBtn")
-      .classList
-      .remove("hide");
-
-
-    $("profile").innerHTML = `
-
-      <div class="row">
-
-        <span>
-          Tài khoản
-        </span>
-
-        <b>
-          ${escapeHtml(
-            user.username
-          )}
-        </b>
-
-      </div>
-
-
-      <div class="row">
-
-        <span>
-          Liên hệ
-        </span>
-
-        <b>
-          ${escapeHtml(
-            user.contact
-          )}
-        </b>
-
-      </div>
-
-
-      <div class="row">
-
-        <span>
-          Số dư
-        </span>
-
-        <b>
-          ${money(
-            user.balance
-          )}
-        </b>
-
-      </div>
-
-
-      <div class="row">
-
-        <span>
-          Quyền
-        </span>
-
-        <b>
-          ${
-            user.role === "admin"
-            ? "👑 ADMIN"
-            : "👤 USER"
-          }
-        </b>
-
-      </div>
-
-
-      <br>
-
-
-      <button
-        class="danger"
-        onclick="logout()">
-
-        Đăng xuất
-
-      </button>
-
-    `;
-
-
-    if(
-      user.role === "admin"
-    ){
-
-      $("adminSection")
-        .classList
-        .remove("hide");
-
-
-      $("navAdmin")
-        .classList
-        .remove("hide");
-
-
-      await loadAdmin();
-
-    }else{
-
-      $("adminSection")
-        .classList
-        .add("hide");
-
-
-      $("navAdmin")
-        .classList
-        .add("hide");
-
-    }
-
-
+    const u=await api("/api/me");
+    $("hello").textContent=`👤 ${u.username}`;
+    $("balance").textContent=money(u.balance);
+    $("balance").classList.remove("hide");
+    $("loginBtn").classList.add("hide");
+    $("regBtn").classList.add("hide");
+    $("logoutBtn").classList.remove("hide");
+    $("navAdmin").classList.toggle("hide",u.role!=="admin");
+    $("adminSection").classList.toggle("hide",u.role!=="admin");
+    await loadProfile();
     await loadBuyHistory();
-
     await loadTopupHistory();
-
-
-  }catch(error){
-
-    token = "";
-
-    localStorage.removeItem(
-      "black_token"
-    );
-
-    $("loginBtn")
-      .classList
-      .remove("hide");
-
-    $("regBtn")
-      .classList
-      .remove("hide");
-
-    $("logoutBtn")
-      .classList
-      .add("hide");
-
+    if(u.role==="admin"){await loadAdmin();}
+  }catch(e){
+    if(token)token="";
+    localStorage.removeItem("black_token");
   }
-
 }
 
-
-/* ==================================================
-   BUY
-================================================== */
+async function loadProducts(){
+  try{
+    products=await api("/api/products");
+    $("productGrid").innerHTML=products.map(p=>`
+      <div class="card">
+        ${p.image?`<img class="product-img" src="${escapeAttr(p.image)}" alt="">`:`<div class="product-img" style="display:flex;align-items:center;justify-content:center;font-size:46px">🌱</div>`}
+        <div class="tag">GAG2</div>
+        <h3>${escapeHtml(p.name)}</h3>
+        <div class="muted">Grow a Garden 2</div>
+        <div class="price">${money(p.price)} / 1</div>
+        <div class="stock">${Number(p.stock)>0?`Còn ${p.stock}`:"Còn hàng"}</div>
+        <div class="actions"><button class="btn primary" onclick="buy(${p.id})">⚡ Mua ngay</button></div>
+      </div>`).join("")||`<p class="muted">Chưa có sản phẩm.</p>`;
+  }catch(e){$("productGrid").innerHTML=`<p class="muted">Không tải được sản phẩm.</p>`}
+}
 
 function buy(id){
-
-  if(!token){
-
-    modal("login");
-
-    return;
-
-  }
-
-
-  const product =
-    products.find(
-      x => x.id === id
-    );
-
-
-  if(!product){
-
-    alert(
-      "Không tìm thấy sản phẩm."
-    );
-
-    return;
-
-  }
-
-
-  let qty = 1;
-
-
-  $("modalbox").innerHTML = `
-
-    <h3>
-      🛒 ${escapeHtml(
-        product.name
-      )}
-    </h3>
-
-
-    <div
-      style="
-        text-align:center;
-        margin:15px 0;
-      ">
-
-      <b>
-        Số lượng
-      </b>
-
-
-      <div
-        style="
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          gap:18px;
-          margin-top:10px;
-        ">
-
-        <button
-          class="dark"
-          id="qtyMinus"
-          style="
-            width:45px;
-            height:45px;
-            font-size:22px;
-          ">
-
-          −
-
-        </button>
-
-
-        <strong
-          id="qtyValue"
-          style="
-            min-width:30px;
-            font-size:22px;
-          ">
-
-          1
-
-        </strong>
-
-
-        <button
-          class="dark"
-          id="qtyPlus"
-          style="
-            width:45px;
-            height:45px;
-            font-size:22px;
-          ">
-
-          +
-
-        </button>
-
+  if(!token){modal("login");return}
+  const p=products.find(x=>x.id===id);
+  if(!p)return;
+  let qty=1;
+  $("modalbox").innerHTML=`
+    <h3>🛒 ${escapeHtml(p.name)}</h3>
+    <div style="text-align:center">
+      <div>Số lượng</div>
+      <div style="display:flex;justify-content:center;align-items:center;gap:18px;margin:12px 0">
+        <button class="btn dark" id="qm">−</button>
+        <strong id="qv">1</strong>
+        <button class="btn dark" id="qp">+</button>
       </div>
-
     </div>
-
-
-    <b>
-      🎮 Tên tài khoản game
-    </b>
-
-
-    <input
-      id="gameUsername"
-      placeholder="Nhập tên tài khoản game"
-      autocomplete="off">
-
-
-    <p class="muted">
-
-      Tổng:
-
-      <b
-        id="buyTotal">
-
-        ${money(
-          product.price
-        )}
-
-      </b>
-
-    </p>
-
-
-    <button
-      class="primary"
-      id="confirmBuy"
-      style="width:100%">
-
-      ✅ Xác nhận mua
-
-    </button>
-
-
-    <button
-      class="dark"
-      id="cancelBuy"
-      style="
-        width:100%;
-        margin-top:8px;
-      ">
-
-      Hủy
-
-    </button>
-
-  `;
-
-
-  $("modal")
-    .classList
-    .add("show");
-
-
-  function updateQty(){
-
-    $("qtyValue")
-      .textContent =
-      qty;
-
-
-    $("buyTotal")
-      .textContent =
-      money(
-        product.price *
-        qty
-      );
-
-  }
-
-
-  $("qtyMinus").onclick =
-    () => {
-
-      if(qty > 1){
-
-        qty--;
-
-        updateQty();
-
-      }
-
-    };
-
-
-  $("qtyPlus").onclick =
-    () => {
-
-      if(
-        product.stock > 0 &&
-        qty >= product.stock
-      ){
-
-        alert(
-          "Không đủ hàng."
-        );
-
-        return;
-
-      }
-
-
-      qty++;
-
-      updateQty();
-
-    };
-
-
-  $("cancelBuy").onclick =
-    close;
-
-
-  $("confirmBuy").onclick =
-    () => {
-
-      const gameUsername =
-        $("gameUsername")
-          .value
-          .trim();
-
-
-      if(!gameUsername){
-
-        alert(
-          "Vui lòng nhập tên tài khoản game."
-        );
-
-        return;
-
-      }
-
-
-      checkout(
-        [
-          {
-            productId:
-              product.id,
-            qty
-          }
-        ],
-        gameUsername
-      );
-
-    };
-
+    <b>🎮 Tên tài khoản game</b>
+    <input id="gameUsername" placeholder="Nhập tên tài khoản game">
+    <p class="muted">Tổng: <b id="buyTotal">${money(p.price)}</b></p>
+    <button class="btn primary" style="width:100%" onclick="checkout([{productId:${p.id},qty:qtyBuy}],$('gameUsername').value.trim())">✅ Xác nhận mua</button>
+    <button class="btn dark" style="width:100%;margin-top:8px" onclick="close()">Hủy</button>`;
+  window.qtyBuy=qty;
+  $("qm").onclick=()=>{if(qtyBuy>1){qtyBuy--;updateQty()}}
+  $("qp").onclick=()=>{if(p.stock>0&&qtyBuy>=p.stock){alert("Không đủ hàng");return}qtyBuy++;updateQty()}
+  function updateQty(){$("qv").textContent=qtyBuy;$("buyTotal").textContent=money(p.price*qtyBuy)}
+  $("modal").classList.add("show");
 }
-
-
-/* ==================================================
-   CHECKOUT
-================================================== */
-
-async function checkout(
-  items,
-  gameUsername
-){
-
+async function checkout(items,gameUsername){
+  if(!gameUsername){alert("Vui lòng nhập tên tài khoản game.");return}
   try{
-
-    const data =
-      await api(
-        "/api/orders",
-        {
-          method:"POST",
-          body:{
-            items,
-            gameUsername
-          }
-        }
-      );
-
-
-    alert(
-      "Đặt hàng thành công. Mã đơn #" +
-      data.orderId
-    );
-
-
-    close();
-
-
-    await loadProducts();
-
-    await refresh();
-
-
-    showHistory(
-      "buy"
-    );
-
-
-  }catch(error){
-
-    alert(
-      error.message
-    );
-
-  }
-
+    const d=await api("/api/orders",{method:"POST",body:{items,gameUsername}});
+    alert("Đặt hàng thành công. Mã đơn #"+d.orderId);
+    close(); await loadProducts(); await refresh(); showHistory("buy");
+  }catch(e){alert(e.message)}
 }
 
-
-/* ==================================================
-   HISTORY TABS
-================================================== */
+async function loadProfile(){
+  if(!token){
+    $("profileContent").innerHTML=`<div class="card"><p class="muted">Đăng nhập để xem hồ sơ.</p></div>`;
+    return;
+  }
+  try{
+    const u=await api("/api/me");
+    const orders=await api("/api/orders");
+    const topups=await api("/api/topups/history");
+    const spent=orders.reduce((s,o)=>s+Number(o.total||0),0);
+    const credited=topups.reduce((s,t)=>s+Number(t.credited_amount||0),0);
+    $("profileContent").innerHTML=`
+      <div class="stat-grid">
+        <div class="stat green"><small>Số dư ví</small><strong>${money(u.balance)}</strong></div>
+        <div class="stat purple"><small>Đơn hàng</small><strong>${orders.length}</strong></div>
+        <div class="stat yellow"><small>Tổng nạp</small><strong>${money(credited)}</strong></div>
+        <div class="stat"><small>Tổng chi</small><strong>${money(spent)}</strong></div>
+      </div>
+      <div class="profile-grid" style="margin-top:16px">
+        <div class="card">
+          <h3>👤 Thông tin tài khoản</h3>
+          <div class="row"><span>Tài khoản</span><b>${escapeHtml(u.username)}</b></div>
+          <div class="row"><span>Liên hệ</span><b>${escapeHtml(u.contact)}</b></div>
+          <div class="row"><span>Quyền</span><b>${u.role==="admin"?"👑 ADMIN":"👤 USER"}</b></div>
+        </div>
+        <div class="card">
+          <h3>⚡ Thao tác nhanh</h3>
+          <div class="actions">
+            <button class="btn primary" onclick="go('topup')">💳 Nạp tiền</button>
+            <button class="btn dark" onclick="go('history')">📜 Lịch sử</button>
+            <button class="btn dark" onclick="go('shop')">🛍️ Mua hàng</button>
+          </div>
+        </div>
+      </div>`;
+  }catch(e){}
+}
 
 function showHistory(type){
-
-  if(type === "buy"){
-
-    $("buyHistory")
-      .classList
-      .remove("hide");
-
-
-    $("topupHistory")
-      .classList
-      .add("hide");
-
-
-    $("historyBuyBtn")
-      .classList
-      .remove("dark");
-
-    $("historyBuyBtn")
-      .classList
-      .add("primary");
-
-
-    $("historyTopupBtn")
-      .classList
-      .remove("primary");
-
-    $("historyTopupBtn")
-      .classList
-      .add("dark");
-
-
+  if(type==="buy"){
+    $("buyHistory").classList.remove("hide"); $("topupHistory").classList.add("hide");
+    $("buyHistTab").classList.add("on"); $("topHistTab").classList.remove("on");
     loadBuyHistory();
-
   }else{
-
-    $("buyHistory")
-      .classList
-      .add("hide");
-
-
-    $("topupHistory")
-      .classList
-      .remove("hide");
-
-
-    $("historyTopupBtn")
-      .classList
-      .remove("dark");
-
-    $("historyTopupBtn")
-      .classList
-      .add("primary");
-
-
-    $("historyBuyBtn")
-      .classList
-      .remove("primary");
-
-    $("historyBuyBtn")
-      .classList
-      .add("dark");
-
-
+    $("buyHistory").classList.add("hide"); $("topupHistory").classList.remove("hide");
+    $("buyHistTab").classList.remove("on"); $("topHistTab").classList.add("on");
     loadTopupHistory();
-
   }
-
 }
-
-
-/* ==================================================
-   BUY HISTORY
-================================================== */
 
 async function loadBuyHistory(){
-
-  if(!token){
-
-    $("buyHistory").innerHTML = `
-      <p class="muted">
-        Đăng nhập để xem lịch sử mua.
-      </p>
-    `;
-
-    return;
-
-  }
-
-
+  if(!token){$("buyHistory").innerHTML=`<p class="muted">Đăng nhập để xem lịch sử mua.</p>`;return}
   try{
-
-    const orders =
-      await api(
-        "/api/orders"
-      );
-
-
-    if(!orders.length){
-
-      $("buyHistory").innerHTML = `
-        <p class="muted">
-          Chưa có lịch sử mua hàng.
-        </p>
-      `;
-
-      return;
-
-    }
-
-
-    $("buyHistory").innerHTML =
-      orders
-        .map(
-          order => `
-
-          <div
-            class="card"
-            style="
-              margin-bottom:12px;
-            ">
-
-            <div
-              class="row">
-
-              <div>
-
-                <b>
-                  📦 Đơn #${order.id}
-                </b>
-
-                <br>
-
-                <small
-                  class="muted">
-
-                  ${escapeHtml(
-                    order.created_at || ""
-                  )}
-
-                </small>
-
-              </div>
-
-
-              <b>
-                ${money(
-                  order.total
-                )}
-              </b>
-
-            </div>
-
-
-            <div
-              class="row">
-
-              <span>
-                🎮 Tài khoản game
-              </span>
-
-              <b>
-                ${escapeHtml(
-                  order.game_username ||
-                  "-"
-                )}
-              </b>
-
-            </div>
-
-
-            <div
-              style="
-                margin-top:10px;
-              ">
-
-              <b>
-                Sản phẩm
-              </b>
-
-
-              ${
-                (order.items || [])
-                  .map(
-                    item => `
-
-                    <div
-                      class="row">
-
-                      <span>
-                        ${escapeHtml(
-                          item.name
-                        )}
-                      </span>
-
-                      <span>
-                        x${item.qty}
-                      </span>
-
-                    </div>
-
-                    `
-                  )
-                  .join("")
-              }
-
-            </div>
-
-
-            <div
-              style="
-                margin-top:10px;
-              ">
-
-              Trạng thái:
-
-              <span
-                class="
-                  status
-                  ${
-                    order.status ===
-                    "COMPLETED"
-                    ? "status-approved"
-                    :
-                    order.status ===
-                    "CANCELLED"
-                    ? "status-rejected"
-                    :
-                    "status-pending"
-                  }
-                ">
-
-                ${escapeHtml(
-                  order.status
-                )}
-
-              </span>
-
-            </div>
-
-          </div>
-
-          `
-        )
-        .join("");
-
-  }catch(error){
-
-    $("buyHistory").innerHTML = `
-      <p class="muted">
-        Không tải được lịch sử mua.
-      </p>
-    `;
-
-  }
-
+    const a=await api("/api/orders");
+    $("buyHistory").innerHTML=a.length?a.map(o=>`
+      <div class="list">
+        <div class="list-item">
+          <div><b>📦 Đơn #${o.id}</b><br><span class="muted">${escapeHtml(o.created_at||"")}</span></div>
+          <div><b>${money(o.total)}</b><br><span class="status ${o.status==="COMPLETED"?"approved":o.status==="CANCELLED"?"rejected":"pending"}">${escapeHtml(o.status)}</span></div>
+        </div>
+        <div class="muted">🎮 ${escapeHtml(o.game_username||"-")}</div>
+        <div class="muted">${(o.items||[]).map(i=>`${escapeHtml(i.name)} × ${i.qty}`).join(" · ")}</div>
+      </div>`).join(""):`<p class="muted">Chưa có lịch sử mua.</p>`;
+  }catch(e){$("buyHistory").innerHTML=`<p class="muted">Không tải được.</p>`}
 }
 
-
-/* ==================================================
-   TOPUP CARD
-================================================== */
+function showTopupMode(mode){
+  if(mode==="card"){
+    $("topupCardTab").classList.add("on"); $("topupBankTab").classList.remove("on"); topupCard();
+  }else{
+    $("topupBankTab").classList.add("on"); $("topupCardTab").classList.remove("on"); topupBank();
+  }
+}
 
 function topupCard(){
-
-  if(!token){
-
-    modal("login");
-
-    return;
-
-  }
-
-
-  $("topupMsg").innerHTML = `
-
-    <div
-      class="admin-form">
-
-      <h3>
-        💳 Nạp thẻ cào
-      </h3>
-
-
-      <p class="muted">
-
-        Chiết khấu 16%.
-        Khi Admin duyệt,
-        user nhận 84% mệnh giá.
-
-      </p>
-
-
-      <select
-        id="cardProvider">
-
-        <option value="VIETTEL">
-          Viettel
-        </option>
-
-        <option value="VINAPHONE">
-          Vinaphone
-        </option>
-
-        <option value="MOBIFONE">
-          Mobifone
-        </option>
-
-      </select>
-
-
-      <select
-        id="cardValue">
-
-        <option value="10000">
-          10.000đ
-        </option>
-
-        <option value="20000">
-          20.000đ
-        </option>
-
-        <option value="50000">
-          50.000đ
-        </option>
-
-        <option value="100000">
-          100.000đ
-        </option>
-
-        <option value="200000">
-          200.000đ
-        </option>
-
-        <option value="500000">
-          500.000đ
-        </option>
-
-      </select>
-
-
-      <input
-        id="cardSerial"
-        placeholder="Serial">
-
-
-      <input
-        id="cardCode"
-        placeholder="Mã thẻ">
-
-
-      <button
-        class="primary"
-        onclick="sendCard()">
-
-        Gửi thẻ
-
-      </button>
-
-    </div>
-
-  `;
-
+  if(!token){modal("login");return}
+  $("topupArea").innerHTML=`
+    <div class="admin-card">
+      <h3>💳 Nạp thẻ cào</h3>
+      <p class="muted">Chiết khấu 16% — duyệt đúng sẽ cộng 84% mệnh giá.</p>
+      <select id="cardProvider"><option>Viettel</option><option>Vinaphone</option><option>Mobifone</option></select>
+      <select id="cardValue">${[10000,20000,50000,100000,200000,500000].map(x=>`<option value="${x}">${money(x)}</option>`).join("")}</select>
+      <input id="cardSerial" placeholder="Serial">
+      <input id="cardCode" placeholder="Mã thẻ">
+      <button class="btn primary" onclick="sendCard()">Gửi thẻ</button>
+    </div>`;
 }
-
-
-/* ==================================================
-   SEND CARD
-================================================== */
-
 async function sendCard(){
-
   try{
-
-    await api(
-      "/api/topups/card",
-      {
-        method:"POST",
-        body:{
-          provider:
-            $("cardProvider").value,
-
-          value:
-            Number(
-              $("cardValue").value
-            ),
-
-          serial:
-            $("cardSerial")
-              .value
-              .trim(),
-
-          code:
-            $("cardCode")
-              .value
-              .trim()
-        }
-      }
-    );
-
-
-    alert(
-      "Đã gửi thẻ. Chờ Admin kiểm tra."
-    );
-
-
-    $("topupMsg").innerHTML = `
-      <div
-        class="admin-form">
-
-        ✅ Đã gửi yêu cầu nạp thẻ.
-
-        <p class="muted">
-          Xem trạng thái trong
-          "Lịch sử nạp".
-        </p>
-
-      </div>
-    `;
-
-
-    await loadTopupHistory();
-
-  }catch(error){
-
-    alert(
-      error.message
-    );
-
-  }
-
+    await api("/api/topups/card",{method:"POST",body:{
+      provider:$("cardProvider").value,value:Number($("cardValue").value),
+      serial:$("cardSerial").value.trim(),code:$("cardCode").value.trim()
+    }});
+    alert("Đã gửi thẻ, chờ Admin kiểm tra."); await loadTopupHistory(); showHistory("topup");
+  }catch(e){alert(e.message)}
 }
-
-
-/* ==================================================
-   BANK
-   4 QR ĐÚNG THEO MỆNH GIÁ
-================================================== */
 
 async function topupBank(){
-
-  if(!token){
-
-    modal("login");
-
-    return;
-
-  }
-
-
-  try{
-
-    const bank =
-      await api(
-        "/api/bank-info"
-      );
-
-
-    const amounts = [
-      10000,
-      20000,
-      50000,
-      100000
-    ];
-
-
-    $("topupMsg").innerHTML = `
-
-      <div
-        class="admin-form">
-
-        <h3>
-          🏦 Nạp Bank / QR
-        </h3>
-
-
-        <p class="muted">
-          Chọn mệnh giá để hiện đúng QR.
-        </p>
-
-
-        <div
-          class="amount-grid">
-
-          ${
-            amounts
-              .map(
-                amount => `
-
-                <button
-                  class="dark"
-                  onclick="
-                    showBankQR(
-                      ${amount}
-                    )
-                  ">
-
-                  ${money(
-                    amount
-                  )}
-
-                </button>
-
-                `
-              )
-              .join("")
-          }
-
-        </div>
-
-
-        <div
-          id="bankQRContainer">
-
-          <p class="muted">
-            Chọn mệnh giá ở trên.
-          </p>
-
-        </div>
-
+  if(!token){modal("login");return}
+  $("topupArea").innerHTML=`
+    <div class="admin-card">
+      <h3>🏦 Nạp Bank / QR</h3>
+      <p class="muted">Chọn đúng mệnh giá để hiện đúng QR.</p>
+      <div class="amounts">
+        ${[10000,20000,50000,100000].map(a=>`<button class="btn dark" onclick="showQR(${a})">${money(a)}</button>`).join("")}
       </div>
-
-    `;
-
-  }catch(error){
-
-    alert(
-      error.message
-    );
-
-  }
-
+      <div id="qrArea" style="margin-top:12px"><p class="muted">Chọn mệnh giá.</p></div>
+    </div>`;
 }
 
-
-/* ==================================================
-   SHOW BANK QR
-================================================== */
-
-async function showBankQR(
-  amount
-){
-
+async function showQR(amount){
   try{
-
-    const bank =
-      await api(
-        "/api/bank-info"
-      );
-
-
-    const qr =
-      bank.qr &&
-      bank.qr[amount]
-      ?
-      bank.qr[amount]
-      :
-      "";
-
-
-    $("bankQRContainer").innerHTML = `
-
-      <div
-        class="qr-box">
-
-        <h3>
-          🏦 QR ${money(
-            amount
-          )}
-        </h3>
-
-
-        ${
-          qr
-          ?
-          `
-          <img
-            src="${escapeAttr(qr)}"
-            alt="QR ${money(
-              amount
-            )}">
-          `
-          :
-          `
-          <p class="muted">
-            Không tìm thấy QR.
-          </p>
-          `
-        }
-
-
-        <div
-          class="row">
-
-          <span>
-            Số tiền
-          </span>
-
-          <b>
-            ${money(
-              amount
-            )}
-          </b>
-
-        </div>
-
-
-        <div
-          class="row">
-
-          <span>
-            Ngân hàng
-          </span>
-
-          <b>
-            ${escapeHtml(
-              bank.bankName || "-"
-            )}
-          </b>
-
-        </div>
-
-
-        <div
-          class="row">
-
-          <span>
-            STK
-          </span>
-
-          <b>
-            ${escapeHtml(
-              bank.account || "-"
-            )}
-          </b>
-
-        </div>
-
-
-        <div
-          class="row">
-
-          <span>
-            Chủ TK
-          </span>
-
-          <b>
-            ${escapeHtml(
-              bank.accountName || "-"
-            )}
-          </b>
-
-        </div>
-
-
-        <button
-          class="primary"
-          style="
-            width:100%;
-            margin-top:12px;
-          "
-          onclick="
-            submitBank(
-              ${amount}
-            )
-          ">
-
-          ✅ Tôi đã chuyển
-          ${money(amount)}
-
-        </button>
-
-
-        <button
-          class="dark"
-          style="
-            width:100%;
-            margin-top:8px;
-          "
-          onclick="
-            topupBank()
-          ">
-
-          ← Đổi mệnh giá
-
-        </button>
-
-      </div>
-
-    `;
-
-  }catch(error){
-
-    alert(
-      error.message
-    );
-
-  }
-
+    const b=await api("/api/bank-info");
+    const src=b.qr?.[amount]||"";
+    $("qrArea").innerHTML=`
+      <div class="qrbox">
+        <h3>🏦 QR ${money(amount)}</h3>
+        ${src?`<img src="${src}" alt="QR">`:`<p class="muted">Không tìm thấy QR.</p>`}
+        <div class="row"><span>Số tiền</span><b>${money(amount)}</b></div>
+        <div class="row"><span>Ngân hàng</span><b>${escapeHtml(b.bankName||"-")}</b></div>
+        <div class="row"><span>STK</span><b>${escapeHtml(b.account||"-")}</b></div>
+        <div class="row"><span>Chủ TK</span><b>${escapeHtml(b.accountName||"-")}</b></div>
+        <button class="btn primary" style="width:100%;margin-top:12px" onclick="submitBank(${amount})">✅ Tôi đã chuyển ${money(amount)}</button>
+      </div>`;
+  }catch(e){alert(e.message)}
 }
 
-
-/* ==================================================
-   SUBMIT BANK
-================================================== */
-
-async function submitBank(
-  amount
-){
-
+async function submitBank(amount){
   try{
-
-    await api(
-      "/api/topups/bank",
-      {
-        method:"POST",
-        body:{
-          amount
-        }
-      }
-    );
-
-
-    alert(
-      `Đã gửi yêu cầu nạp ${money(
-        amount
-      )}.`
-    );
-
-
-    $("topupMsg").innerHTML = `
-
-      <div
-        class="admin-form">
-
-        <h3>
-          ✅ Đã gửi yêu cầu
-        </h3>
-
-        <p>
-          Số tiền:
-          <b>
-            ${money(
-              amount
-            )}
-          </b>
-        </p>
-
-        <p class="muted">
-          Chờ Admin kiểm tra và duyệt.
-        </p>
-
-      </div>
-
-    `;
-
-
-    await loadTopupHistory();
-
-  }catch(error){
-
-    alert(
-      error.message
-    );
-
-  }
-
+    await api("/api/topups/bank",{method:"POST",body:{amount}});
+    alert("Đã gửi yêu cầu nạp Bank."); await loadTopupHistory(); showHistory("topup");
+  }catch(e){alert(e.message)}
 }
-
-
-/* ==================================================
-   TOPUP HISTORY
-================================================== */
 
 async function loadTopupHistory(){
-
-  if(!token){
-
-    $("topupHistory").innerHTML = `
-      <p class="muted">
-        Đăng nhập để xem lịch sử nạp.
-      </p>
-    `;
-
-    return;
-
-  }
-
-
+  if(!token){$("topupHistory").innerHTML=`<p class="muted">Đăng nhập để xem lịch sử nạp.</p>`;return}
   try{
-
-    const topups =
-      await api(
-        "/api/topups/history"
-      );
-
-
-    if(!topups.length){
-
-      $("topupHistory").innerHTML = `
-        <p class="muted">
-          Chưa có lịch sử nạp.
-        </p>
-      `;
-
-      return;
-
-    }
-
-
-    $("topupHistory").innerHTML =
-      topups
-        .map(
-          topup => `
-
-          <div
-            class="card"
-            style="
-              margin-bottom:12px;
-            ">
-
-            <div
-              class="row">
-
-              <div>
-
-                <b>
-                  💰 Nạp #${topup.id}
-                </b>
-
-                <br>
-
-                <small
-                  class="muted">
-
-                  ${escapeHtml(
-                    topup.created_at || ""
-                  )}
-
-                </small>
-
-              </div>
-
-
-              <b>
-                ${money(
-                  topup.amount
-                )}
-              </b>
-
-            </div>
-
-
-            <div
-              class="row">
-
-              <span>
-                Phương thức
-              </span>
-
-              <b>
-                ${
-                  topup.method === "CARD"
-                  ? "💳 Thẻ cào"
-                  : "🏦 Bank"
-                }
-              </b>
-
-            </div>
-
-
-            <div
-              class="row">
-
-              <span>
-                Số tiền nhận
-              </span>
-
-              <b>
-                ${
-                  topup.credited_amount
-                  ?
-                  money(
-                    topup.credited_amount
-                  )
-                  :
-                  "-"
-                }
-              </b>
-
-            </div>
-
-
-            <div>
-
-              Trạng thái:
-
-              <span
-                class="
-                  status
-                  ${
-                    topup.status ===
-                    "APPROVED"
-                    ? "status-approved"
-                    :
-                    topup.status ===
-                    "REJECTED"
-                    ? "status-rejected"
-                    :
-                    "status-pending"
-                  }
-                ">
-
-                ${
-                  topup.status ===
-                  "APPROVED"
-                  ? "🟢 Thành công"
-                  :
-                  topup.status ===
-                  "REJECTED"
-                  ? "🔴 Từ chối"
-                  :
-                  "🟡 Đang chờ"
-                }
-
-              </span>
-
-            </div>
-
-
-            ${
-              topup.status ===
-              "REJECTED" &&
-              topup.reject_reason
-              ?
-              `
-              <p
-                class="muted">
-
-                Lý do:
-                ${escapeHtml(
-                  topup.reject_reason
-                )}
-
-              </p>
-              `
-              :
-              ""
-            }
-
-          </div>
-
-          `
-        )
-        .join("");
-
-  }catch(error){
-
-    $("topupHistory").innerHTML = `
-      <p class="muted">
-        Không tải được lịch sử nạp.
-      </p>
-    `;
-
-  }
-
+    const a=await api("/api/topups/history");
+    $("topupHistory").innerHTML=a.length?a.map(t=>`
+      <div class="list-item">
+        <div><b>💰 ${t.method==="CARD"?"Nạp thẻ":"Nạp Bank"} #${t.id}</b><br><span class="muted">${escapeHtml(t.created_at||"")}</span></div>
+        <div style="text-align:right"><b>${money(t.amount)}</b><br>
+        <span class="status ${t.status==="APPROVED"?"approved":t.status==="REJECTED"?"rejected":"pending"}">${t.status==="APPROVED"?"Thành công":t.status==="REJECTED"?"Từ chối":"Đang chờ"}</span></div>
+      </div>
+      ${t.status==="REJECTED"&&t.reject_reason?`<div class="muted" style="padding:8px 0">Lý do: ${escapeHtml(t.reject_reason)}</div>`:""}`).join(""):`<p class="muted">Chưa có lịch sử nạp.</p>`;
+  }catch(e){$("topupHistory").innerHTML=`<p class="muted">Không tải được.</p>`}
 }
 
-
-/* ==================================================
-   ADMIN
-================================================== */
-
-let adminData = null;
-
+/* ---------- ADMIN ---------- */
+document.querySelectorAll(".admin-nav .tab").forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll(".admin-nav .tab").forEach(x=>x.classList.remove("on"));
+    document.querySelectorAll(".admin-pane").forEach(x=>x.classList.remove("on"));
+    btn.classList.add("on");
+    $("pane-"+btn.dataset.pane).classList.add("on");
+  };
+});
 
 async function loadAdmin(){
-
   try{
-
-    adminData =
-      await api(
-        "/api/admin/overview"
-      );
-
-
-    renderAdmin();
-
-  }catch(error){
-
-    $("admin").innerHTML = `
-      <p class="muted">
-        Không tải được Admin.
-      </p>
-    `;
-
-  }
-
+    adminData=await api("/api/admin/overview");
+    renderAdminDashboard(); renderAdminProducts(); renderAdminTopups(); renderAdminOrders(); renderAdminUsers();
+  }catch(e){}
 }
 
-
-/* ==================================================
-   RENDER ADMIN
-================================================== */
-
-function renderAdmin(){
-
-  if(!adminData){
-    return;
-  }
-
-
-  $("admin").innerHTML = `
-
-    <!-- CỘNG TIỀN USER -->
-
-    <div
-      class="admin-form">
-
-      <h3>
-        💰 Cộng tiền cho User
-      </h3>
-
-      <p class="muted">
-        Nhập username của user trong shop.
-      </p>
-
-
-      <input
-        id="addBalanceUsername"
-        placeholder="Tên tài khoản user">
-
-
-      <input
-        id="addBalanceAmount"
-        type="number"
-        min="1"
-        step="1000"
-        placeholder="Số tiền muốn cộng">
-
-
-      <button
-        class="primary"
-        style="width:100%"
-        onclick="
-          adminAddBalance()
-        ">
-
-        💰 Cộng tiền
-
-      </button>
-
-
-      <p
-        id="addBalanceMsg"
-        class="muted">
-      </p>
-
+function renderAdminDashboard(){
+  const pendingTopups=adminData.topups.filter(x=>x.status==="PENDING").length;
+  const pendingOrders=adminData.orders.filter(x=>x.status==="PENDING").length;
+  $("pane-dash").innerHTML=`
+    <div class="stat-grid">
+      <div class="stat"><small>Users</small><strong>${adminData.users.length}</strong></div>
+      <div class="stat purple"><small>Sản phẩm</small><strong>${adminData.products.length}</strong></div>
+      <div class="stat yellow"><small>Nạp chờ duyệt</small><strong>${pendingTopups}</strong></div>
+      <div class="stat green"><small>Đơn chờ xử lý</small><strong>${pendingOrders}</strong></div>
     </div>
-
-
-    <!-- THÊM SẢN PHẨM -->
-
-    <div
-      class="admin-form">
-
-      <h3>
-        ➕ Thêm sản phẩm
-      </h3>
-
-
-      <input
-        id="newName"
-        placeholder="Tên sản phẩm">
-
-
-      <input
-        id="newPrice"
-        type="number"
-        min="1"
-        placeholder="Giá">
-
-
-      <input
-        id="newStock"
-        type="number"
-        min="0"
-        placeholder="Số lượng">
-
-
-      <input
-        id="newImage"
-        type="file"
-        accept="image/*">
-
-
-      <button
-        class="primary"
-        style="width:100%"
-        onclick="
-          adminAddProduct()
-        ">
-
-        ➕ Thêm sản phẩm
-
-      </button>
-
-    </div>
-
-
-    <!-- PRODUCTS -->
-
-    <div
-      class="admin-form">
-
-      <h3>
-        🌱 Quản lý sản phẩm
-      </h3>
-
-      <div
-        id="adminProducts">
+    <div class="grid" style="margin-top:14px">
+      <div class="admin-card"><h3>⚡ Thao tác</h3><div class="actions">
+        <button class="btn primary" onclick="switchAdmin('products')">Quản lý sản phẩm</button>
+        <button class="btn dark" onclick="switchAdmin('topups')">Duyệt nạp tiền</button>
+        <button class="btn dark" onclick="switchAdmin('orders')">Xử lý đơn</button>
+      </div></div>
+      <div class="admin-card"><h3>💰 Cộng tiền</h3>
+        <input id="quickUser" placeholder="Username">
+        <input id="quickAmount" type="number" placeholder="Số tiền">
+        <button class="btn primary" onclick="quickAddBalance()">Cộng tiền</button>
       </div>
-
-    </div>
-
-
-    <!-- TOPUPS -->
-
-    <div
-      class="admin-form">
-
-      <h3>
-        💳 / 🏦 Yêu cầu nạp
-      </h3>
-
-      <div
-        id="adminTopups">
-      </div>
-
-    </div>
-
-
-    <!-- ORDERS -->
-
-    <div
-      class="admin-form">
-
-      <h3>
-        📦 Quản lý đơn
-      </h3>
-
-      <div
-        id="adminOrders">
-      </div>
-
-    </div>
-
-
-    <!-- USERS -->
-
-    <div
-      class="admin-form">
-
-      <h3>
-        👥 Danh sách User
-      </h3>
-
-      <div
-        id="adminUsers">
-      </div>
-
-    </div>
-
-  `;
-
-
-  renderAdminProducts();
-
-  renderAdminTopups();
-
-  renderAdminOrders();
-
-  renderAdminUsers();
-
+    </div>`;
 }
-
-
-/* ==================================================
-   ADMIN PRODUCTS
-================================================== */
+function switchAdmin(name){
+  document.querySelectorAll(".admin-nav .tab").forEach(x=>x.classList.toggle("on",x.dataset.pane===name));
+  document.querySelectorAll(".admin-pane").forEach(x=>x.classList.toggle("on",x.id==="pane-"+name));
+}
 
 function renderAdminProducts(){
-
-  if(
-    !adminData.products.length
-  ){
-
-    $("adminProducts").innerHTML = `
-      <p class="muted">
-        Chưa có sản phẩm.
-      </p>
-    `;
-
-    return;
-
-  }
-
-
-  $("adminProducts").innerHTML =
-    adminData.products
-      .map(
-        p => `
-
-        <div
-          class="card"
-          style="
-            margin-bottom:10px;
-          ">
-
-          <div
-            style="
-              display:flex;
-              gap:10px;
-              align-items:center;
-            ">
-
-            ${
-              p.image
-              ?
-              `
-              <img
-                class="admin-img"
-                src="${escapeAttr(
-                  p.image
-                )}"
-                alt="">
-              `
-              :
-              `
-              <div
-                class="admin-img"
-                style="
-                  display:flex;
-                  align-items:center;
-                  justify-content:center;
-                ">
-
-                🌱
-
-              </div>
-              `
-            }
-
-
-            <div>
-
-              <b>
-                ${escapeHtml(
-                  p.name
-                )}
-              </b>
-
-              <br>
-
-              <small
-                class="muted">
-
-                ID #${p.id}
-
-              </small>
-
-            </div>
-
-          </div>
-
-
-          <input
-            id="productName_${p.id}"
-            value="${escapeAttr(
-              p.name
-            )}"
-            placeholder="Tên sản phẩm">
-
-
-          <input
-            id="productPrice_${p.id}"
-            type="number"
-            value="${Number(
-              p.price
-            )}"
-            placeholder="Giá">
-
-
-          <input
-            id="productStock_${p.id}"
-            type="number"
-            value="${Number(
-              p.stock
-            )}"
-            placeholder="Stock">
-
-
-          <input
-            id="productImage_${p.id}"
-            type="file"
-            accept="image/*">
-
-
-          <div
-            class="admin-actions">
-
-            <button
-              class="primary"
-              onclick="
-                adminSaveProduct(
-                  ${p.id}
-                )
-              ">
-
-              💾 Lưu
-
-            </button>
-
-
-            <button
-              class="dark"
-              onclick="
-                adminRemoveImage(
-                  ${p.id}
-                )
-              ">
-
-              🖼️ Xóa ảnh
-
-            </button>
-
-
-            ${
-              p.active
-              ?
-              `
-              <button
-                class="danger"
-                onclick="
-                  adminHide(
-                    ${p.id}
-                  )
-                ">
-
-                Ẩn
-
-              </button>
-              `
-              :
-              `
-              <button
-                class="success"
-                onclick="
-                  adminShow(
-                    ${p.id}
-                  )
-                ">
-
-                Hiện
-
-              </button>
-              `
-            }
-
-          </div>
-
+  $("pane-products").innerHTML=`
+    <div class="admin-card">
+      <h3>➕ Thêm sản phẩm</h3>
+      <input id="newName" placeholder="Tên sản phẩm">
+      <input id="newPrice" type="number" placeholder="Giá">
+      <input id="newStock" type="number" placeholder="Stock">
+      <input id="newImage" type="file" accept="image/*">
+      <button class="btn primary" onclick="adminAddProduct()">Thêm</button>
+    </div>
+    ${adminData.products.map(p=>`
+      <div class="admin-card">
+        <div style="display:flex;gap:10px;align-items:center">
+          ${p.image?`<img class="admin-img" src="${escapeAttr(p.image)}">`:`<div class="admin-img" style="display:flex;align-items:center;justify-content:center">🌱</div>`}
+          <div><b>${escapeHtml(p.name)}</b><div class="muted">${money(p.price)} · stock ${p.stock}</div></div>
         </div>
-
-        `
-      )
-      .join("");
-
+        <input id="pn_${p.id}" value="${escapeAttr(p.name)}">
+        <input id="pp_${p.id}" type="number" value="${p.price}">
+        <input id="ps_${p.id}" type="number" value="${p.stock}">
+        <input id="pi_${p.id}" type="file" accept="image/*">
+        <div class="actions">
+          <button class="btn primary" onclick="saveProduct(${p.id})">💾 Lưu</button>
+          <button class="btn dark" onclick="removeImage(${p.id})">Xóa ảnh</button>
+          ${p.active?`<button class="btn red" onclick="hideProduct(${p.id})">Ẩn</button>`:`<button class="btn green" onclick="showProduct(${p.id})">Hiện</button>`}
+        </div>
+      </div>`).join("")}`;
 }
 
-
-/* ==================================================
-   ADMIN TOPUPS
-================================================== */
+function readImage(file){return new Promise((res,rej)=>{if(!file)return res(null);const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file)})}
+async function adminAddProduct(){
+  try{
+    const img=await readImage($("newImage").files[0]);
+    await api("/api/admin/products",{method:"POST",body:{name:$("newName").value,price:Number($("newPrice").value),stock:Number($("newStock").value||0),image:img}});
+    await loadProducts();await loadAdmin();alert("Đã thêm sản phẩm.");
+  }catch(e){alert(e.message)}
+}
+async function saveProduct(id){
+  try{
+    const body={name:$("pn_"+id).value,price:Number($("pp_"+id).value),stock:Number($("ps_"+id).value)};
+    const img=await readImage($("pi_"+id).files[0]); if(img)body.image=img;
+    await api(`/api/admin/products/${id}`,{method:"PATCH",body});
+    await loadProducts();await loadAdmin();alert("Đã lưu.");
+  }catch(e){alert(e.message)}
+}
+async function removeImage(id){if(!confirm("Xóa ảnh?"))return;try{await api(`/api/admin/products/${id}/remove-image`,{method:"POST"});await loadProducts();await loadAdmin()}catch(e){alert(e.message)}}
+async function hideProduct(id){try{await api(`/api/admin/products/${id}/hide`,{method:"POST"});await loadProducts();await loadAdmin()}catch(e){alert(e.message)}}
+async function showProduct(id){try{await api(`/api/admin/products/${id}/show`,{method:"POST"});await loadProducts();await loadAdmin()}catch(e){alert(e.message)}}
 
 function renderAdminTopups(){
-
-  if(
-    !adminData.topups.length
-  ){
-
-    $("adminTopups").innerHTML = `
-      <p class="muted">
-        Chưa có yêu cầu nạp.
-      </p>
-    `;
-
-    return;
-
-  }
-
-
-  $("adminTopups").innerHTML =
-    adminData.topups
-      .map(
-        t => `
-
-        <div
-          class="card"
-          style="
-            margin-bottom:10px;
-          ">
-
-          <b>
-            #${t.id}
-            ·
-            ${escapeHtml(
-              t.username
-            )}
-          </b>
-
-
-          <p
-            class="muted">
-
-            ${
-              t.method === "CARD"
-              ? "💳 Thẻ cào"
-              : "🏦 Bank"
-            }
-
-            ·
-
-            ${money(
-              t.amount
-            )}
-
-          </p>
-
-
-          ${
-            t.method === "CARD"
-            ?
-            `
-
-            <p>
-              Nhà mạng:
-              <b>
-                ${escapeHtml(
-                  t.provider || ""
-                )}
-              </b>
-            </p>
-
-            <p>
-              Serial:
-              <b>
-                ${escapeHtml(
-                  t.serial || ""
-                )}
-              </b>
-            </p>
-
-            <p>
-              Mã thẻ:
-              <b>
-                ${escapeHtml(
-                  t.code || ""
-                )}
-              </b>
-            </p>
-
-            <p
-              class="muted">
-
-              Nếu đúng:
-              user nhận
-
-              <b>
-                ${money(
-                  Math.floor(
-                    t.amount * 0.84
-                  )
-                )}
-              </b>
-
-              (84%)
-
-            </p>
-
-            `
-            :
-            `
-            <p
-              class="muted">
-
-              Bank duyệt:
-              user nhận đủ
-
-              <b>
-                ${money(
-                  t.amount
-                )}
-              </b>
-
-            </p>
-
-            `
-          }
-
-
-          <div>
-
-            Trạng thái:
-
-            <span
-              class="
-                status
-                ${
-                  t.status ===
-                  "APPROVED"
-                  ? "status-approved"
-                  :
-                  t.status ===
-                  "REJECTED"
-                  ? "status-rejected"
-                  :
-                  "status-pending"
-                }
-              ">
-
-              ${
-                t.status ===
-                "APPROVED"
-                ? "🟢 Thành công"
-                :
-                t.status ===
-                "REJECTED"
-                ? "🔴 Từ chối"
-                :
-                "🟡 Đang chờ"
-              }
-
-            </span>
-
-          </div>
-
-
-          ${
-            t.status ===
-            "PENDING"
-            ?
-            `
-
-            <div
-              class="admin-actions"
-              style="
-                margin-top:10px;
-              ">
-
-              <button
-                class="success"
-                onclick="
-                  adminApproveTopup(
-                    ${t.id}
-                  )
-                ">
-
-                ✅ Duyệt
-
-              </button>
-
-
-              <button
-                class="danger"
-                onclick="
-                  adminRejectTopup(
-                    ${t.id}
-                  )
-                ">
-
-                ❌ Từ chối / Thẻ sai
-
-              </button>
-
-            </div>
-
-            `
-            :
-            ""
-          }
-
-
-          ${
-            t.status ===
-            "REJECTED" &&
-            t.reject_reason
-            ?
-            `
-            <p
-              class="muted">
-
-              Lý do:
-              ${escapeHtml(
-                t.reject_reason
-              )}
-
-            </p>
-            `
-            :
-            ""
-          }
-
-        </div>
-
-        `
-      )
-      .join("");
-
+  $("pane-topups").innerHTML=adminData.topups.map(t=>`
+    <div class="admin-card">
+      <b>#${t.id} · ${escapeHtml(t.username)}</b>
+      <div class="muted">${t.method==="CARD"?"💳 Card":"🏦 Bank"} · ${money(t.amount)}</div>
+      ${t.method==="CARD"?`<p>Provider: <b>${escapeHtml(t.provider||"")}</b><br>Serial: <b>${escapeHtml(t.serial||"")}</b><br>Mã: <b>${escapeHtml(t.code||"")}</b></p>`:""}
+      <div>Trạng thái: <span class="status ${t.status==="APPROVED"?"approved":t.status==="REJECTED"?"rejected":"pending"}">${t.status}</span></div>
+      ${t.status==="PENDING"?`<div class="actions"><button class="btn green" onclick="approveTopup(${t.id})">✅ Duyệt</button><button class="btn red" onclick="rejectTopup(${t.id})">❌ Từ chối</button></div>`:""}
+    </div>`).join("")||`<p class="muted">Không có yêu cầu.</p>`;
 }
-
-
-/* ==================================================
-   ADMIN ORDERS
-================================================== */
+async function approveTopup(id){try{const d=await api(`/api/admin/topups/${id}/approve`,{method:"POST"});alert("Đã cộng "+money(d.creditedAmount));await loadAdmin();await loadTopupHistory()}catch(e){alert(e.message)}}
+async function rejectTopup(id){const reason=prompt("Lý do từ chối","Thẻ sai hoặc giao dịch không hợp lệ.");if(reason===null)return;try{await api(`/api/admin/topups/${id}/reject`,{method:"POST",body:{reason}});await loadAdmin();await loadTopupHistory()}catch(e){alert(e.message)}}
 
 function renderAdminOrders(){
-
-  if(
-    !adminData.orders.length
-  ){
-
-    $("adminOrders").innerHTML = `
-      <p class="muted">
-        Chưa có đơn.
-      </p>
-    `;
-
-    return;
-
-  }
-
-
-  $("adminOrders").innerHTML =
-    adminData.orders
-      .map(
-        o => `
-
-        <div
-          class="card"
-          style="
-            margin-bottom:10px;
-          ">
-
-          <b>
-            📦 Đơn #${o.id}
-          </b>
-
-
-          <p>
-            User:
-            <b>
-              ${escapeHtml(
-                o.username
-              )}
-            </b>
-          </p>
-
-
-          <p>
-            Game:
-            <b>
-              ${escapeHtml(
-                o.game_username ||
-                "-"
-              )}
-            </b>
-          </p>
-
-
-          <p>
-            Tổng:
-            <b>
-              ${money(
-                o.total
-              )}
-            </b>
-          </p>
-
-
-          <p
-            class="muted">
-
-            ${
-              (o.items || [])
-                .map(
-                  item =>
-                    `${escapeHtml(
-                      item.name
-                    )} × ${item.qty}`
-                )
-                .join(", ")
-            }
-
-          </p>
-
-
-          <select
-            id="orderStatus_${o.id}">
-
-            <option
-              value="PENDING"
-              ${
-                o.status ===
-                "PENDING"
-                ? "selected"
-                : ""
-              }>
-
-              PENDING
-
-            </option>
-
-
-            <option
-              value="PROCESSING"
-              ${
-                o.status ===
-                "PROCESSING"
-                ? "selected"
-                : ""
-              }>
-
-              PROCESSING
-
-            </option>
-
-
-            <option
-              value="COMPLETED"
-              ${
-                o.status ===
-                "COMPLETED"
-                ? "selected"
-                : ""
-              }>
-
-              COMPLETED
-
-            </option>
-
-
-            <option
-              value="CANCELLED"
-              ${
-                o.status ===
-                "CANCELLED"
-                ? "selected"
-                : ""
-              }>
-
-              CANCELLED
-
-            </option>
-
-          </select>
-
-
-          <button
-            class="primary"
-            onclick="
-              adminOrderStatus(
-                ${o.id}
-              )
-            ">
-
-            Cập nhật đơn
-
-          </button>
-
-        </div>
-
-        `
-      )
-      .join("");
-
+  $("pane-orders").innerHTML=adminData.orders.map(o=>`
+    <div class="admin-card">
+      <b>📦 #${o.id} · ${escapeHtml(o.username)}</b>
+      <div class="muted">Game: ${escapeHtml(o.game_username||"-")}</div>
+      <div class="muted">Tổng: ${money(o.total)}</div>
+      <div class="muted">${(o.items||[]).map(i=>`${escapeHtml(i.name)} × ${i.qty}`).join(", ")}</div>
+      <select id="os_${o.id}">${["PENDING","PROCESSING","COMPLETED","CANCELLED"].map(s=>`<option ${s===o.status?"selected":""}>${s}</option>`).join("")}</select>
+      <button class="btn primary" onclick="updateOrder(${o.id})">Lưu</button>
+    </div>`).join("")||`<p class="muted">Chưa có đơn.</p>`;
 }
-
-
-/* ==================================================
-   ADMIN USERS
-================================================== */
+async function updateOrder(id){try{await api(`/api/admin/orders/${id}/status`,{method:"POST",body:{status:$("os_"+id).value}});await loadAdmin();await loadBuyHistory()}catch(e){alert(e.message)}}
 
 function renderAdminUsers(){
-
-  if(
-    !adminData.users.length
-  ){
-
-    $("adminUsers").innerHTML = `
-      <p class="muted">
-        Chưa có user.
-      </p>
-    `;
-
-    return;
-
-  }
-
-
-  $("adminUsers").innerHTML =
-    adminData.users
-      .map(
-        user => `
-
-        <div
-          class="row">
-
-          <span>
-
-            <b>
-              ${escapeHtml(
-                user.username
-              )}
-            </b>
-
-            <br>
-
-            <small
-              class="muted">
-
-              ${escapeHtml(
-                user.contact
-              )}
-
-            </small>
-
-          </span>
-
-
-          <b>
-            ${money(
-              user.balance
-            )}
-          </b>
-
-        </div>
-
-        `
-      )
-      .join("");
-
+  $("pane-users").innerHTML=`
+    <div class="admin-card"><h3>💰 Cộng tiền</h3>
+      <input id="uUser" placeholder="Username">
+      <input id="uAmount" type="number" placeholder="Số tiền">
+      <button class="btn primary" onclick="quickAddBalance()">Cộng</button>
+    </div>
+    ${adminData.users.map(u=>`
+      <div class="row"><span><b>${escapeHtml(u.username)}</b><br><small class="muted">${escapeHtml(u.contact)}</small></span><b>${money(u.balance)}</b></div>`).join("")}`;
+}
+async function quickAddBalance(){
+  const username=$("quickUser")?.value||$("uUser")?.value;
+  const amount=Number($("quickAmount")?.value||$("uAmount")?.value||0);
+  if(!username||amount<=0){alert("Nhập username và số tiền.");return}
+  if(!confirm(`Cộng ${money(amount)} cho ${username}?`))return;
+  try{const d=await api("/api/admin/users/add-balance",{method:"POST",body:{username,amount}});alert("Đã cộng "+money(d.added));await loadAdmin();await refresh()}catch(e){alert(e.message)}
 }
 
+$("modal").addEventListener("click",e=>{if(e.target===$("modal"))close()});
 
-/* ==================================================
-   READ IMAGE
-================================================== */
-
-function readImage(file){
-
-  return new Promise(
-    (resolve,reject)=>{
-
-      if(!file){
-
-        resolve(
-          null
-        );
-
-        return;
-
-      }
-
-
-      if(
-        !file.type.startsWith(
-          "image/"
-        )
-      ){
-
-        reject(
-          new Error(
-            "File phải là hình ảnh."
-          )
-        );
-
-        return;
-
-      }
-
-
-      const reader =
-        new FileReader();
-
-
-      reader.onload =
-        () =>
-        resolve(
-          reader.result
-        );
-
-
-      reader.onerror =
-        () =>
-        reject(
-          new Error(
-            "Không đọc được ảnh."
-          )
-        );
-
-
-      reader.readAsDataURL(
-        file
-      );
-
-    }
-  );
-
-}
-
-
-/* ==================================================
-   ADMIN ADD PRODUCT
-================================================== */
-
-async function adminAddProduct(){
-
-  try{
-
-    const image =
-      await readImage(
-        $("newImage")
-          .files[0]
-      );
-
-
-    await api(
-      "/api/admin/products",
-      {
-        method:"POST",
-
-        body:{
-          name:
-            $("newName")
-              .value
-              .trim(),
-
-          price:
-            Number(
-              $("newPrice")
-                .value
-            ),
-
-          stock:
-            Number(
-              $("newStock")
-                .value || 0
-            ),
-
-          image
-
-        }
-      }
-    );
-
-
-    alert(
-      "✅ Đã thêm sản phẩm."
-    );
-
-
-    await loadProducts();
-
-    await loadAdmin();
-
-
-  }catch(error){
-
-    alert(
-      error.message
-    );
-
-  }
-
-}
-
-
-/* ==================================================
-   ADMIN SAVE PRODUCT
-================================================== */
-
-async function adminSaveProduct(id){
-
-  try{
-
-    const body = {
-
-      name:
-        $("productName_" + id)
-          .value
-          .trim(),
-
-      price:
-        Number(
-          $("productPrice_" + id)
-            .value
-        ),
-
-      stock:
-        Number(
-          $("productStock_" + id)
-            .value
-        )
-
-    };
-
-
-    const file =
-      $("productImage_" + id)
-        .files[0];
-
-
-    if(file){
-
-      body.image =
-        await readImage(
-          file
-        );
-
-    }
-
-
-    await api(
-      `/api/admin/products/${id}`,
-      {
-        method:"PATCH",
-        body
-      }
-    );
-
-
-    alert(
-      "✅ Đã lưu. Giá và ảnh vẫn được giữ trong database."
-    );
-
-
-    await loadProducts();
-
-    await loadAdmin();
-
-
-  }catch(error){
-
-    alert(
-      error.message
-    );
-
-  }
-
-}
-
-
-/* ==================================================
-   ADMIN REMOVE IMAGE
-================================================== */
-
-async function adminRemoveImage(
-  id
-){
-
-  if(
-    !confirm(
-      "Xóa ảnh sản phẩm này?"
-    )
-  ){
-
-    return;
-
-  }
-
-
-  try{
-
-    await api(
-      `/api/admin/products/${id}/remove-image`,
-      {
-        method:"POST"
-      }
-    );
-
-
-    await loadProducts();
-
-    await loadAdmin();
-
-
-  }catch(error){
-
-    alert(
-      error.message
-    );
-
-  }
-
-}
-
-
-/* ==================================================
-   ADMIN HIDE
-================================================== */
-
-async function adminHide(
-  id
-){
-
-  try{
-
-    await api(
-      `/api/admin/products/${id}/hide`,
-      {
-        method:"POST"
-      }
-    );
-
-
-    await loadProducts();
-
-    await loadAdmin();
-
-
-  }catch(error){
-
-    alert(
-      error.message
-    );
-
-  }
-
-}
-
-
-/* ==================================================
-   ADMIN SHOW
-================================================== */
-
-async function adminShow(
-  id
-){
-
-  try{
-
-    await api(
-      `/api/admin/products/${id}/show`,
-      {
-        method:"POST"
-      }
-    );
-
-
-    await loadProducts();
-
-    await loadAdmin();
-
-
-  }catch(error){
-
-    alert(
-      error.message
-    );
-
-  }
-
-}
-
-
-/* ==================================================
-   ADMIN APPROVE TOPUP
-================================================== */
-
-async function adminApproveTopup(
-  id
-){
-
-  if(
-    !confirm(
-      "Xác nhận giao dịch đúng và duyệt tiền?"
-    )
-  ){
-
-    return;
-
-  }
-
-
-  try{
-
-    const data =
-      await api(
-        `/api/admin/topups/${id}/approve`,
-        {
-          method:"POST"
-        }
-      );
-
-
-    alert(
-      "✅ Đã duyệt. Cộng " +
-      money(
-        data.creditedAmount
-      ) +
-      " cho user."
-    );
-
-
-    await loadAdmin();
-
-  }catch(error){
-
-    alert(
-      error.message
-    );
-
-  }
-
-}
-
-
-/* ==================================================
-   ADMIN REJECT TOPUP
-================================================== */
-
-async function adminRejectTopup(
-  id
-){
-
-  const reason =
-    prompt(
-      "Lý do từ chối / thẻ sai:",
-      "Thẻ sai hoặc giao dịch không hợp lệ."
-    );
-
-
-  if(reason === null){
-
-    return;
-
-  }
-
-
-  try{
-
-    await api(
-      `/api/admin/topups/${id}/reject`,
-      {
-        method:"POST",
-        body:{
-          reason
-        }
-      }
-    );
-
-
-    alert(
-      "❌ Đã từ chối. Không cộng tiền."
-    );
-
-
-    await loadAdmin();
-
-    await loadTopupHistory();
-
-
-  }catch(error){
-
-    alert(
-      error.message
-    );
-
-  }
-
-}
-
-
-/* ==================================================
-   ADMIN ADD BALANCE
-================================================== */
-
-async function adminAddBalance(){
-
-  const username =
-    $("addBalanceUsername")
-      .value
-      .trim();
-
-
-  const amount =
-    Math.floor(
-      Number(
-        $("addBalanceAmount")
-          .value
-      ) || 0
-    );
-
-
-  if(!username){
-
-    alert(
-      "Nhập tên tài khoản user."
-    );
-
-    return;
-
-  }
-
-
-  if(amount <= 0){
-
-    alert(
-      "Số tiền không hợp lệ."
-    );
-
-    return;
-
-  }
-
-
-  if(
-    !confirm(
-      `Cộng ${money(
-        amount
-      )} cho ${username}?`
-    )
-  ){
-
-    return;
-
-  }
-
-
-  try{
-
-    const data =
-      await api(
-        "/api/admin/users/add-balance",
-        {
-          method:"POST",
-          body:{
-            username,
-            amount
-          }
-        }
-      );
-
-
-    $("addBalanceMsg").innerHTML = `
-
-      ✅ Đã cộng
-
-      <b>
-        ${money(
-          data.added
-        )}
-      </b>
-
-      cho
-
-      <b>
-        ${escapeHtml(
-          data.username
-        )}
-      </b>.
-
-      <br>
-
-      Số dư cũ:
-      ${money(
-        data.oldBalance
-      )}
-
-      <br>
-
-      Số dư mới:
-
-      <b>
-        ${money(
-          data.newBalance
-        )}
-      </b>
-
-    `;
-
-
-    $("addBalanceUsername")
-      .value = "";
-
-    $("addBalanceAmount")
-      .value = "";
-
-
-    await loadAdmin();
-
-
-  }catch(error){
-
-    alert(
-      error.message
-    );
-
-  }
-
-}
-
-
-/* ==================================================
-   ADMIN ORDER STATUS
-================================================== */
-
-async function adminOrderStatus(
-  id
-){
-
-  try{
-
-    const status =
-      $("orderStatus_" + id)
-        .value;
-
-
-    await api(
-      `/api/admin/orders/${id}/status`,
-      {
-        method:"POST",
-        body:{
-          status
-        }
-      }
-    );
-
-
-    alert(
-      "✅ Đã cập nhật đơn."
-    );
-
-
-    await loadAdmin();
-
-    await loadBuyHistory();
-
-
-  }catch(error){
-
-    alert(
-      error.message
-    );
-
-  }
-
-}
-
-
-/* ==================================================
-   ADMIN LOGIN
-================================================== */
-
-function adminLogin(){
-
-  if(!token){
-
-    modal("login");
-
-    return;
-
-  }
-
-
-  scrollToId(
-    "adminSection"
-  );
-
-}
-
-
-/* ==================================================
-   CLOSE MODAL
-================================================== */
-
-$("modal")
-  .addEventListener(
-    "click",
-    event => {
-
-      if(
-        event.target ===
-        $("modal")
-      ){
-
-        close();
-
-      }
-
-    }
-  );
-
-
-/* ==================================================
-   INIT
-================================================== */
-
-(async function(){
-
-  await loadProducts();
-
-
-  if(token){
-
-    await refresh();
-
-  }else{
-
-    $("buyHistory").innerHTML = `
-      <p class="muted">
-        Đăng nhập để xem lịch sử mua.
-      </p>
-    `;
-
-    $("topupHistory").innerHTML = `
-      <p class="muted">
-        Đăng nhập để xem lịch sử nạp.
-      </p>
-    `;
-
-  }
-
-})();
-
+(async()=>{await loadProducts();if(token)await refresh();else{await loadProfile();await loadBuyHistory();await loadTopupHistory()}})();
 </script>
-
 </body>
-
 </html>
-```
-
-### 4 QR phải đặt đúng 4 file
-
-```text
-public/
-├── index.html
-├── qr-10k.png
-├── qr-20k.png
-├── qr-50k.png
-└── qr-100k.png
-```
-
-Thứ tự đúng theo 4 ảnh mày vừa gửi là **10k → 20k → 50k → 100k**.
-
-**Không xóa `black_gag2.db`**. Giá, ảnh sản phẩm, user, số dư, đơn hàng và lịch sử cũ đều nằm trong DB đó.
