@@ -1,1 +1,13 @@
-{ "name": "black-gag2-shop", "version": "1.0.0", "private": true, "main": "server.js", "scripts": { "start": "node server.js" }, "engines": { "node": ">=20" }, "dependencies": { "express": "^5.1.0", "bcryptjs": "^3.0.2", "pg": "^8.16.3", "better-sqlite3": "^11.10.0" } }
+{
+"name": "black-gag2-shop",
+"version": "1.0.0",
+"description": "BLACK GAG2 SHOP",
+"main": "server.js",
+"scripts": {
+"start": "node server.js"
+},
+"dependencies": {
+"better-sqlite3": "^11.7.0",
+"express": "^4.21.2"
+}
+}
