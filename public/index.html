@@ -1,56 +1,638 @@
-let token = localStorage.getItem("black_token") || "";
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>BLACK GAG2 SHOP</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+margin:0;
+background:#070a13;
+color:white;
+}
+
+
+.top{
+position:sticky;
+top:0;
+z-index:99;
+background:#080b15ee;
+border-bottom:1px solid #252b45;
+}
+
+
+.nav{
+max-width:1200px;
+margin:auto;
+padding:15px;
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+
+.logo{
+font-size:22px;
+font-weight:900;
+margin-right:auto;
+}
+
+
+.logo span{
+color:#8b5cff;
+}
+
+
+button{
+cursor:pointer;
+border:0;
+border-radius:12px;
+padding:10px 15px;
+font-weight:bold;
+}
+
+
+.btn{
+background:#151b30;
+color:white;
+}
+
+
+.primary{
+background:linear-gradient(90deg,#7655ff,#b05cff);
+color:white;
+}
+
+
+.hide{
+display:none!important;
+}
+
+
+.balance{
+background:#10372b;
+color:#5cffb1;
+padding:10px 14px;
+border-radius:12px;
+font-weight:bold;
+}
+
+
+
+.wrap{
+max-width:1200px;
+margin:auto;
+padding:25px 15px 100px;
+}
+
+
+
+.hero{
+
+background:
+radial-gradient(circle at top right,#45236e,#111629);
+
+padding:35px;
+
+border-radius:25px;
+
+border:1px solid #252b45;
+
+}
+
+
+.hero h1{
+
+font-size:60px;
+
+margin:15px 0;
+
+}
+
+
+.gradient{
+
+background:linear-gradient(90deg,#806cff,#e26cff);
+
+-webkit-background-clip:text;
+
+color:transparent;
+
+}
+
+
+
+.card{
+
+background:#101625;
+
+border:1px solid #252b45;
+
+border-radius:20px;
+
+padding:18px;
+
+margin-top:20px;
+
+}
+
+
+
+.grid{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(230px,1fr));
+
+gap:15px;
+
+}
+
+
+
+.product{
+
+background:#0d1322;
+
+border:1px solid #252b45;
+
+border-radius:18px;
+
+padding:15px;
+
+}
+
+
+
+.product img{
+
+width:100%;
+
+height:180px;
+
+object-fit:cover;
+
+border-radius:15px;
+
+}
+
+
+
+.price{
+
+font-size:22px;
+
+font-weight:bold;
+
+color:#7cffc1;
+
+margin:10px 0;
+
+}
+
+
+
+input,select{
+
+width:100%;
+
+background:#090e1b;
+
+color:white;
+
+border:1px solid #303957;
+
+border-radius:10px;
+
+padding:12px;
+
+margin:6px 0;
+
+}
+
+
+
+.modal{
+
+display:none;
+
+position:fixed;
+
+inset:0;
+
+background:#000b;
+
+align-items:center;
+
+justify-content:center;
+
+z-index:200;
+
+}
+
+
+
+.modal.show{
+
+display:flex;
+
+}
+
+
+
+.modal-box{
+
+width:400px;
+
+max-width:95%;
+
+background:#101625;
+
+padding:20px;
+
+border-radius:20px;
+
+border:1px solid #333d60;
+
+}
+
+
+
+.admin-box{
+
+background:#0c1220;
+
+padding:15px;
+
+border-radius:15px;
+
+border:1px solid #252b45;
+
+margin-top:15px;
+
+}
+
+
+
+.bottom{
+
+position:fixed;
+
+bottom:10px;
+
+left:50%;
+
+transform:translateX(-50%);
+
+background:#0d1220ee;
+
+border:1px solid #252b45;
+
+border-radius:18px;
+
+padding:8px;
+
+display:flex;
+
+gap:5px;
+
+z-index:100;
+
+}
+
+
+
+.bottom button{
+
+background:none;
+
+color:#aaa;
+
+}
+
+
+
+.bottom button:hover{
+
+background:#33235d;
+
+color:white;
+
+}
+
+
+
+@media(max-width:600px){
+
+.hero h1{
+
+font-size:40px;
+
+}
+
+}
+
+
+</style>
+
+</head><body>
+
+<div class="top">
+
+<div class="nav">
+
+<div class="logo">
+🎮 <span>BLACK</span> GAG2 SHOP
+</div>
+
+
+<div id="hello"></div>
+
+
+<div id="balance" class="balance hide">
+0đ
+</div>
+
+
+<button id="loginBtn" class="btn" onclick="openLogin()">
+Đăng nhập
+</button>
+
+
+<button id="regBtn" class="primary" onclick="openRegister()">
+Đăng ký
+</button>
+
+
+<button id="logoutBtn" class="btn hide" onclick="logout()">
+Đăng xuất
+</button>
+
+
+</div>
+
+</div>
+
+
+
+<div class="wrap">
+
+
+<section class="hero">
+
+<h3>GROW A GARDEN 2</h3>
+
+<h1>
+Mua bán GAG2
+<br>
+<span class="gradient">
+Nhanh & tiện
+</span>
+</h1>
+
+
+<p>
+BLACK GAG2 SHOP - Shop game, nạp tiền, mua vật phẩm.
+</p>
+
+
+<button class="primary" onclick="goShop()">
+🛒 Xem Shop
+</button>
+
+
+</section>
+
+
+
+
+
+<section class="card">
+
+
+<h2>
+🛍️ Sản phẩm
+</h2>
+
+
+<div id="productGrid" class="grid">
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+<section class="card">
+
+
+<h2>
+💰 Nạp tiền
+</h2>
+
+
+<button class="primary" onclick="topupCard()">
+💳 Thẻ cào
+</button>
+
+
+<button class="btn" onclick="topupBank()">
+🏦 Bank QR
+</button>
+
+
+
+<div id="topupArea">
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+<section class="card">
+
+
+<h2>
+👤 Hồ sơ
+</h2>
+
+
+<div id="profile">
+
+Vui lòng đăng nhập
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+
+<section id="adminSection" class="card hide">
+
+
+<h2>
+👑 ADMIN CENTER
+</h2>
+
+
+
+<button class="primary" onclick="loadAdmin()">
+Tải dữ liệu
+</button>
+
+
+
+
+<div id="adminContent">
+
+
+</div>
+
+
+
+</section>
+
+
+
+
+</div>
+
+
+
+
+
+
+
+<div class="bottom">
+
+
+<button onclick="goShop()">
+🏠<br>
+Shop
+</button>
+
+
+
+<button onclick="topupCard()">
+💳<br>
+Nạp
+</button>
+
+
+
+<button onclick="showProfile()">
+👤<br>
+Hồ sơ
+</button>
+
+
+
+<button id="adminBtn" class="hide" onclick="showAdmin()">
+👑<br>
+Admin
+</button>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<!-- LOGIN MODAL -->
+
+<div id="modal" class="modal">
+
+
+<div class="modal-box" id="modalBox">
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+<script>let token = localStorage.getItem("black_token") || "";
 
 let products = [];
-
-let adminData = {};
 
 const $ = id => document.getElementById(id);
 
 
-const money = n =>
-Number(n || 0).toLocaleString("vi-VN") + "đ";
+function money(n){
+    return Number(n || 0).toLocaleString("vi-VN")+"đ";
+}
 
 
 
 async function api(url,opt={}){
 
-
-opt.headers={
-...(opt.headers||{}),
-...(token ? {
-Authorization:"Bearer "+token
-}: {})
-};
-
+    opt.headers = {
+        ...(opt.headers || {}),
+        ...(token ? {
+            Authorization:"Bearer "+token
+        }: {})
+    };
 
 
-if(opt.body){
+    if(opt.body){
 
-opt.headers["Content-Type"]="application/json";
+        opt.headers["Content-Type"]="application/json";
 
-opt.body=JSON.stringify(opt.body);
+        opt.body=JSON.stringify(opt.body);
 
-}
-
-
-
-const res = await fetch(url,opt);
+    }
 
 
-const data = await res.json().catch(()=>({}));
+    let res = await fetch(url,opt);
+
+    let data = await res.json().catch(()=>({}));
 
 
-if(!res.ok){
+    if(!res.ok){
 
-throw Error(
-data.message || "Có lỗi"
-);
+        throw Error(data.message || "Có lỗi");
 
-}
+    }
 
 
-return data;
-
+    return data;
 
 }
 
@@ -58,31 +640,63 @@ return data;
 
 
 
-async function doLogin(){
+
+// =======================
+// ĐĂNG NHẬP
+// =======================
+
+
+function openLogin(){
+
+
+$("modalBox").innerHTML=`
+
+<h2>🔐 Đăng nhập</h2>
+
+
+<input id="loginUser" placeholder="Tên tài khoản">
+
+
+<input id="loginPass" type="password" placeholder="Mật khẩu">
+
+
+<button class="primary" onclick="login()">
+Đăng nhập
+</button>
+
+`;
+
+$("modal").classList.add("show");
+
+
+}
+
+
+
+
+
+async function login(){
 
 
 try{
 
 
-const login =
-document.getElementById("login").value.trim();
+let username=$("loginUser").value;
 
-
-const password =
-document.getElementById("pass").value;
+let password=$("loginPass").value;
 
 
 
-const data = await api(
-"/api/login",
-{
+let data=await api("/api/login",{
+
 method:"POST",
+
 body:{
-login,
+username,
 password
 }
-}
-);
+
+});
 
 
 
@@ -96,7 +710,7 @@ token
 
 
 
-close();
+closeModal();
 
 
 await refresh();
@@ -105,18 +719,126 @@ await refresh();
 
 }catch(e){
 
+alert(e.message);
+
+}
+
+
+}
+
+
+
+
+
+
+
+// =======================
+// ĐĂNG KÝ
+// =======================
+
+
+function openRegister(){
+
+
+$("modalBox").innerHTML=`
+
+<h2>👤 Đăng ký</h2>
+
+
+<input id="regUser" placeholder="Tên tài khoản">
+
+
+<input id="regContact" placeholder="Email / SĐT">
+
+
+<input id="regPass" type="password" placeholder="Mật khẩu">
+
+
+<button class="primary" onclick="register()">
+Tạo tài khoản
+</button>
+
+
+`;
+
+$("modal").classList.add("show");
+
+}
+
+
+
+
+
+async function register(){
+
+
+try{
+
+
+let data=await api("/api/register",{
+
+method:"POST",
+
+body:{
+
+username:$("regUser").value,
+
+contact:$("regContact").value,
+
+password:$("regPass").value
+
+}
+
+
+});
+
+
+
+token=data.token;
+
+
+localStorage.setItem(
+"black_token",
+token
+);
+
+
+
+closeModal();
+
+
+refresh();
+
+
+}catch(e){
 
 alert(e.message);
 
+}
 
 }
 
 
 
+
+
+
+
+function closeModal(){
+
+$("modal").classList.remove("show");
+
 }
 
 
 
+
+
+
+
+// =======================
+// LOAD USER
+// =======================
 
 
 async function refresh(){
@@ -125,67 +847,48 @@ async function refresh(){
 try{
 
 
-const data = await api("/api/me");
+let data=await api("/api/me");
 
 
-const u=data.user;
-
-
-
-document.getElementById("hello").innerHTML =
-"👤 "+u.username;
+let u=data.user;
 
 
 
-document.getElementById("balance").innerHTML =
-money(u.balance);
+$("hello").innerHTML="👤 "+u.username;
+
+
+$("balance").innerHTML=money(u.balance);
+
+
+$("balance").classList.remove("hide");
+
+
+$("loginBtn").classList.add("hide");
+
+
+$("regBtn").classList.add("hide");
+
+
+$("logoutBtn").classList.remove("hide");
 
 
 
-document.getElementById("balance")
-.classList.remove("hide");
+
+if(u.username==="blackadmin"){
 
 
-
-document.getElementById("loginBtn")
-.classList.add("hide");
+$("adminBtn").classList.remove("hide");
 
 
-document.getElementById("regBtn")
-.classList.add("hide");
-
-
-document.getElementById("logoutBtn")
-.classList.remove("hide");
-
-
-
-if(u.role==="admin"){
-
-
-document.getElementById("navAdmin")
-.classList.remove("hide");
-
-
-document.getElementById("adminSection")
-.classList.remove("hide");
-
-
-await loadAdmin();
-
-
-}else{
-
-
-document.getElementById("navAdmin")
-.classList.add("hide");
-
-
-document.getElementById("adminSection")
-.classList.add("hide");
+$("adminSection").classList.remove("hide");
 
 
 }
+
+
+
+
+loadProfile();
 
 
 
@@ -193,7 +896,6 @@ document.getElementById("adminSection")
 
 
 token="";
-
 
 localStorage.removeItem(
 "black_token"
@@ -204,83 +906,77 @@ localStorage.removeItem(
 
 
 
-}// =========================
+}
+
+
+
+
+
+
+
+
+// =======================
 // LOAD PRODUCTS
-// =========================
+// =======================
+
 
 async function loadProducts(){
+
 
 try{
 
 
-const data = await api("/api/products");
+let data=await api("/api/products");
 
 
 products=data.products;
 
 
 
-document.getElementById("productGrid").innerHTML =
-
+$("productGrid").innerHTML=
 products.map(p=>`
 
-<div class="card">
+
+<div class="product">
 
 
 ${p.image ?
 
-`<img class="product-img" src="${p.image}">`
+`<img src="${p.image}">`
 
 :
 
-`<div class="product-img"
-style="
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:50px">
-🌱
-</div>`
+`🌱`
 
 }
 
 
 
-<h3>${p.name}</h3>
+<h3>
+${p.name}
+</h3>
 
-
-<p class="muted">
-Grow a Garden 2
-</p>
 
 
 <div class="price">
-
 ${money(p.price)}
-
-</div>
-
-
-<div class="stock">
-
-Còn: ${p.stock}
-
 </div>
 
 
 
-<div class="actions">
+<p>
+Kho: ${p.stock}
+</p>
 
 
-<button class="btn primary"
+
+<button class="primary"
 onclick="buy(${p.id})">
 
 ⚡ Mua ngay
 
 </button>
 
-
-</div>
 
 
 </div>
@@ -292,14 +988,7 @@ onclick="buy(${p.id})">
 
 }catch(e){
 
-
-document.getElementById("productGrid").innerHTML=
-`
-<p class="muted">
-Không tải được sản phẩm
-</p>
-`;
-
+console.log(e);
 
 }
 
@@ -310,9 +999,11 @@ Không tải được sản phẩm
 
 
 
-// =========================
-// BUY PRODUCT
-// =========================
+
+
+// =======================
+// MUA HÀNG
+// =======================
 
 
 function buy(id){
@@ -320,70 +1011,38 @@ function buy(id){
 
 if(!token){
 
-modal("login");
+openLogin();
 
 return;
 
 }
 
 
-
-const p =
-products.find(x=>x.id===id);
+let p=products.find(x=>x.id===id);
 
 
 
-if(!p)return;
-
-
-
-let qty=1;
-
-
-
-document.getElementById("modalbox").innerHTML=
-
-`
+$("modalBox").innerHTML=`
 
 <h2>
 🛒 ${p.name}
 </h2>
 
 
-<p>
-Giá:
-<b>${money(p.price)}</b>
-</p>
 
-
-
-<label>
-Số lượng
-</label>
-
-
-<input 
-id="buyQty"
+<input id="buyQty"
 type="number"
 value="1"
 min="1">
 
 
 
-<label>
-Tên tài khoản game
-</label>
-
-
-<input 
-id="gameName"
+<input id="gameName"
 placeholder="Tên Roblox">
 
 
 
-<button 
-class="btn primary"
-style="width:100%"
+<button class="primary"
 onclick="checkout(${p.id})">
 
 Xác nhận mua
@@ -391,23 +1050,11 @@ Xác nhận mua
 </button>
 
 
-
-<button 
-class="btn dark"
-style="width:100%;margin-top:10px"
-onclick="close()">
-
-Hủy
-
-</button>
-
 `;
 
 
 
-document
-.getElementById("modal")
-.classList.add("show");
+$("modal").classList.add("show");
 
 
 }
@@ -416,51 +1063,26 @@ document
 
 
 
-async function checkout(productId){
+
+async function checkout(id){
 
 
 try{
 
 
-const qty =
-Number(
-document.getElementById("buyQty").value
-);
+await api("/api/orders",{
 
-
-
-const game =
-document.getElementById("gameName").value.trim();
-
-
-
-if(!game){
-
-alert("Nhập tên game");
-
-return;
-
-}
-
-
-
-await api(
-"/api/orders",
-{
 method:"POST",
-body:{
 
+body:{
 
 items:[{
 
-product_id:productId,
+product_id:id,
 
-quantity:qty
+quantity:Number($("buyQty").value)
 
-}],
-
-
-gameUsername:game
+}]
 
 
 }
@@ -469,58 +1091,50 @@ gameUsername:game
 
 
 
-alert(
-"Mua hàng thành công"
-);
+alert("Mua thành công");
 
 
-
-close();
-
-
-await loadProducts();
+closeModal();
 
 
-await refresh();
+loadProducts();
+
+
+refresh();
 
 
 
 }catch(e){
 
-
 alert(e.message);
-
 
 }
 
 
-}// =========================
+}
+// =======================
 // TOPUP CARD
-// =========================
+// =======================
 
 function topupCard(){
 
 if(!token){
-
-modal("login");
+openLogin();
 return;
-
 }
 
 
-document.getElementById("topupArea").innerHTML=`
+$("topupArea").innerHTML=`
 
-<div class="admin-card">
+<div class="admin-box">
 
 <h3>💳 Nạp thẻ cào</h3>
 
 
 <select id="provider">
-
 <option>Viettel</option>
 <option>Mobifone</option>
 <option>Vinaphone</option>
-
 </select>
 
 
@@ -536,21 +1150,15 @@ document.getElementById("topupArea").innerHTML=`
 
 
 
-<input id="serial"
-placeholder="Serial">
+<input id="serial" placeholder="Serial">
+
+
+<input id="code" placeholder="Mã thẻ">
 
 
 
-<input id="code"
-placeholder="Mã thẻ">
-
-
-
-<button class="btn primary"
-onclick="sendCard()">
-
+<button class="primary" onclick="sendCard()">
 Gửi thẻ
-
 </button>
 
 
@@ -562,48 +1170,33 @@ Gửi thẻ
 
 
 
-// GỬI THẺ
 
 async function sendCard(){
 
 try{
 
 
-await api(
-"/api/topups/card",
-{
+await api("/api/topups/card",{
 
 method:"POST",
 
 body:{
 
-provider:
-document.getElementById("provider").value,
+provider:$("provider").value,
 
+value:Number($("cardValue").value),
 
-value:
-Number(
-document.getElementById("cardValue").value
-),
+serial:$("serial").value,
 
-
-serial:
-document.getElementById("serial").value,
-
-
-code:
-document.getElementById("code").value
-
+code:$("code").value
 
 }
 
 });
 
 
-alert(
-"Đã gửi thẻ chờ duyệt"
-);
 
+alert("Đã gửi thẻ chờ duyệt");
 
 
 }catch(e){
@@ -612,61 +1205,63 @@ alert(e.message);
 
 }
 
-
 }
 
 
 
 
 
-// =========================
+
+// =======================
 // BANK QR
-// =========================
+// =======================
 
 
-async function topupBank(){
+function topupBank(){
+
 
 if(!token){
 
-modal("login");
+openLogin();
 
 return;
 
 }
 
 
-document.getElementById("topupArea").innerHTML=`
 
-<div class="admin-card">
+$("topupArea").innerHTML=`
+
+<div class="admin-box">
+
 
 <h3>🏦 Nạp Bank QR</h3>
 
 
-<button class="btn dark"
-onclick="showQR(10000)">
+<button class="btn" onclick="showQR(10000)">
 10.000đ
 </button>
 
 
-<button class="btn dark"
-onclick="showQR(20000)">
+<button class="btn" onclick="showQR(20000)">
 20.000đ
 </button>
 
 
-<button class="btn dark"
-onclick="showQR(50000)">
+<button class="btn" onclick="showQR(50000)">
 50.000đ
 </button>
 
 
-<button class="btn dark"
-onclick="showQR(100000)">
+<button class="btn" onclick="showQR(100000)">
 100.000đ
 </button>
 
 
-<div id="qrArea"></div>
+
+<div id="qrArea">
+
+</div>
 
 
 </div>
@@ -678,57 +1273,37 @@ onclick="showQR(100000)">
 
 
 
-
 async function showQR(amount){
+
 
 try{
 
 
-const data =
-await api("/api/bank-info");
+let data=await api("/api/bank-info");
 
 
 
-document.getElementById("qrArea").innerHTML=`
+$("qrArea").innerHTML=`
 
-<div class="qrbox">
-
-
-<h3>
-QR ${money(amount)}
-</h3>
-
-
-
-<img src="
-${data.qr[amount]}
-">
-
+<h3>QR ${money(amount)}</h3>
 
 
 <p>
-Ngân hàng:
-<b>${data.bankName}</b>
+Ngân hàng: ${data.bankName || ""}
 </p>
-
 
 
 <p>
-STK:
-<b>${data.account}</b>
+STK: ${data.account || ""}
 </p>
-
 
 
 <p>
-Chủ TK:
-<b>${data.accountName}</b>
+Chủ TK: ${data.accountName || ""}
 </p>
 
 
-
-<button
-class="btn primary"
+<button class="primary"
 onclick="submitBank(${amount})">
 
 Tôi đã chuyển
@@ -736,9 +1311,8 @@ Tôi đã chuyển
 </button>
 
 
-</div>
-
 `;
+
 
 
 }catch(e){
@@ -756,12 +1330,11 @@ alert(e.message);
 
 async function submitBank(amount){
 
+
 try{
 
 
-await api(
-"/api/topups/bank",
-{
+await api("/api/topups/bank",{
 
 method:"POST",
 
@@ -773,10 +1346,7 @@ amount
 
 
 
-alert(
-"Đã gửi yêu cầu nạp"
-);
-
+alert("Đã gửi yêu cầu nạp");
 
 
 }catch(e){
@@ -792,14 +1362,19 @@ alert(e.message);
 
 
 
-// =========================
-// TOPUP HISTORY
-// =========================
 
 
-async function loadTopupHistory(){
+// =======================
+// PROFILE
+// =======================
+
+
+async function loadProfile(){
+
 
 if(!token){
+
+$("profile").innerHTML="Vui lòng đăng nhập";
 
 return;
 
@@ -809,120 +1384,100 @@ return;
 try{
 
 
-const data =
-await api("/api/topups/history");
+let data=await api("/api/me");
+
+let u=data.user;
 
 
+$("profile").innerHTML=`
 
-document.getElementById("topupHistory").innerHTML =
-
-
-data.map(t=>`
-
-<div class="list-item">
-
-<b>
-${t.method}
-</b>
+<h3>
+👤 ${u.username}
+</h3>
 
 
-<span>
-
-${money(t.amount)}
-
-<br>
-
-${t.status}
-
-</span>
+<p>
+Liên hệ: ${u.contact}
+</p>
 
 
-</div>
+<p>
+Số dư: ${money(u.balance)}
+</p>
 
 
-`).join("");
+<p>
+Quyền:
+${u.username==="blackadmin"
+?"👑 ADMIN"
+:"USER"}
+
+</p>
+
+`;
 
 
 
 }catch(e){}
 
 
-} // =========================
-// LOAD ADMIN
-// =========================
+}
+
+
+
+
+
+
+function showProfile(){
+
+$("profile").scrollIntoView();
+
+}
+
+
+
+
+
+
+// =======================
+// ADMIN
+// =======================
+
+
+function showAdmin(){
+
+$("adminSection").scrollIntoView();
+
+}
+
+
+
+
 
 async function loadAdmin(){
+
 
 try{
 
 
-const users =
-await api("/api/admin/users");
+let users=await api("/api/admin/users");
 
+let products=await api("/api/admin/products");
 
-const products =
-await api("/api/admin/products");
-
-
-const topups =
-await api("/api/admin/topups");
-
-
-const orders =
-await api("/api/admin/orders");
+let topups=await api("/api/admin/topups");
 
 
 
-adminData={
-
-users:users.users,
-
-products:products.products,
-
-topups:topups.topups,
-
-orders:orders.orders
-
-};
-
-
-
-renderAdmin();
-
-
-}catch(e){
-
-console.log(e.message);
-
-}
-
-
-}
-
-
-
-
-
-function renderAdmin(){
-
-
-document.getElementById("pane-users").innerHTML=
-
-`
+$("adminContent").innerHTML=`
 
 <h3>👥 Users</h3>
 
-${adminData.users.map(u=>`
 
-<div class="admin-card">
+${users.users.map(u=>`
 
+<div class="admin-box">
 
 <b>${u.username}</b>
-
-<p>
-${u.contact}
-</p>
-
 
 <p>
 Số dư:
@@ -930,14 +1485,12 @@ ${money(u.balance)}
 </p>
 
 
-<input 
-id="money_${u.id}"
+<input id="money${u.id}"
 type="number"
 placeholder="Số tiền">
 
 
-<button
-class="btn primary"
+<button class="primary"
 onclick="addMoney(${u.id})">
 
 Cộng tiền
@@ -950,62 +1503,14 @@ Cộng tiền
 
 `).join("")}
 
-`;
 
 
+<h3>💰 Nạp chờ duyệt</h3>
 
 
+${topups.topups.map(t=>`
 
-document.getElementById("pane-products").innerHTML=
-
-`
-
-<h3>📦 Sản phẩm</h3>
-
-
-${adminData.products.map(p=>`
-
-<div class="admin-card">
-
-
-<b>${p.name}</b>
-
-
-<p>
-${money(p.price)}
-</p>
-
-
-<p>
-Kho: ${p.stock}
-</p>
-
-
-
-</div>
-
-
-`).join("")}
-
-`;
-
-
-
-
-
-
-
-document.getElementById("pane-topups").innerHTML=
-
-`
-
-<h3>💰 Nạp tiền chờ duyệt</h3>
-
-
-${adminData.topups.map(t=>`
-
-<div class="admin-card">
-
+<div class="admin-box">
 
 <b>
 ${t.username}
@@ -1019,23 +1524,7 @@ ${money(t.amount)}
 </p>
 
 
-
-<p>
-Trạng thái:
-${t.status}
-</p>
-
-
-
-${
-t.status==="pending"
-
-?
-
-`
-
-<button
-class="btn green"
+<button class="primary"
 onclick="approveTopup(${t.id})">
 
 Duyệt
@@ -1043,23 +1532,14 @@ Duyệt
 </button>
 
 
-<button
-class="btn red"
+
+<button class="btn"
 onclick="rejectTopup(${t.id})">
 
 Từ chối
 
 </button>
 
-`
-
-:
-
-""
-
-}
-
-
 
 </div>
 
@@ -1068,107 +1548,6 @@ Từ chối
 
 
 `;
-
-
-
-
-
-
-document.getElementById("pane-orders").innerHTML=
-
-`
-
-<h3>📦 Đơn hàng</h3>
-
-
-${adminData.orders.map(o=>`
-
-<div class="admin-card">
-
-<b>
-Đơn #${o.id}
-</b>
-
-
-<p>
-User:
-${o.username}
-</p>
-
-
-<p>
-${money(o.total)}
-</p>
-
-
-</div>
-
-
-`).join("")}
-
-
-`;
-
-
-
-}
-
-
-
-
-
-
-
-// =========================
-// ADD BALANCE
-// =========================
-
-
-async function addMoney(id){
-
-
-const amount =
-Number(
-document.getElementById(
-"money_"+id
-).value
-);
-
-
-
-const user =
-adminData.users.find(
-x=>x.id===id
-);
-
-
-
-try{
-
-
-await api(
-"/api/admin/users/add-balance",
-{
-
-method:"POST",
-
-body:{
-
-username:user.username,
-
-amount
-
-}
-
-});
-
-
-alert(
-"Đã cộng tiền"
-);
-
-
-await loadAdmin();
 
 
 
@@ -1186,14 +1565,45 @@ alert(e.message);
 
 
 
-// =========================
-// APPROVE TOPUP
-// =========================
+async function addMoney(id){
+
+
+let user=prompt("Username");
+
+
+let amount=Number(
+prompt("Số tiền")
+);
+
+
+
+await api("/api/admin/users/add-balance",{
+
+method:"POST",
+
+body:{
+username:user,
+amount
+}
+
+});
+
+
+alert("Đã cộng tiền");
+
+
+loadAdmin();
+
+
+}
+
+
+
+
+
 
 
 async function approveTopup(id){
-
-try{
 
 
 await api(
@@ -1204,20 +1614,11 @@ method:"POST"
 );
 
 
-alert(
-"Đã duyệt"
-);
+
+alert("Đã duyệt");
 
 
-await loadAdmin();
-
-
-
-}catch(e){
-
-alert(e.message);
-
-}
+loadAdmin();
 
 
 }
@@ -1229,9 +1630,6 @@ alert(e.message);
 async function rejectTopup(id){
 
 
-try{
-
-
 await api(
 `/api/admin/topups/${id}/reject`,
 {
@@ -1241,37 +1639,34 @@ method:"POST"
 
 
 
-alert(
-"Đã từ chối"
-);
+alert("Đã từ chối");
 
 
+loadAdmin();
 
-await loadAdmin();
-
-
-
-}catch(e){
-
-alert(e.message);
 
 }
 
 
-}// =========================
+
+
+
+
+
+// =======================
 // LOGOUT
-// =========================
+// =======================
+
 
 async function logout(){
 
+
 try{
 
-await api(
-"/api/logout",
-{
+
+await api("/api/logout",{
 method:"POST"
-}
-);
+});
 
 
 }catch(e){}
@@ -1286,118 +1681,7 @@ localStorage.removeItem(
 );
 
 
-
-document.getElementById("hello").innerHTML="";
-
-document.getElementById("balance")
-.classList.add("hide");
-
-
-document.getElementById("loginBtn")
-.classList.remove("hide");
-
-
-document.getElementById("regBtn")
-.classList.remove("hide");
-
-
-document.getElementById("logoutBtn")
-.classList.add("hide");
-
-
-
-document.getElementById("navAdmin")
-.classList.add("hide");
-
-
-document.getElementById("adminSection")
-.classList.add("hide");
-
-
-}
-
-
-
-// =========================
-// PROFILE
-// =========================
-
-async function loadProfile(){
-
-
-if(!token){
-
-document.getElementById("profileContent").innerHTML=
-
-`
-
-<div class="card">
-
-<p>
-Vui lòng đăng nhập
-</p>
-
-</div>
-
-`;
-
-return;
-
-}
-
-
-
-try{
-
-
-const data =
-await api("/api/me");
-
-
-const u=data.user;
-
-
-
-document.getElementById("profileContent").innerHTML=
-
-`
-
-<div class="card">
-
-
-<h3>
-👤 ${u.username}
-</h3>
-
-
-<p>
-Liên hệ:
-${u.contact}
-</p>
-
-
-
-<p>
-Số dư:
-<b>${money(u.balance)}</b>
-</p>
-
-
-
-<p>
-Quyền:
-${u.role==="admin"?"👑 ADMIN":"USER"}
-</p>
-
-
-</div>
-
-`;
-
-
-
-}catch(e){}
-
+location.reload();
 
 
 }
@@ -1406,46 +1690,23 @@ ${u.role==="admin"?"👑 ADMIN":"USER"}
 
 
 
-// =========================
-// MODAL CLOSE
-// =========================
 
 
-function close(){
-
-document.getElementById("modal")
-.classList.remove("show");
-
-}
-
-
-
-
-document
-.getElementById("modal")
-.addEventListener(
-"click",
-e=>{
-
-if(
-e.target.id==="modal"
-){
-
-close();
-
-}
-
-}
-);
-
-
-
-
-
-
-// =========================
+// =======================
 // START
-// =========================
+// =======================
+
+
+$("modal").onclick=e=>{
+
+if(e.target.id==="modal"){
+
+closeModal();
+
+}
+
+};
+
 
 
 (async()=>{
@@ -1454,17 +1715,18 @@ close();
 await loadProducts();
 
 
-
 if(token){
 
 await refresh();
 
-}else{
-
-await loadProfile();
-
 }
 
 
-
 })();
+
+</script>
+
+
+</body>
+
+</html>
