@@ -10,10 +10,14 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 /* ==================================================
-   DATABASE PATH
-   - Trên Render: đặt DB_PATH = đường dẫn Persistent Disk
-   - Ví dụ: /var/data/black_gag2.db
-   - Không biết mount path thì xem phần Disk của Render
+   DATABASE
+   Trên Render:
+   đặt biến môi trường DB_PATH nếu dùng Persistent Disk.
+   Ví dụ:
+   /var/data/black_gag2.db
+
+   Nếu chưa đặt DB_PATH:
+   dùng black_gag2.db trong project.
 ================================================== */
 
 const DEFAULT_DB_PATH =
@@ -21,47 +25,8 @@ const DEFAULT_DB_PATH =
 
 const DB_PATH =
   process.env.DB_PATH
-  ? path.resolve(process.env.DB_PATH)
-  : DEFAULT_DB_PATH;
-
-
-/* ==================================================
-   MIGRATE DATABASE CŨ NẾU CÓ
-   Nếu DB_PATH mới chưa có mà database cũ nằm cạnh
-   server.js thì copy database cũ sang nơi mới.
-================================================== */
-
-if (
-  DB_PATH !== DEFAULT_DB_PATH &&
-  !fs.existsSync(DB_PATH) &&
-  fs.existsSync(DEFAULT_DB_PATH)
-) {
-
-  const parent =
-    path.dirname(DB_PATH);
-
-  fs.mkdirSync(
-    parent,
-    {
-      recursive: true
-    }
-  );
-
-  fs.copyFileSync(
-    DEFAULT_DB_PATH,
-    DB_PATH
-  );
-
-  console.log(
-    "Đã copy database cũ sang:",
-    DB_PATH
-  );
-}
-
-
-/* ==================================================
-   TẠO THƯ MỤC DATABASE
-================================================== */
+    ? path.resolve(process.env.DB_PATH)
+    : DEFAULT_DB_PATH;
 
 fs.mkdirSync(
   path.dirname(DB_PATH),
@@ -70,19 +35,27 @@ fs.mkdirSync(
   }
 );
 
+let db;
 
-/* ==================================================
-   OPEN DATABASE
-================================================== */
+try {
+  db = new Database(DB_PATH);
 
-const db =
-  new Database(
+  db.pragma("journal_mode = WAL");
+
+  console.log(
+    "Database:",
     DB_PATH
   );
 
-db.pragma(
-  "journal_mode = WAL"
-);
+} catch (error) {
+
+  console.error(
+    "Không mở được SQLite database:",
+    error
+  );
+
+  process.exit(1);
+}
 
 
 /* ==================================================
@@ -101,126 +74,71 @@ const ADMIN_PASSWORD =
 ================================================== */
 
 db.exec(`
-
 CREATE TABLE IF NOT EXISTS users(
-
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-
   username TEXT UNIQUE NOT NULL,
-
   contact TEXT NOT NULL,
-
   password_hash TEXT NOT NULL,
-
   balance INTEGER NOT NULL DEFAULT 0,
-
   role TEXT NOT NULL DEFAULT 'user',
-
-  created_at TEXT NOT NULL
-    DEFAULT CURRENT_TIMESTAMP
-
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-
 
 CREATE TABLE IF NOT EXISTS products(
-
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-
   name TEXT NOT NULL,
-
   price INTEGER NOT NULL,
-
   stock INTEGER NOT NULL DEFAULT 0,
-
   active INTEGER NOT NULL DEFAULT 1,
-
   image TEXT
-
 );
-
 
 CREATE TABLE IF NOT EXISTS orders(
-
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-
   user_id INTEGER NOT NULL,
-
   total INTEGER NOT NULL,
-
-  status TEXT NOT NULL
-    DEFAULT 'PENDING',
-
+  status TEXT NOT NULL DEFAULT 'PENDING',
   game_username TEXT,
-
-  created_at TEXT NOT NULL
-    DEFAULT CURRENT_TIMESTAMP
-
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-
 
 CREATE TABLE IF NOT EXISTS order_items(
-
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-
   order_id INTEGER NOT NULL,
-
   product_id INTEGER NOT NULL,
-
   qty INTEGER NOT NULL,
-
   unit_price INTEGER NOT NULL
-
 );
-
 
 CREATE TABLE IF NOT EXISTS topups(
-
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-
   user_id INTEGER NOT NULL,
-
   method TEXT NOT NULL,
-
   amount INTEGER NOT NULL,
-
-  status TEXT NOT NULL
-    DEFAULT 'PENDING',
-
+  status TEXT NOT NULL DEFAULT 'PENDING',
   provider_ref TEXT,
-
   credited_amount INTEGER,
-
   reject_reason TEXT,
-
-  created_at TEXT NOT NULL
-    DEFAULT CURRENT_TIMESTAMP
-
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-
 
 CREATE TABLE IF NOT EXISTS sessions(
-
   token TEXT PRIMARY KEY,
-
   user_id INTEGER NOT NULL,
-
-  created_at TEXT NOT NULL
-    DEFAULT CURRENT_TIMESTAMP
-
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-
 `);
 
 
 /* ==================================================
-   ADD MISSING COLUMNS
+   ADD COLUMN FOR OLD DATABASE
 ================================================== */
 
 function addColumnIfMissing(
   table,
   column,
   definition
-){
+) {
 
   const columns =
     db
@@ -229,11 +147,12 @@ function addColumnIfMissing(
       )
       .all();
 
-  if (
-    !columns.some(
+  const exists =
+    columns.some(
       x => x.name === column
-    )
-  ){
+    );
+
+  if (!exists) {
 
     db.exec(`
       ALTER TABLE ${table}
@@ -241,42 +160,52 @@ function addColumnIfMissing(
     `);
 
     console.log(
-      `Đã thêm cột ${table}.${column}`
+      `Added column ${table}.${column}`
     );
 
   }
-
 }
 
 
-addColumnIfMissing(
-  "products",
-  "image",
-  "TEXT"
-);
+try {
 
-addColumnIfMissing(
-  "orders",
-  "game_username",
-  "TEXT"
-);
+  addColumnIfMissing(
+    "products",
+    "image",
+    "TEXT"
+  );
 
-addColumnIfMissing(
-  "topups",
-  "credited_amount",
-  "INTEGER"
-);
+  addColumnIfMissing(
+    "orders",
+    "game_username",
+    "TEXT"
+  );
 
-addColumnIfMissing(
-  "topups",
-  "reject_reason",
-  "TEXT"
-);
+  addColumnIfMissing(
+    "topups",
+    "credited_amount",
+    "INTEGER"
+  );
+
+  addColumnIfMissing(
+    "topups",
+    "reject_reason",
+    "TEXT"
+  );
+
+} catch (error) {
+
+  console.error(
+    "Lỗi cập nhật database:",
+    error
+  );
+
+  process.exit(1);
+}
 
 
 /* ==================================================
    DEFAULT PRODUCTS
-   CHỈ TẠO KHI DATABASE THẬT SỰ CHƯA CÓ SP
 ================================================== */
 
 const productCount =
@@ -287,10 +216,7 @@ const productCount =
     .get()
     .c;
 
-
-if (
-  productCount === 0
-){
+if (productCount === 0) {
 
   const insert =
     db.prepare(`
@@ -302,17 +228,10 @@ if (
         active,
         image
       )
-      VALUES(
-        ?,
-        ?,
-        ?,
-        1,
-        NULL
-      )
+      VALUES (?, ?, ?, 1, NULL)
     `);
 
-
-  const defaults = [
+  const defaultProducts = [
 
     [
       "Dragon Breath Seed",
@@ -370,13 +289,12 @@ if (
 
   ];
 
-
   for (
-    const p of defaults
-  ){
+    const product of defaultProducts
+  ) {
 
     insert.run(
-      ...p
+      ...product
     );
 
   }
@@ -385,10 +303,10 @@ if (
 
 
 /* ==================================================
-   CREATE / SYNC ADMIN
+   CREATE ADMIN
 ================================================== */
 
-function createAdmin(){
+function createAdmin() {
 
   const hash =
     bcrypt.hashSync(
@@ -396,12 +314,10 @@ function createAdmin(){
       12
     );
 
-
   const admin =
     db
       .prepare(`
-        SELECT
-          id
+        SELECT id
         FROM users
         WHERE username=?
       `)
@@ -409,8 +325,7 @@ function createAdmin(){
         ADMIN_USERNAME
       );
 
-
-  if (!admin){
+  if (!admin) {
 
     db.prepare(`
       INSERT INTO users
@@ -420,28 +335,19 @@ function createAdmin(){
         password_hash,
         role
       )
-      VALUES(
-        ?,
-        ?,
-        ?,
-        'admin'
-      )
+      VALUES (?, ?, ?, 'admin')
     `).run(
-
       ADMIN_USERNAME,
-
       "admin@black-gag2.local",
-
       hash
-
     );
 
     console.log(
-      "Đã tạo Admin:",
+      "Created admin:",
       ADMIN_USERNAME
     );
 
-  }else{
+  } else {
 
     db.prepare(`
       UPDATE users
@@ -450,17 +356,12 @@ function createAdmin(){
         password_hash=?
       WHERE username=?
     `).run(
-
       hash,
-
       ADMIN_USERNAME
-
     );
 
   }
-
 }
-
 
 createAdmin();
 
@@ -493,10 +394,10 @@ app.use(
 
 
 /* ==================================================
-   TOKEN
+   AUTH HELPERS
 ================================================== */
 
-function createToken(){
+function createToken() {
 
   return crypto
     .randomBytes(32)
@@ -505,69 +406,54 @@ function createToken(){
 }
 
 
-/* ==================================================
-   GET USER
-================================================== */
-
-function getUser(req){
+function getUser(req) {
 
   const auth =
     req.headers.authorization || "";
 
-
-  if(
-    !auth.startsWith(
-      "Bearer "
-    )
-  ){
-
+  if (
+    !auth.startsWith("Bearer ")
+  ) {
     return null;
-
   }
-
 
   const token =
     auth
       .slice(7)
       .trim();
 
-
-  if(!token){
-
+  if (!token) {
     return null;
-
   }
 
+  const user =
+    db
+      .prepare(`
+        SELECT
+          u.*
+        FROM sessions s
+        JOIN users u
+          ON u.id=s.user_id
+        WHERE s.token=?
+      `)
+      .get(
+        token
+      );
 
-  return db.prepare(`
-    SELECT
-      u.*
-    FROM sessions s
-    JOIN users u
-      ON u.id=s.user_id
-    WHERE s.token=?
-  `).get(
-    token
-  ) || null;
-
+  return user || null;
 }
 
-
-/* ==================================================
-   REQUIRE USER
-================================================== */
 
 function requireUser(
   req,
   res,
   next
-){
+) {
 
   const user =
     getUser(req);
 
-
-  if(!user){
+  if (!user) {
 
     return res
       .status(401)
@@ -578,34 +464,26 @@ function requireUser(
 
   }
 
-
   req.user =
     user;
 
-
   next();
-
 }
 
-
-/* ==================================================
-   REQUIRE ADMIN
-================================================== */
 
 function requireAdmin(
   req,
   res,
   next
-){
+) {
 
   const user =
     getUser(req);
 
-
-  if(
+  if (
     !user ||
     user.role !== "admin"
-  ){
+  ) {
 
     return res
       .status(403)
@@ -616,18 +494,15 @@ function requireAdmin(
 
   }
 
-
   req.user =
     user;
 
-
   next();
-
 }
 
 
 /* ==================================================
-   PRODUCTS - USER
+   PRODUCTS
 ================================================== */
 
 app.get(
@@ -635,19 +510,20 @@ app.get(
   (req, res) => {
 
     const products =
-      db.prepare(`
-        SELECT
-          id,
-          name,
-          price,
-          stock,
-          active,
-          image
-        FROM products
-        WHERE active=1
-        ORDER BY id
-      `).all();
-
+      db
+        .prepare(`
+          SELECT
+            id,
+            name,
+            price,
+            stock,
+            active,
+            image
+          FROM products
+          WHERE active=1
+          ORDER BY id
+        `)
+        .all();
 
     res.json(
       products
@@ -670,24 +546,21 @@ app.post(
         req.body?.username || ""
       ).trim();
 
-
     const contact =
       String(
         req.body?.contact || ""
       ).trim();
-
 
     const password =
       String(
         req.body?.password || ""
       );
 
-
-    if(
+    if (
       username.length < 3 ||
       !contact ||
       password.length < 6
-    ){
+    ) {
 
       return res
         .status(400)
@@ -698,11 +571,10 @@ app.post(
 
     }
 
-
-    if(
+    if (
       username.toLowerCase() ===
       ADMIN_USERNAME.toLowerCase()
-    ){
+    ) {
 
       return res
         .status(400)
@@ -713,19 +585,18 @@ app.post(
 
     }
 
-
     const exists =
-      db.prepare(`
-        SELECT
-          id
-        FROM users
-        WHERE username=?
-      `).get(
-        username
-      );
+      db
+        .prepare(`
+          SELECT id
+          FROM users
+          WHERE username=?
+        `)
+        .get(
+          username
+        );
 
-
-    if(exists){
+    if (exists) {
 
       return res
         .status(400)
@@ -736,41 +607,31 @@ app.post(
 
     }
 
-
     const hash =
       bcrypt.hashSync(
         password,
         12
       );
 
-
     const result =
-      db.prepare(`
-        INSERT INTO users
-        (
+      db
+        .prepare(`
+          INSERT INTO users
+          (
+            username,
+            contact,
+            password_hash
+          )
+          VALUES (?, ?, ?)
+        `)
+        .run(
           username,
           contact,
-          password_hash
-        )
-        VALUES(
-          ?,
-          ?,
-          ?
-        )
-      `).run(
-
-        username,
-
-        contact,
-
-        hash
-
-      );
-
+          hash
+        );
 
     const token =
       createToken();
-
 
     db.prepare(`
       INSERT INTO sessions
@@ -778,18 +639,11 @@ app.post(
         token,
         user_id
       )
-      VALUES(
-        ?,
-        ?
-      )
+      VALUES (?, ?)
     `).run(
-
       token,
-
       result.lastInsertRowid
-
     );
-
 
     res.json({
       token
@@ -812,35 +666,31 @@ app.post(
         req.body?.login || ""
       ).trim();
 
-
     const password =
       String(
         req.body?.password || ""
       );
 
-
     const user =
-      db.prepare(`
-        SELECT *
-        FROM users
-        WHERE username=?
-        OR contact=?
-      `).get(
+      db
+        .prepare(`
+          SELECT *
+          FROM users
+          WHERE username=?
+          OR contact=?
+        `)
+        .get(
+          login,
+          login
+        );
 
-        login,
-
-        login
-
-      );
-
-
-    if(
+    if (
       !user ||
       !bcrypt.compareSync(
         password,
         user.password_hash
       )
-    ){
+    ) {
 
       return res
         .status(401)
@@ -851,10 +701,8 @@ app.post(
 
     }
 
-
     const token =
       createToken();
-
 
     db.prepare(`
       INSERT INTO sessions
@@ -862,18 +710,11 @@ app.post(
         token,
         user_id
       )
-      VALUES(
-        ?,
-        ?
-      )
+      VALUES (?, ?)
     `).run(
-
       token,
-
       user.id
-
     );
-
 
     res.json({
 
@@ -932,16 +773,16 @@ app.post(
   requireUser,
   (req, res) => {
 
-    const token =
-      (
-        req.headers.authorization || ""
-      )
-      .replace(
-        "Bearer ",
-        ""
-      )
-      .trim();
+    const auth =
+      req.headers.authorization || "";
 
+    const token =
+      auth
+        .replace(
+          "Bearer ",
+          ""
+        )
+        .trim();
 
     db.prepare(`
       DELETE FROM sessions
@@ -949,7 +790,6 @@ app.post(
     `).run(
       token
     );
-
 
     res.json({
       ok: true
@@ -960,7 +800,7 @@ app.post(
 
 
 /* ==================================================
-   ORDERS
+   CREATE ORDER
 ================================================== */
 
 app.post(
@@ -975,14 +815,14 @@ app.post(
       ? req.body.items
       : [];
 
-
     const gameUsername =
       String(
         req.body?.gameUsername || ""
       ).trim();
 
-
-    if(!gameUsername){
+    if (
+      !gameUsername
+    ) {
 
       return res
         .status(400)
@@ -993,8 +833,9 @@ app.post(
 
     }
 
-
-    if(!items.length){
+    if (
+      items.length === 0
+    ) {
 
       return res
         .status(400)
@@ -1005,28 +846,28 @@ app.post(
 
     }
 
-
     let total = 0;
 
     const checked = [];
 
 
-    for(
+    for (
       const item of items
-    ){
+    ) {
 
       const product =
-        db.prepare(`
-          SELECT *
-          FROM products
-          WHERE id=?
-          AND active=1
-        `).get(
-          Number(
-            item.productId
-          )
-        );
-
+        db
+          .prepare(`
+            SELECT *
+            FROM products
+            WHERE id=?
+            AND active=1
+          `)
+          .get(
+            Number(
+              item.productId
+            )
+          );
 
       const qty =
         Math.max(
@@ -1038,8 +879,7 @@ app.post(
           )
         );
 
-
-      if(!product){
+      if (!product) {
 
         return res
           .status(400)
@@ -1050,11 +890,10 @@ app.post(
 
       }
 
-
-      if(
+      if (
         product.stock > 0 &&
         product.stock < qty
-      ){
+      ) {
 
         return res
           .status(400)
@@ -1065,11 +904,8 @@ app.post(
 
       }
 
-
       total +=
-        product.price *
-        qty;
-
+        product.price * qty;
 
       checked.push({
         product,
@@ -1079,10 +915,9 @@ app.post(
     }
 
 
-    if(
-      req.user.balance <
-      total
-    ){
+    if (
+      req.user.balance < total
+    ) {
 
       return res
         .status(400)
@@ -1103,39 +938,32 @@ app.post(
             balance=balance-?
           WHERE id=?
         `).run(
-
           total,
-
           req.user.id
-
         );
 
-
         const order =
-          db.prepare(`
-            INSERT INTO orders
-            (
-              user_id,
+          db
+            .prepare(`
+              INSERT INTO orders
+              (
+                user_id,
+                total,
+                status,
+                game_username
+              )
+              VALUES(
+                ?,
+                ?,
+                'PENDING',
+                ?
+              )
+            `)
+            .run(
+              req.user.id,
               total,
-              status,
-              game_username
-            )
-            VALUES(
-              ?,
-              ?,
-              'PENDING',
-              ?
-            )
-          `).run(
-
-            req.user.id,
-
-            total,
-
-            gameUsername
-
-          );
-
+              gameUsername
+            );
 
         const insertItem =
           db.prepare(`
@@ -1146,35 +974,23 @@ app.post(
               qty,
               unit_price
             )
-            VALUES(
-              ?,
-              ?,
-              ?,
-              ?
-            )
+            VALUES (?, ?, ?, ?)
           `);
 
-
-        for(
-          const x of checked
-        ){
+        for (
+          const item of checked
+        ) {
 
           insertItem.run(
-
             order.lastInsertRowid,
-
-            x.product.id,
-
-            x.qty,
-
-            x.product.price
-
+            item.product.id,
+            item.qty,
+            item.product.price
           );
 
-
-          if(
-            x.product.stock > 0
-          ){
+          if (
+            item.product.stock > 0
+          ) {
 
             db.prepare(`
               UPDATE products
@@ -1182,26 +998,23 @@ app.post(
                 stock=stock-?
               WHERE id=?
             `).run(
-
-              x.qty,
-
-              x.product.id
-
+              item.qty,
+              item.product.id
             );
 
           }
 
         }
 
-
         return order.lastInsertRowid;
 
       });
 
+    const orderId =
+      transaction();
 
     res.json({
-      orderId:
-        transaction()
+      orderId
     });
 
   }
@@ -1218,20 +1031,21 @@ app.get(
   (req, res) => {
 
     const orders =
-      db.prepare(`
-        SELECT
-          o.id,
-          o.total,
-          o.status,
-          o.game_username,
-          o.created_at
-        FROM orders o
-        WHERE o.user_id=?
-        ORDER BY o.id DESC
-      `).all(
-        req.user.id
-      );
-
+      db
+        .prepare(`
+          SELECT
+            o.id,
+            o.total,
+            o.status,
+            o.game_username,
+            o.created_at
+          FROM orders o
+          WHERE o.user_id=?
+          ORDER BY o.id DESC
+        `)
+        .all(
+          req.user.id
+        );
 
     const itemQuery =
       db.prepare(`
@@ -1247,8 +1061,7 @@ app.get(
         WHERE oi.order_id=?
       `);
 
-
-    res.json(
+    const result =
       orders.map(
         order => ({
 
@@ -1260,7 +1073,10 @@ app.get(
             )
 
         })
-      )
+      );
+
+    res.json(
+      result
     );
 
   }
@@ -1269,7 +1085,7 @@ app.get(
 
 /* ==================================================
    BANK INFO
-   4 QR FILES IN /public
+   4 QR
 ================================================== */
 
 app.get(
@@ -1279,9 +1095,11 @@ app.get(
 
     res.json({
 
-      configured: true,
+      configured:
+        true,
 
-      minAmount: 10000,
+      minAmount:
+        10000,
 
       bankName:
         process.env.BANK_NAME || "",
@@ -1315,7 +1133,7 @@ app.get(
 
 
 /* ==================================================
-   TOPUP BANK
+   BANK TOPUP
 ================================================== */
 
 app.post(
@@ -1330,25 +1148,18 @@ app.post(
         ) || 0
       );
 
-
     const allowed = [
-
       10000,
-
       20000,
-
       50000,
-
       100000
-
     ];
 
-
-    if(
+    if (
       !allowed.includes(
         amount
       )
-    ){
+    ) {
 
       return res
         .status(400)
@@ -1359,36 +1170,31 @@ app.post(
 
     }
 
-
     const result =
-      db.prepare(`
-        INSERT INTO topups
-        (
-          user_id,
-          method,
-          amount,
-          status
-        )
-        VALUES(
-          ?,
-          'BANK',
-          ?,
-          'PENDING'
-        )
-      `).run(
-
-        req.user.id,
-
-        amount
-
-      );
-
+      db
+        .prepare(`
+          INSERT INTO topups
+          (
+            user_id,
+            method,
+            amount,
+            status
+          )
+          VALUES(
+            ?,
+            'BANK',
+            ?,
+            'PENDING'
+          )
+        `)
+        .run(
+          req.user.id,
+          amount
+        );
 
     res.json({
-
       id:
         result.lastInsertRowid
-
     });
 
   }
@@ -1396,7 +1202,7 @@ app.post(
 
 
 /* ==================================================
-   TOPUP CARD
+   CARD TOPUP
 ================================================== */
 
 app.post(
@@ -1409,7 +1215,6 @@ app.post(
         req.body?.provider || ""
       ).trim();
 
-
     const value =
       Math.floor(
         Number(
@@ -1417,25 +1222,22 @@ app.post(
         ) || 0
       );
 
-
     const serial =
       String(
         req.body?.serial || ""
       ).trim();
-
 
     const code =
       String(
         req.body?.code || ""
       ).trim();
 
-
-    if(
+    if (
       !provider ||
+      !value ||
       !serial ||
-      !code ||
-      !value
-    ){
+      !code
+    ) {
 
       return res
         .status(400)
@@ -1446,52 +1248,41 @@ app.post(
 
     }
 
-
     const providerRef =
       JSON.stringify({
-
         provider,
-
         serial,
-
         code
-
       });
 
-
     const result =
-      db.prepare(`
-        INSERT INTO topups
-        (
-          user_id,
-          method,
-          amount,
-          status,
-          provider_ref
-        )
-        VALUES(
-          ?,
-          'CARD',
-          ?,
-          'PENDING',
-          ?
-        )
-      `).run(
-
-        req.user.id,
-
-        value,
-
-        providerRef
-
-      );
-
+      db
+        .prepare(`
+          INSERT INTO topups
+          (
+            user_id,
+            method,
+            amount,
+            status,
+            provider_ref
+          )
+          VALUES(
+            ?,
+            'CARD',
+            ?,
+            'PENDING',
+            ?
+          )
+        `)
+        .run(
+          req.user.id,
+          value,
+          providerRef
+        );
 
     res.json({
-
       id:
         result.lastInsertRowid
-
     });
 
   }
@@ -1507,26 +1298,27 @@ app.get(
   requireUser,
   (req, res) => {
 
-    const topups =
-      db.prepare(`
-        SELECT
-          id,
-          method,
-          amount,
-          status,
-          credited_amount,
-          reject_reason,
-          created_at
-        FROM topups
-        WHERE user_id=?
-        ORDER BY id DESC
-      `).all(
-        req.user.id
-      );
-
+    const rows =
+      db
+        .prepare(`
+          SELECT
+            id,
+            method,
+            amount,
+            status,
+            credited_amount,
+            reject_reason,
+            created_at
+          FROM topups
+          WHERE user_id=?
+          ORDER BY id DESC
+        `)
+        .all(
+          req.user.id
+        );
 
     res.json(
-      topups
+      rows
     );
 
   }
@@ -1543,41 +1335,47 @@ app.get(
   (req, res) => {
 
     const users =
-      db.prepare(`
-        SELECT
-          id,
-          username,
-          contact,
-          balance,
-          role,
-          created_at
-        FROM users
-        ORDER BY id DESC
-      `).all();
+      db
+        .prepare(`
+          SELECT
+            id,
+            username,
+            contact,
+            balance,
+            role,
+            created_at
+          FROM users
+          ORDER BY id DESC
+        `)
+        .all();
 
 
     const products =
-      db.prepare(`
-        SELECT *
-        FROM products
-        ORDER BY id
-      `).all();
+      db
+        .prepare(`
+          SELECT *
+          FROM products
+          ORDER BY id
+        `)
+        .all();
 
 
     const orders =
-      db.prepare(`
-        SELECT
-          o.id,
-          u.username,
-          o.game_username,
-          o.total,
-          o.status,
-          o.created_at
-        FROM orders o
-        JOIN users u
-          ON u.id=o.user_id
-        ORDER BY o.id DESC
-      `).all();
+      db
+        .prepare(`
+          SELECT
+            o.id,
+            u.username,
+            o.game_username,
+            o.total,
+            o.status,
+            o.created_at
+          FROM orders o
+          JOIN users u
+            ON u.id=o.user_id
+          ORDER BY o.id DESC
+        `)
+        .all();
 
 
     const itemQuery =
@@ -1594,9 +1392,9 @@ app.get(
       `);
 
 
-    for(
+    for (
       const order of orders
-    ){
+    ) {
 
       order.items =
         itemQuery.all(
@@ -1607,41 +1405,42 @@ app.get(
 
 
     const topups =
-      db.prepare(`
-        SELECT
-          t.id,
-          u.username,
-          u.contact,
-          t.method,
-          t.amount,
-          t.credited_amount,
-          t.status,
-          t.provider_ref,
-          t.reject_reason,
-          t.created_at
-        FROM topups t
-        JOIN users u
-          ON u.id=t.user_id
-        ORDER BY t.id DESC
-      `).all();
+      db
+        .prepare(`
+          SELECT
+            t.id,
+            u.username,
+            u.contact,
+            t.method,
+            t.amount,
+            t.credited_amount,
+            t.status,
+            t.provider_ref,
+            t.reject_reason,
+            t.created_at
+          FROM topups t
+          JOIN users u
+            ON u.id=t.user_id
+          ORDER BY t.id DESC
+        `)
+        .all();
 
 
-    for(
+    for (
       const topup of topups
-    ){
+    ) {
 
-      if(
+      if (
         topup.method === "CARD" &&
         topup.provider_ref
-      ){
+      ) {
 
-        try{
+        try {
 
           const data =
             JSON.parse(
               topup.provider_ref
             );
-
 
           topup.provider =
             data.provider || "";
@@ -1652,7 +1451,18 @@ app.get(
           topup.code =
             data.code || "";
 
-        }catch{}
+        } catch {
+
+          topup.provider =
+            "";
+
+          topup.serial =
+            "";
+
+          topup.code =
+            "";
+
+        }
 
       }
 
@@ -1689,35 +1499,40 @@ app.post(
         req.body?.name || ""
       ).trim();
 
-
     const price =
       Number(
         req.body?.price
       );
-
 
     const stock =
       Number(
         req.body?.stock
       );
 
+    let image =
+      null;
 
-    const image =
+
+    if (
       typeof req.body?.image === "string" &&
       req.body.image.startsWith(
         "data:image/"
       )
-      ? req.body.image
-      : null;
+    ) {
+
+      image =
+        req.body.image;
+
+    }
 
 
-    if(
+    if (
       !name ||
       !Number.isFinite(
         price
       ) ||
       price <= 0
-    ){
+    ) {
 
       return res
         .status(400)
@@ -1730,44 +1545,46 @@ app.post(
 
 
     const result =
-      db.prepare(`
-        INSERT INTO products
-        (
-          name,
-          price,
-          stock,
-          active,
-          image
-        )
-        VALUES(
-          ?,
-          ?,
-          ?,
-          1,
-          ?
-        )
-      `).run(
-
-        name,
-
-        Math.floor(
-          price
-        ),
-
-        Number.isFinite(
-          stock
-        )
-        ? Math.max(
-            0,
-            Math.floor(
-              stock
-            )
+      db
+        .prepare(`
+          INSERT INTO products
+          (
+            name,
+            price,
+            stock,
+            active,
+            image
           )
-        : 0,
+          VALUES(
+            ?,
+            ?,
+            ?,
+            1,
+            ?
+          )
+        `)
+        .run(
 
-        image
+          name,
 
-      );
+          Math.floor(
+            price
+          ),
+
+          Number.isFinite(
+            stock
+          )
+          ? Math.max(
+              0,
+              Math.floor(
+                stock
+              )
+            )
+          : 0,
+
+          image
+
+        );
 
 
     res.json({
@@ -1785,7 +1602,6 @@ app.post(
 
 /* ==================================================
    ADMIN EDIT PRODUCT
-   GIÁ / ẢNH / STOCK LƯU DB
 ================================================== */
 
 app.patch(
@@ -1798,18 +1614,19 @@ app.patch(
         req.params.id
       );
 
-
     const old =
-      db.prepare(`
-        SELECT *
-        FROM products
-        WHERE id=?
-      `).get(
-        id
-      );
+      db
+        .prepare(`
+          SELECT *
+          FROM products
+          WHERE id=?
+        `)
+        .get(
+          id
+        );
 
 
-    if(!old){
+    if (!old) {
 
       return res
         .status(404)
@@ -1857,12 +1674,12 @@ app.patch(
       old.image || null;
 
 
-    if(
+    if (
       typeof req.body?.image === "string" &&
       req.body.image.startsWith(
         "data:image/"
       )
-    ){
+    ) {
 
       image =
         req.body.image;
@@ -1870,13 +1687,13 @@ app.patch(
     }
 
 
-    if(
+    if (
       !name ||
       !Number.isFinite(
         price
       ) ||
       price <= 0
-    ){
+    ) {
 
       return res
         .status(400)
@@ -1888,12 +1705,12 @@ app.patch(
     }
 
 
-    if(
+    if (
       !Number.isFinite(
         stock
       ) ||
       stock < 0
-    ){
+    ) {
 
       return res
         .status(400)
@@ -1940,13 +1757,15 @@ app.patch(
       ok: true,
 
       product:
-        db.prepare(`
-          SELECT *
-          FROM products
-          WHERE id=?
-        `).get(
-          id
-        )
+        db
+          .prepare(`
+            SELECT *
+            FROM products
+            WHERE id=?
+          `)
+          .get(
+            id
+          )
 
     });
 
@@ -1955,7 +1774,7 @@ app.patch(
 
 
 /* ==================================================
-   ADMIN REMOVE IMAGE
+   ADMIN REMOVE PRODUCT IMAGE
 ================================================== */
 
 app.post(
@@ -1983,7 +1802,7 @@ app.post(
 
 
 /* ==================================================
-   ADMIN HIDE
+   ADMIN HIDE PRODUCT
 ================================================== */
 
 app.post(
@@ -2011,7 +1830,7 @@ app.post(
 
 
 /* ==================================================
-   ADMIN SHOW
+   ADMIN SHOW PRODUCT
 ================================================== */
 
 app.post(
@@ -2040,8 +1859,8 @@ app.post(
 
 /* ==================================================
    ADMIN APPROVE TOPUP
-   CARD 84%
-   BANK 100%
+   CARD = 84%
+   BANK = 100%
 ================================================== */
 
 app.post(
@@ -2056,19 +1875,21 @@ app.post(
 
 
     const topup =
-      db.prepare(`
-        SELECT *
-        FROM topups
-        WHERE id=?
-      `).get(
-        id
-      );
+      db
+        .prepare(`
+          SELECT *
+          FROM topups
+          WHERE id=?
+        `)
+        .get(
+          id
+        );
 
 
-    if(
+    if (
       !topup ||
       topup.status !== "PENDING"
-    ){
+    ) {
 
       return res
         .status(400)
@@ -2082,12 +1903,9 @@ app.post(
 
     const credit =
       topup.method === "CARD"
-
       ? Math.floor(
-          topup.amount *
-          0.84
+          topup.amount * 0.84
         )
-
       : Math.floor(
           topup.amount
         );
@@ -2096,27 +1914,26 @@ app.post(
     const transaction =
       db.transaction(() => {
 
-        const changed =
-          db.prepare(`
-            UPDATE topups
-            SET
-              status='APPROVED',
-              credited_amount=?,
-              reject_reason=NULL
-            WHERE id=?
-            AND status='PENDING'
-          `).run(
+        const result =
+          db
+            .prepare(`
+              UPDATE topups
+              SET
+                status='APPROVED',
+                credited_amount=?,
+                reject_reason=NULL
+              WHERE id=?
+              AND status='PENDING'
+            `)
+            .run(
+              credit,
+              id
+            );
 
-            credit,
 
-            id
-
-          );
-
-
-        if(
-          !changed.changes
-        ){
+        if (
+          result.changes === 0
+        ) {
 
           throw new Error(
             "Yêu cầu đã được xử lý."
@@ -2131,21 +1948,18 @@ app.post(
             balance=balance+?
           WHERE id=?
         `).run(
-
           credit,
-
           topup.user_id
-
         );
 
       });
 
 
-    try{
+    try {
 
       transaction();
 
-    }catch(error){
+    } catch (error) {
 
       return res
         .status(400)
@@ -2189,19 +2003,21 @@ app.post(
 
 
     const topup =
-      db.prepare(`
-        SELECT *
-        FROM topups
-        WHERE id=?
-      `).get(
-        id
-      );
+      db
+        .prepare(`
+          SELECT *
+          FROM topups
+          WHERE id=?
+        `)
+        .get(
+          id
+        );
 
 
-    if(
+    if (
       !topup ||
       topup.status !== "PENDING"
-    ){
+    ) {
 
       return res
         .status(400)
@@ -2229,11 +2045,8 @@ app.post(
       WHERE id=?
       AND status='PENDING'
     `).run(
-
       reason,
-
       id
-
     );
 
 
@@ -2275,10 +2088,10 @@ app.post(
       );
 
 
-    if(
+    if (
       !username ||
       amount <= 0
-    ){
+    ) {
 
       return res
         .status(400)
@@ -2291,20 +2104,22 @@ app.post(
 
 
     const user =
-      db.prepare(`
-        SELECT
-          id,
-          username,
-          balance,
-          role
-        FROM users
-        WHERE username=?
-      `).get(
-        username
-      );
+      db
+        .prepare(`
+          SELECT
+            id,
+            username,
+            balance,
+            role
+          FROM users
+          WHERE username=?
+        `)
+        .get(
+          username
+        );
 
 
-    if(!user){
+    if (!user) {
 
       return res
         .status(404)
@@ -2316,9 +2131,9 @@ app.post(
     }
 
 
-    if(
+    if (
       user.role === "admin"
-    ){
+    ) {
 
       return res
         .status(400)
@@ -2336,25 +2151,24 @@ app.post(
         balance=balance+?
       WHERE id=?
     `).run(
-
       amount,
-
       user.id
-
     );
 
 
     const updated =
-      db.prepare(`
-        SELECT
-          id,
-          username,
-          balance
-        FROM users
-        WHERE id=?
-      `).get(
-        user.id
-      );
+      db
+        .prepare(`
+          SELECT
+            id,
+            username,
+            balance
+          FROM users
+          WHERE id=?
+        `)
+        .get(
+          user.id
+        );
 
 
     res.json({
@@ -2402,10 +2216,10 @@ app.post(
       );
 
 
-    if(
+    if (
       !username ||
       amount <= 0
-    ){
+    ) {
 
       return res
         .status(400)
@@ -2418,19 +2232,21 @@ app.post(
 
 
     const user =
-      db.prepare(`
-        SELECT
-          id,
-          username,
-          balance
-        FROM users
-        WHERE username=?
-      `).get(
-        username
-      );
+      db
+        .prepare(`
+          SELECT
+            id,
+            username,
+            balance
+          FROM users
+          WHERE username=?
+        `)
+        .get(
+          username
+        );
 
 
-    if(!user){
+    if (!user) {
 
       return res
         .status(404)
@@ -2442,10 +2258,10 @@ app.post(
     }
 
 
-    if(
+    if (
       user.balance <
       amount
-    ){
+    ) {
 
       return res
         .status(400)
@@ -2463,25 +2279,24 @@ app.post(
         balance=balance-?
       WHERE id=?
     `).run(
-
       amount,
-
       user.id
-
     );
 
 
     const updated =
-      db.prepare(`
-        SELECT
-          id,
-          username,
-          balance
-        FROM users
-        WHERE id=?
-      `).get(
-        user.id
-      );
+      db
+        .prepare(`
+          SELECT
+            id,
+            username,
+            balance
+          FROM users
+          WHERE id=?
+        `)
+        .get(
+          user.id
+        );
 
 
     res.json({
@@ -2532,11 +2347,11 @@ app.post(
       req.body?.status;
 
 
-    if(
+    if (
       !allowed.includes(
         newStatus
       )
-    ){
+    ) {
 
       return res
         .status(400)
@@ -2549,18 +2364,20 @@ app.post(
 
 
     const order =
-      db.prepare(`
-        SELECT *
-        FROM orders
-        WHERE id=?
-      `).get(
-        Number(
-          req.params.id
-        )
-      );
+      db
+        .prepare(`
+          SELECT *
+          FROM orders
+          WHERE id=?
+        `)
+        .get(
+          Number(
+            req.params.id
+          )
+        );
 
 
-    if(!order){
+    if (!order) {
 
       return res
         .status(404)
@@ -2572,10 +2389,10 @@ app.post(
     }
 
 
-    if(
+    if (
       order.status ===
       newStatus
-    ){
+    ) {
 
       return res.json({
         ok: true
@@ -2584,10 +2401,12 @@ app.post(
     }
 
 
-    if(
-      newStatus === "CANCELLED" &&
-      order.status !== "CANCELLED"
-    ){
+    if (
+      newStatus ===
+      "CANCELLED" &&
+      order.status !==
+      "CANCELLED"
+    ) {
 
       const transaction =
         db.transaction(() => {
@@ -2614,20 +2433,22 @@ app.post(
 
 
           const items =
-            db.prepare(`
-              SELECT
-                product_id,
-                qty
-              FROM order_items
-              WHERE order_id=?
-            `).all(
-              order.id
-            );
+            db
+              .prepare(`
+                SELECT
+                  product_id,
+                  qty
+                FROM order_items
+                WHERE order_id=?
+              `)
+              .all(
+                order.id
+              );
 
 
-          for(
+          for (
             const item of items
-          ){
+          ) {
 
             db.prepare(`
               UPDATE products
@@ -2635,11 +2456,8 @@ app.post(
                 stock=stock+?
               WHERE id=?
             `).run(
-
               item.qty,
-
               item.product_id
-
             );
 
           }
@@ -2649,7 +2467,7 @@ app.post(
 
       transaction();
 
-    }else{
+    } else {
 
       db.prepare(`
         UPDATE orders
@@ -2657,11 +2475,8 @@ app.post(
           status=?
         WHERE id=?
       `).run(
-
         newStatus,
-
         order.id
-
       );
 
     }
@@ -2681,12 +2496,46 @@ app.post(
 
 
 /* ==================================================
-   HEALTH CHECK
+   HEALTH
 ================================================== */
 
 app.get(
   "/api/health",
   (req, res) => {
+
+    let users = 0;
+    let products = 0;
+
+    try {
+
+      users =
+        db
+          .prepare(
+            "SELECT COUNT(*) AS c FROM users"
+          )
+          .get()
+          .c;
+
+      products =
+        db
+          .prepare(
+            "SELECT COUNT(*) AS c FROM products"
+          )
+          .get()
+          .c;
+
+    } catch (error) {
+
+      return res
+        .status(500)
+        .json({
+          ok: false,
+          error:
+            error.message
+        });
+
+    }
+
 
     res.json({
 
@@ -2695,8 +2544,13 @@ app.get(
       database:
         DB_PATH,
 
-      timestamp:
-        new Date().toISOString()
+      users,
+
+      products,
+
+      time:
+        new Date()
+          .toISOString()
 
     });
 
@@ -2705,7 +2559,7 @@ app.get(
 
 
 /* ==================================================
-   SHOP PAGE
+   FALLBACK
 ================================================== */
 
 app.use(
@@ -2724,23 +2578,68 @@ app.use(
 
 
 /* ==================================================
-   START SERVER
+   SERVER START
 ================================================== */
 
 app.listen(
   PORT,
+  "0.0.0.0",
   () => {
 
     console.log(
-      `BLACK GAG2 SHOP running on port ${PORT}`
+      "===================================="
     );
 
     console.log(
-      `Database path: ${DB_PATH}`
+      "BLACK GAG2 SHOP"
     );
 
     console.log(
-      `Admin username: ${ADMIN_USERNAME}`
+      "Port:",
+      PORT
+    );
+
+    console.log(
+      "Database:",
+      DB_PATH
+    );
+
+    console.log(
+      "Admin:",
+      ADMIN_USERNAME
+    );
+
+    console.log(
+      "===================================="
+    );
+
+  }
+);
+
+
+/* ==================================================
+   ERROR HANDLERS
+================================================== */
+
+process.on(
+  "uncaughtException",
+  error => {
+
+    console.error(
+      "UNCAUGHT EXCEPTION:",
+      error
+    );
+
+  }
+);
+
+process.on(
+  "unhandledRejection",
+  error => {
+
+    console.error(
+      "UNHANDLED REJECTION:",
+      error
     );
 
   }
