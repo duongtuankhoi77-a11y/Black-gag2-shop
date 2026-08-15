@@ -16,8 +16,9 @@ const PORT = process.env.PORT || 3000;
 const DATA_DIR = path.join(__dirname,"data");
 
 if(!fs.existsSync(DATA_DIR)){
-  fs.mkdirSync(DATA_DIR,{recursive:true});
+    fs.mkdirSync(DATA_DIR,{recursive:true});
 }
+
 
 const DB_PATH = path.join(DATA_DIR,"black_gag2.db");
 
@@ -26,13 +27,15 @@ console.log("Database:",DB_PATH);
 
 const db = new Database(DB_PATH);
 
-db.pragma("journal_mode = WAL");
-db.pragma("foreign_keys = ON");
+
+db.pragma("journal_mode=WAL");
+db.pragma("foreign_keys=ON");
+
 
 
 
 // =========================
-// TABLES
+// CREATE TABLE
 // =========================
 
 db.exec(`
@@ -54,74 +57,67 @@ CREATE TABLE IF NOT EXISTS products(
  bank_price INTEGER DEFAULT 0,
  stock INTEGER DEFAULT 0,
  image TEXT DEFAULT '',
- description TEXT DEFAULT '',
- created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
-
-CREATE TABLE IF NOT EXISTS orders(
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- user_id INTEGER NOT NULL,
- total INTEGER NOT NULL,
- status TEXT DEFAULT 'pending',
- created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
-
-CREATE TABLE IF NOT EXISTS order_items(
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- order_id INTEGER NOT NULL,
- product_id INTEGER NOT NULL,
- quantity INTEGER NOT NULL,
- price INTEGER NOT NULL
+ description TEXT DEFAULT ''
 );
 
 
 CREATE TABLE IF NOT EXISTS topups(
  id INTEGER PRIMARY KEY AUTOINCREMENT,
- user_id INTEGER NOT NULL,
- method TEXT NOT NULL,
- amount INTEGER NOT NULL,
+ user_id INTEGER,
+ method TEXT,
+ amount INTEGER,
  provider TEXT DEFAULT '',
  serial TEXT DEFAULT '',
  code TEXT DEFAULT '',
- status TEXT DEFAULT 'pending',
- created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+ status TEXT DEFAULT 'pending'
+);
+
+
+CREATE TABLE IF NOT EXISTS orders(
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ user_id INTEGER,
+ total INTEGER,
+ status TEXT DEFAULT 'pending'
 );
 
 
 CREATE TABLE IF NOT EXISTS sessions(
  token TEXT PRIMARY KEY,
- user_id INTEGER NOT NULL,
- created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+ user_id INTEGER
 );
+
 
 `);
 
 
 
 
+
 // =========================
-// HELPERS PASSWORD
+// PASSWORD
 // =========================
+
 
 function hashPassword(password){
 
-return crypto
-.createHash("sha256")
-.update(password)
-.digest("hex");
+    return crypto
+    .createHash("sha256")
+    .update(password)
+    .digest("hex");
 
 }
+
 
 
 function createToken(){
 
-return crypto
-.randomBytes(32)
-.toString("hex");
+    return crypto
+    .randomBytes(32)
+    .toString("hex");
 
 }
+
+
 
 
 
@@ -129,14 +125,14 @@ return crypto
 // DEFAULT PRODUCTS
 // =========================
 
-const productCount = db
-.prepare("SELECT COUNT(*) AS c FROM products")
+
+const count = db
+.prepare("SELECT COUNT(*) c FROM products")
 .get().c;
 
 
 
-if(productCount===0){
-
+if(count===0){
 
 const add=db.prepare(`
 
@@ -148,9 +144,7 @@ VALUES(?,?,?,?,?,?)
 `);
 
 
-
-const products=[
-
+[
 ["Dragon Breath Seed",4000,4000,0,"",""],
 ["Star Fruit",8000,8000,0,"",""],
 ["Sun Bloom",3000,3000,0,"",""],
@@ -161,15 +155,12 @@ const products=[
 ["Mega Seed",1000,1000,0,"",""],
 ["Rainbow Seed",1000,1000,0,"",""]
 
-];
-
-
-for(const p of products){
-add.run(...p);
-}
-
+].forEach(p=>add.run(...p));
 
 }
+
+
+
 
 
 
@@ -177,7 +168,8 @@ add.run(...p);
 // DEFAULT ADMIN
 // =========================
 
-const adminExist = db.prepare(`
+
+const admin = db.prepare(`
 
 SELECT id FROM users WHERE username=?
 
@@ -185,8 +177,7 @@ SELECT id FROM users WHERE username=?
 
 
 
-if(!adminExist){
-
+if(!admin){
 
 db.prepare(`
 
@@ -199,16 +190,18 @@ VALUES(?,?,?,?)
 
 "blackadmin",
 "admin",
-hashPassword("11102011tuankhoi"),
+hashPassword("tuankhoi123"),
 0
 
 );
 
 
-console.log("Created admin blackadmin");
-
+console.log("Created admin");
 
 }
+
+
+
 
 
 
@@ -216,10 +209,8 @@ console.log("Created admin blackadmin");
 // EXPRESS
 // =========================
 
-app.use(express.json({
-limit:"2mb"
-}));
 
+app.use(express.json());
 
 app.use(express.urlencoded({
 extended:true
@@ -229,58 +220,58 @@ extended:true
 app.use(express.static(
 path.join(__dirname,"public")
 ));// =========================
-// AUTH
+// AUTH FUNCTIONS
 // =========================
 
 
 function getUserFromToken(token){
 
-if(!token) return null;
+    if(!token) return null;
 
 
-return db.prepare(`
+    return db.prepare(`
 
-SELECT users.*
+    SELECT users.*
 
-FROM sessions
+    FROM sessions
 
-JOIN users
+    JOIN users
 
-ON users.id=sessions.user_id
+    ON users.id=sessions.user_id
 
-WHERE sessions.token=?
+    WHERE sessions.token=?
 
-`).get(token);
-
+    `).get(token);
 
 }
+
 
 
 
 function auth(req,res,next){
 
-const token=req.headers.authorization?.replace("Bearer ","");
+    const token=req.headers.authorization?.replace("Bearer ","");
 
 
-const user=getUserFromToken(token);
+    const user=getUserFromToken(token);
 
 
-if(!user){
+    if(!user){
 
-return res.status(401).json({
+        return res.status(401).json({
 
-success:false,
-message:"Bạn chưa đăng nhập"
+            success:false,
+            message:"Chưa đăng nhập"
 
-});
+        });
 
-}
+    }
 
 
-req.user=user;
-req.token=token;
+    req.user=user;
+    req.token=token;
 
-next();
+    next();
 
 }
 
@@ -289,37 +280,30 @@ next();
 
 function adminAuth(req,res,next){
 
-
-const token=req.headers.authorization?.replace("Bearer ","");
-
-
-const user=getUserFromToken(token);
+    const token=req.headers.authorization?.replace("Bearer ","");
 
 
-
-if(!user || user.username!=="blackadmin"){
-
-
-return res.status(403).json({
-
-success:false,
-message:"Không có quyền admin"
-
-});
-
-
-}
+    const user=getUserFromToken(token);
 
 
 
-req.user=user;
-req.token=token;
+    if(!user || user.username!=="blackadmin"){
+
+        return res.status(403).json({
+
+            success:false,
+            message:"Không có quyền admin"
+
+        });
+
+    }
 
 
-next();
-
+    req.user=user;
+    next();
 
 }
+
 
 
 
@@ -335,46 +319,13 @@ app.get("/api/health",(req,res)=>{
 res.json({
 
 success:true,
-status:"online",
-database:DB_PATH
+status:"online"
 
 });
 
 
 });
 
-
-
-
-// =========================
-// PRODUCTS
-// =========================
-
-
-app.get("/api/products",(req,res)=>{
-
-
-const products=db.prepare(`
-
-SELECT *
-
-FROM products
-
-ORDER BY id ASC
-
-`).all();
-
-
-
-res.json({
-
-success:true,
-products
-
-});
-
-
-});
 
 
 
@@ -399,7 +350,7 @@ password
 
 
 
-if(!username || !contact || !password){
+if(!username||!contact||!password){
 
 return res.status(400).json({
 
@@ -409,7 +360,6 @@ message:"Thiếu thông tin"
 });
 
 }
-
 
 
 
@@ -434,11 +384,9 @@ message:"Tài khoản đã tồn tại"
 
 
 
-
 const result=db.prepare(`
 
 INSERT INTO users
-
 (username,contact,password,balance)
 
 VALUES(?,?,?,0)
@@ -453,7 +401,6 @@ hashPassword(password)
 
 
 
-
 const token=createToken();
 
 
@@ -461,7 +408,6 @@ const token=createToken();
 db.prepare(`
 
 INSERT INTO sessions
-
 (token,user_id)
 
 VALUES(?,?)
@@ -485,7 +431,6 @@ user:{
 
 id:result.lastInsertRowid,
 username,
-contact,
 balance:0
 
 }
@@ -496,9 +441,7 @@ balance:0
 
 }catch(e){
 
-
 console.log(e);
-
 
 res.status(500).json({
 
@@ -507,11 +450,13 @@ message:"Lỗi server"
 
 });
 
-
 }
 
 
 });
+
+
+
 
 
 
@@ -541,7 +486,6 @@ FROM users
 WHERE username=?
 
 `).get(username);
-
 
 
 
@@ -591,7 +535,6 @@ user:{
 
 id:user.id,
 username:user.username,
-contact:user.contact,
 balance:user.balance
 
 }
@@ -604,8 +547,12 @@ balance:user.balance
 
 
 
+
+
+
+
 // =========================
-// USER INFO
+// GET USER
 // =========================
 
 
@@ -620,7 +567,6 @@ user:{
 
 id:req.user.id,
 username:req.user.username,
-contact:req.user.contact,
 balance:req.user.balance
 
 }
@@ -634,12 +580,19 @@ balance:req.user.balance
 
 
 
+// =========================
+// LOGOUT
+// =========================
+
+
 app.post("/api/logout",auth,(req,res)=>{
 
 
 db.prepare(`
 
-DELETE FROM sessions WHERE token=?
+DELETE FROM sessions
+
+WHERE token=?
 
 `).run(req.token);
 
@@ -654,8 +607,42 @@ message:"Đã đăng xuất"
 
 
 });// =========================
+// PRODUCTS
+// =========================
+
+app.get("/api/products",(req,res)=>{
+
+
+const products=db.prepare(`
+
+SELECT *
+
+FROM products
+
+ORDER BY id ASC
+
+`).all();
+
+
+
+res.json({
+
+success:true,
+products
+
+});
+
+
+});
+
+
+
+
+
+// =========================
 // TOPUP CARD
 // =========================
+
 
 app.post("/api/topups/card",auth,(req,res)=>{
 
@@ -679,6 +666,7 @@ message:"Thiếu thông tin thẻ"
 });
 
 }
+
 
 
 
@@ -707,13 +695,18 @@ code,
 res.json({
 
 success:true,
+
 message:"Đã gửi thẻ chờ duyệt",
+
 id:result.lastInsertRowid
 
 });
 
 
 });
+
+
+
 
 
 
@@ -731,7 +724,7 @@ const amount=Number(req.body.amount);
 
 
 
-if(!Number.isFinite(amount)||amount<10000){
+if(!amount || amount<10000){
 
 return res.status(400).json({
 
@@ -741,6 +734,7 @@ message:"Nạp tối thiểu 10.000đ"
 });
 
 }
+
 
 
 
@@ -765,14 +759,17 @@ amount
 res.json({
 
 success:true,
-message:"Đã tạo yêu cầu nạp",
-id:result.lastInsertRowid,
-amount
+
+message:"Đã tạo yêu cầu",
+
+id:result.lastInsertRowid
 
 });
 
 
 });
+
+
 
 
 
@@ -804,6 +801,7 @@ ORDER BY id DESC
 res.json({
 
 success:true,
+
 orders
 
 });
@@ -824,7 +822,6 @@ try{
 const items=req.body.items;
 
 
-
 if(!Array.isArray(items)||items.length===0){
 
 return res.status(400).json({
@@ -838,18 +835,11 @@ message:"Giỏ hàng trống"
 
 
 
-const run=db.transaction(()=>{
-
-
 let total=0;
-
-
-const list=[];
 
 
 
 for(const item of items){
-
 
 
 const product=db.prepare(`
@@ -866,45 +856,17 @@ WHERE id=?
 
 if(!product){
 
-throw Error("Không tìm thấy sản phẩm");
+throw Error("Không có sản phẩm");
 
 }
 
 
 
-const qty=Number(item.quantity);
-
-
-
-if(qty<=0){
-
-throw Error("Số lượng sai");
-
-}
-
-
-
-if(product.stock<qty){
-
-throw Error("Không đủ hàng");
-
-}
-
-
-
-total+=product.price*qty;
-
-
-
-list.push({
-
-product,
-qty
-
-});
+total += product.price * Number(item.quantity);
 
 
 }
+
 
 
 
@@ -922,11 +884,13 @@ WHERE id=?
 
 
 
-if(user.balance<total){
+
+if(user.balance < total){
 
 throw Error("Không đủ tiền");
 
 }
+
 
 
 
@@ -951,52 +915,6 @@ total,
 
 
 
-for(const i of list){
-
-
-
-db.prepare(`
-
-INSERT INTO order_items
-
-(order_id,product_id,quantity,price)
-
-VALUES(?,?,?,?)
-
-`).run(
-
-order.lastInsertRowid,
-i.product.id,
-i.qty,
-i.product.price
-
-);
-
-
-
-db.prepare(`
-
-UPDATE products
-
-SET stock=stock-?
-
-WHERE id=?
-
-`).run(
-
-i.qty,
-i.product.id
-
-);
-
-
-
-}
-
-
-
-
-
 db.prepare(`
 
 UPDATE users
@@ -1014,18 +932,13 @@ user.id
 
 
 
-return order.lastInsertRowid;
-
-
-});
-
-
-
 res.json({
 
 success:true,
+
 message:"Mua thành công",
-order_id:run
+
+order_id:order.lastInsertRowid
 
 });
 
@@ -1037,6 +950,7 @@ order_id:run
 res.status(400).json({
 
 success:false,
+
 message:e.message
 
 });
@@ -1044,20 +958,33 @@ message:e.message
 
 }
 
-});
 
-
-
-
-
-
-
-// =========================
+});// =========================
 // ADMIN OVERVIEW
 // =========================
 
-
 app.get("/api/admin/overview",adminAuth,(req,res)=>{
+
+
+const users=db.prepare(
+"SELECT COUNT(*) c FROM users"
+).get().c;
+
+
+const products=db.prepare(
+"SELECT COUNT(*) c FROM products"
+).get().c;
+
+
+const orders=db.prepare(
+"SELECT COUNT(*) c FROM orders"
+).get().c;
+
+
+const topups=db.prepare(
+"SELECT COUNT(*) c FROM topups WHERE status='pending'"
+).get().c;
+
 
 
 res.json({
@@ -1065,21 +992,17 @@ res.json({
 success:true,
 
 overview:{
-
-users:db.prepare("SELECT COUNT(*) c FROM users").get().c,
-
-products:db.prepare("SELECT COUNT(*) c FROM products").get().c,
-
-orders:db.prepare("SELECT COUNT(*) c FROM orders").get().c,
-
-topups:db.prepare("SELECT COUNT(*) c FROM topups WHERE status='pending'").get().c
-
+users,
+products,
+orders,
+topups
 }
 
 });
 
 
 });
+
 
 
 
@@ -1108,6 +1031,7 @@ ORDER BY id ASC
 res.json({
 
 success:true,
+
 products
 
 });
@@ -1118,6 +1042,9 @@ products
 
 
 
+
+
+// ADD PRODUCT
 
 app.post("/api/admin/products",adminAuth,(req,res)=>{
 
@@ -1135,6 +1062,19 @@ description
 
 
 
+if(!name){
+
+return res.status(400).json({
+
+success:false,
+message:"Thiếu tên"
+
+});
+
+}
+
+
+
 const result=db.prepare(`
 
 INSERT INTO products
@@ -1146,9 +1086,9 @@ VALUES(?,?,?,?,?,?)
 `).run(
 
 name,
-Number(price),
-Number(bank_price||price),
-Number(stock),
+Number(price)||0,
+Number(bank_price)||Number(price)||0,
+Number(stock)||0,
 image||"",
 description||""
 
@@ -1159,19 +1099,27 @@ description||""
 res.json({
 
 success:true,
+
 id:result.lastInsertRowid
 
 });
 
 
-});// =========================
+});
+
+
+
+
+
+
+
 // EDIT PRODUCT
-// =========================
 
 app.patch("/api/admin/products/:id",adminAuth,(req,res)=>{
 
 
 const id=Number(req.params.id);
+
 
 
 const old=db.prepare(`
@@ -1191,11 +1139,14 @@ if(!old){
 return res.status(404).json({
 
 success:false,
-message:"Không tìm thấy sản phẩm"
+
+message:"Không tìm thấy"
 
 });
 
 }
+
+
 
 
 
@@ -1241,7 +1192,7 @@ res.json({
 
 success:true,
 
-message:"Đã cập nhật"
+message:"Đã sửa"
 
 });
 
@@ -1253,10 +1204,8 @@ message:"Đã cập nhật"
 
 
 
-// =========================
+
 // DELETE PRODUCT
-// =========================
-
 
 app.delete("/api/admin/products/:id",adminAuth,(req,res)=>{
 
@@ -1291,6 +1240,8 @@ message:"Đã xóa"
 
 
 
+
+
 // =========================
 // ADMIN TOPUPS
 // =========================
@@ -1301,19 +1252,11 @@ app.get("/api/admin/topups",adminAuth,(req,res)=>{
 
 const topups=db.prepare(`
 
-SELECT
-
-topups.*,
-
-users.username
+SELECT *
 
 FROM topups
 
-JOIN users
-
-ON users.id=topups.user_id
-
-ORDER BY topups.id DESC
+ORDER BY id DESC
 
 `).all();
 
@@ -1335,7 +1278,7 @@ topups
 
 
 
-// DUYỆT NẠP
+// APPROVE TOPUP
 
 app.post("/api/admin/topups/:id/approve",adminAuth,(req,res)=>{
 
@@ -1361,11 +1304,13 @@ if(!topup){
 return res.status(404).json({
 
 success:false,
-message:"Không tìm thấy"
+
+message:"Không có yêu cầu"
 
 });
 
 }
+
 
 
 
@@ -1405,7 +1350,7 @@ res.json({
 
 success:true,
 
-message:"Đã duyệt nạp"
+message:"Đã duyệt"
 
 });
 
@@ -1418,7 +1363,7 @@ message:"Đã duyệt nạp"
 
 
 
-// TỪ CHỐI NẠP
+// REJECT TOPUP
 
 app.post("/api/admin/topups/:id/reject",adminAuth,(req,res)=>{
 
@@ -1448,19 +1393,9 @@ message:"Đã từ chối"
 });
 
 
-});
-
-
-
-
-
-
-
-
-// =========================
+});// =========================
 // ADMIN USERS
 // =========================
-
 
 app.get("/api/admin/users",adminAuth,(req,res)=>{
 
@@ -1493,7 +1428,11 @@ users
 
 
 
+
+// =========================
 // CỘNG TIỀN USER
+// =========================
+
 
 app.patch("/api/admin/users/:id/balance",adminAuth,(req,res)=>{
 
@@ -1510,11 +1449,39 @@ return res.status(400).json({
 
 success:false,
 
-message:"Số tiền lỗi"
+message:"Số tiền không hợp lệ"
 
 });
 
 }
+
+
+
+const user=db.prepare(`
+
+SELECT *
+
+FROM users
+
+WHERE id=?
+
+`).get(id);
+
+
+
+if(!user){
+
+return res.status(404).json({
+
+success:false,
+
+message:"Không tìm thấy user"
+
+});
+
+}
+
+
 
 
 
@@ -1540,7 +1507,7 @@ res.json({
 
 success:true,
 
-message:"Đã cập nhật tiền"
+message:"Đã cộng tiền"
 
 });
 
@@ -1581,11 +1548,12 @@ return res.sendFile(index);
 
 
 
-res.send("BLACK GAG2 SHOP SERVER ONLINE");
+res.send(
+"BLACK GAG2 SHOP SERVER ONLINE"
+);
 
 
 });
-
 
 
 
