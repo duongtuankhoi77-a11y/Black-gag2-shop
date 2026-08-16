@@ -171,13 +171,16 @@ app.post("/api/register",(req,res)=>{
  try{
 
  db.prepare(`
- INSERT INTO users(username,contact,password)
- VALUES(?,?,?)
- `).run(
- username,
- contact || "",
- password
- );
+
+INSERT INTO users(username,contact,password)
+
+VALUES(?,?,?)
+
+`).run(
+username,
+contact || "",
+password
+);
 
 
  res.json({
