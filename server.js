@@ -1,20 +1,39 @@
 const express = require("express");
 const path = require("path");
-const Database = require("better-sqlite3");
 const crypto = require("crypto");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+
+// =====================
+// MIDDLEWARE
+// =====================
+
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({
+    extended:true
+}));
 
-// public folder
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(
+    path.join(__dirname,"public")
+));
 
 
-// DATABASE
-const db = new Database("black_gag2.db");
+// =====================
+// DATABASE SQLITE
+// =====================
+
+const Database = require("better-sqlite3");
+
+const db = new Database(
+    "black_gag2.db"
+);
+
+
+// =====================
+// TẠO BẢNG
+// =====================
 
 db.exec(`
 
@@ -24,8 +43,7 @@ CREATE TABLE IF NOT EXISTS users(
  contact TEXT,
  password TEXT,
  balance INTEGER DEFAULT 0,
- role TEXT DEFAULT 'user',
- created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+ role TEXT DEFAULT 'user'
 );
 
 
@@ -42,8 +60,7 @@ CREATE TABLE IF NOT EXISTS orders(
  id INTEGER PRIMARY KEY AUTOINCREMENT,
  user_id INTEGER,
  total INTEGER,
- status TEXT DEFAULT 'pending',
- created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+ status TEXT
 );
 
 
@@ -52,8 +69,7 @@ CREATE TABLE IF NOT EXISTS topups(
  user_id INTEGER,
  method TEXT,
  amount INTEGER,
- status TEXT DEFAULT 'pending',
- created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+ status TEXT DEFAULT 'PENDING'
 );
 
 
@@ -62,6 +78,8 @@ CREATE TABLE IF NOT EXISTS sessions(
  user_id INTEGER,
  token TEXT
 );
+
+`);
 
 `);// TẠO SẢN PHẨM MẶC ĐỊNH
 const countProduct = db.prepare(
