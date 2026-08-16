@@ -1,8 +1,10 @@
 const express = require("express");
 const path = require("path");
 const crypto = require("crypto");
+const Database = require("better-sqlite3");
 
 const app = express();
+
 const PORT = process.env.PORT || 3000;
 
 
@@ -10,9 +12,13 @@ const PORT = process.env.PORT || 3000;
 // MIDDLEWARE
 // =====================
 
-app.use(express.json());
+app.use(express.json({
+    limit:"20mb"
+}));
+
 app.use(express.urlencoded({
-    extended:true
+    extended:true,
+    limit:"20mb"
 }));
 
 app.use(express.static(
@@ -20,229 +26,499 @@ app.use(express.static(
 ));
 
 
-// =====================
-// DATABASE SQLITE
-// =====================
 
-const Database = require("better-sqlite3");
+// =====================
+// DATABASE
+// =====================
 
 const db = new Database(
     "black_gag2.db"
 );
 
 
-// =====================
-// TẠO BẢNG
-// =====================
-
 db.exec(`
 
 CREATE TABLE IF NOT EXISTS users(
+
  id INTEGER PRIMARY KEY AUTOINCREMENT,
- username TEXT UNIQUE,
+
+ username TEXT UNIQUE NOT NULL,
+
  contact TEXT,
- password TEXT,
+
+ password TEXT NOT NULL,
+
  balance INTEGER DEFAULT 0,
+
  role TEXT DEFAULT 'user'
+
 );
+
 
 
 CREATE TABLE IF NOT EXISTS products(
+
  id INTEGER PRIMARY KEY AUTOINCREMENT,
- name TEXT,
- price INTEGER,
+
+ name TEXT NOT NULL,
+
+ price INTEGER DEFAULT 0,
+
  image TEXT,
+
  stock INTEGER DEFAULT 0
+
 );
+
 
 
 CREATE TABLE IF NOT EXISTS orders(
+
  id INTEGER PRIMARY KEY AUTOINCREMENT,
+
  user_id INTEGER,
+
+ product_id INTEGER,
+
+ qty INTEGER,
+
  total INTEGER,
- status TEXT
+
+ status TEXT DEFAULT 'SUCCESS',
+
+ created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+
 );
+
 
 
 CREATE TABLE IF NOT EXISTS topups(
+
  id INTEGER PRIMARY KEY AUTOINCREMENT,
+
  user_id INTEGER,
+
  method TEXT,
+
  amount INTEGER,
- status TEXT DEFAULT 'PENDING'
+
+ status TEXT DEFAULT 'PENDING',
+
+ credited INTEGER DEFAULT 0,
+
+ created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+
 );
+
 
 
 CREATE TABLE IF NOT EXISTS sessions(
+
  id INTEGER PRIMARY KEY AUTOINCREMENT,
+
  user_id INTEGER,
+
  token TEXT
+
 );
+
 
 `);
 
-`);// TẠO SẢN PHẨM MẶC ĐỊNH
-const countProduct = db.prepare(
-    "SELECT COUNT(*) AS c FROM products"
-).get().c;
 
-if(countProduct === 0){
 
-const products = [
- ["Dragon Breath Seed",4000,"/images/dragon.png"],
- ["Star Fruit",8000,"/images/starfruit.png"],
- ["Sun Bloom",3000,"/images/sunbloom.png"],
- ["Super Watering",1000,"/images/watering.png"],
- ["Super Sprinkler",1000,"/images/sprinkler.png"],
- ["Hypno Bloom",2000,"/images/hypno.png"],
- ["Moon Bloom",2000,"/images/moon.png"],
- ["Mega Seed",1000,"/images/mega.png"],
- ["Rainbow Seed",1000,"/images/rainbow.png"]
-];
 
-const add = db.prepare(
- "INSERT INTO products(name,price,image) VALUES(?,?,?)"
+// =====================
+// ADMIN TẠO SẴN
+// =====================
+
+
+const admin =
+db.prepare(
+"SELECT * FROM users WHERE username=?"
+)
+.get("admin");
+
+
+if(!admin){
+
+db.prepare(`
+
+INSERT INTO users
+
+(username,contact,password,role)
+
+VALUES(?,?,?,?)
+
+`).run(
+
+"admin",
+
+"admin@gmail.com",
+
+"admin123",
+
+"admin"
+
 );
 
-for(const p of products){
- add.run(...p);
-}
-
 }
 
 
-// LẤY USER TỪ TOKEN
-function auth(req,res,next){
-
- const token = req.headers.authorization;
-
- if(!token){
-    return res.status(401).json({
-      error:"Chưa đăng nhập"
-    });
- }
-
- const session = db.prepare(
- "SELECT * FROM sessions WHERE token=?"
- ).get(token);
 
 
- if(!session){
-    return res.status(401).json({
-      error:"Token lỗi"
-    });
- }
+// =====================
+// THÊM SẢN PHẨM MẶC ĐỊNH
+// =====================
 
 
- req.user = db.prepare(
- "SELECT * FROM users WHERE id=?"
- ).get(session.user_id);
+const totalProduct =
+db.prepare(
+"SELECT COUNT(*) AS c FROM products"
+)
+.get().c;
 
 
- next();
 
-}
-
-
-// ĐĂNG KÝ
-app.post("/api/register",(req,res)=>{
-
- let {
- username,
- contact,
- password
- } = req.body;
+if(totalProduct===0){
 
 
- if(!username || !password){
-    return res.json({
-      error:"Thiếu thông tin"
-    });
- }
+const list=[
 
 
- if(password.length < 6){
-    return res.json({
-      error:"Mật khẩu tối thiểu 6 ký tự"
-    });
- }
+["Dragon Breath Seed",4000,"/images/dragon.png"],
+
+["Star Fruit",8000,"/images/starfruit.png"],
+
+["Sun Bloom",3000,"/images/sunbloom.png"],
+
+["Super Watering",1000,"/images/watering.png"],
+
+["Super Sprinkler",1000,"/images/sprinkler.png"],
+
+["Hypno Bloom",2000,"/images/hypno.png"],
+
+["Moon Bloom",2000,"/images/moon.png"],
+
+["Mega Seed",1000,"/images/mega.png"],
+
+["Rainbow Seed",1000,"/images/rainbow.png"]
+
+];
 
 
- try{
+const add =
+db.prepare(`
 
- db.prepare(`
+INSERT INTO products
 
-INSERT INTO users(username,contact,password)
+(name,price,image)
 
 VALUES(?,?,?)
 
-`).run(
-username,
-contact || "",
-password
+`);
+
+
+for(const p of list){
+
+add.run(
+p[0],
+p[1],
+p[2]
+);
+
+}
+
+
+}
+
+
+
+
+// =====================
+// TOKEN
+// =====================
+
+
+function newToken(){
+
+return crypto
+.randomBytes(32)
+.toString("hex");
+
+}
+
+
+
+
+function getUser(req){
+
+
+const token =
+req.headers.authorization;
+
+
+
+if(!token)
+return null;
+
+
+
+const session =
+db.prepare(`
+
+SELECT *
+
+FROM sessions
+
+WHERE token=?
+
+`).get(token);
+
+
+
+if(!session)
+return null;
+
+
+
+return db.prepare(`
+
+SELECT *
+
+FROM users
+
+WHERE id=?
+
+`).get(
+session.user_id
 );
 
 
- res.json({
-   success:true
- });
-
-
- }catch(e){
-
- res.json({
-   error:"Tên tài khoản đã tồn tại"
- });
-
- }
-
-});
+}
 
 
 
-// ĐĂNG NHẬP
-app.post("/api/login",(req,res)=>{
 
-const {
- username,
- password
-}=req.body;
+function auth(req,res,next){
 
 
-const user = db.prepare(
-"SELECT * FROM users WHERE username=? AND password=?"
-).get(username,password);
+const user =
+getUser(req);
 
 
 
 if(!user){
- return res.json({
-   error:"Sai tài khoản hoặc mật khẩu"
- });
+
+return res.status(401).json({
+
+error:"Chưa đăng nhập"
+
+});
+
 }
 
 
-const token = crypto
-.randomBytes(32)
-.toString("hex");
+
+req.user=user;
 
 
-db.prepare(
-"INSERT INTO sessions(user_id,token) VALUES(?,?)"
-).run(
-user.id,
-token
+next();
+
+
+}
+
+
+
+function adminAuth(req,res,next){
+
+
+if(req.user.role!=="admin"){
+
+return res.status(403).json({
+
+error:"Không có quyền"
+
+});
+
+}
+
+
+next();
+
+
+}// =====================
+// REGISTER
+// =====================
+
+app.post("/api/register",(req,res)=>{
+
+
+const {
+username,
+contact,
+password
+}=req.body;
+
+
+
+if(!username || !password){
+
+return res.json({
+error:"Thiếu thông tin"
+});
+
+}
+
+
+
+if(password.length < 6){
+
+return res.json({
+error:"Mật khẩu phải từ 6 ký tự"
+});
+
+}
+
+
+
+try{
+
+
+db.prepare(`
+
+INSERT INTO users
+
+(username,contact,password)
+
+VALUES(?,?,?)
+
+`).run(
+
+username,
+
+contact || "",
+
+password
+
 );
 
 
+
 res.json({
- success:true,
- token:token,
- user:{
-  username:user.username,
-  balance:user.balance,
-  role:user.role
- }
+
+success:true
+
+});
+
+
+
+}catch(e){
+
+
+res.json({
+
+error:"Tên tài khoản đã tồn tại"
+
+});
+
+
+}
+
+
+
+});
+
+
+
+
+
+// =====================
+// LOGIN
+// =====================
+
+
+app.post("/api/login",(req,res)=>{
+
+
+const {
+username,
+password
+}=req.body;
+
+
+
+const user = db.prepare(`
+
+SELECT *
+
+FROM users
+
+WHERE username=?
+
+AND password=?
+
+`).get(
+
+username,
+
+password
+
+);
+
+
+
+if(!user){
+
+return res.json({
+
+error:"Sai tài khoản hoặc mật khẩu"
+
+});
+
+}
+
+
+
+const token =
+newToken();
+
+
+
+db.prepare(`
+
+INSERT INTO sessions
+
+(user_id,token)
+
+VALUES(?,?)
+
+`).run(
+
+user.id,
+
+token
+
+);
+
+
+
+res.json({
+
+success:true,
+
+token,
+
+user:{
+
+username:user.username,
+
+balance:user.balance,
+
+role:user.role
+
+}
+
 });
 
 
@@ -250,19 +526,36 @@ res.json({
 
 
 
-// ĐĂNG XUẤT
+
+
+
+// =====================
+// LOGOUT
+// =====================
+
+
 app.post("/api/logout",auth,(req,res)=>{
 
-const token=req.headers.authorization;
+
+const token =
+req.headers.authorization;
 
 
-db.prepare(
-"DELETE FROM sessions WHERE token=?"
-).run(token);
+
+db.prepare(`
+
+DELETE FROM sessions
+
+WHERE token=?
+
+`).run(token);
+
 
 
 res.json({
- success:true
+
+success:true
+
 });
 
 
@@ -270,71 +563,132 @@ res.json({
 
 
 
-// LẤY USER HIỆN TẠI
+
+
+
+// =====================
+// LẤY HỒ SƠ
+// =====================
+
+
 app.get("/api/me",auth,(req,res)=>{
 
+
 res.json({
- user:req.user
+
+username:req.user.username,
+
+contact:req.user.contact,
+
+balance:req.user.balance,
+
+role:req.user.role
+
 });
 
 
-});// =========================
+});
+
+
+
+
+
+
+
+// =====================
 // PRODUCTS
-// =========================
+// =====================
+
 
 app.get("/api/products",(req,res)=>{
 
-const data = db.prepare(
-"SELECT * FROM products ORDER BY id DESC"
-).all();
+
+const data =
+db.prepare(`
+
+SELECT *
+
+FROM products
+
+ORDER BY id DESC
+
+`).all();
+
 
 
 res.json(data);
 
+
 });
 
 
 
-// =========================
+
+
+
+
+// =====================
 // MUA HÀNG
-// =========================
+// =====================
+
 
 app.post("/api/orders",auth,(req,res)=>{
 
 
 const {
+
 productId,
+
 qty,
+
 gameUsername
+
 }=req.body;
 
 
 
-const product = db.prepare(
-"SELECT * FROM products WHERE id=?"
-).get(productId);
+const product =
+db.prepare(`
+
+SELECT *
+
+FROM products
+
+WHERE id=?
+
+`).get(productId);
 
 
 
 if(!product){
 
 return res.json({
- error:"Không có sản phẩm"
+
+error:"Không có sản phẩm"
+
 });
 
 }
 
 
 
-let amount =
-product.price * Number(qty || 1);
+
+const quantity =
+Number(qty)||1;
 
 
 
-if(req.user.balance < amount){
+const total =
+product.price * quantity;
+
+
+
+if(req.user.balance < total){
 
 return res.json({
- error:"Không đủ tiền"
+
+error:"Không đủ tiền"
+
 });
 
 }
@@ -343,23 +697,44 @@ return res.json({
 
 
 db.prepare(`
+
 UPDATE users
+
 SET balance=balance-?
+
 WHERE id=?
+
 `).run(
-amount,
+
+total,
+
 req.user.id
+
 );
 
 
 
+
 db.prepare(`
-INSERT INTO orders(user_id,total,status)
-VALUES(?,?,?)
+
+INSERT INTO orders
+
+(user_id,product_id,qty,total,status)
+
+VALUES(?,?,?,?,?)
+
 `).run(
+
 req.user.id,
-amount,
+
+product.id,
+
+quantity,
+
+total,
+
 "SUCCESS"
+
 );
 
 
@@ -376,9 +751,12 @@ success:true
 
 
 
-// =========================
+
+
+
+// =====================
 // LỊCH SỬ MUA
-// =========================
+// =====================
 
 
 app.get("/api/orders",auth,(req,res)=>{
@@ -396,22 +774,20 @@ WHERE user_id=?
 ORDER BY id DESC
 
 `).all(
+
 req.user.id
+
 );
+
 
 
 res.json(data);
 
 
 });
-
-
-
-
-
-// =========================
-// NẠP BANK
-// =========================
+// =====================
+// BANK INFO + QR
+// =====================
 
 
 app.get("/api/bank-info",(req,res)=>{
@@ -419,14 +795,19 @@ app.get("/api/bank-info",(req,res)=>{
 
 res.json({
 
+
 bank:"MB BANK",
 
+
 account:"0123456789",
+
 
 name:"BLACK GAG2 SHOP",
 
 
+
 qrs:{
+
 
 10000:"/qr-10k.png",
 
@@ -436,18 +817,26 @@ qrs:{
 
 100000:"/qr-100k.png"
 
+
 }
 
 
-});
-
 
 });
 
 
+});
 
 
-// gửi yêu cầu nạp bank
+
+
+
+
+
+// =====================
+// NẠP BANK
+// =====================
+
 
 app.post("/api/topups/bank",auth,(req,res)=>{
 
@@ -457,31 +846,57 @@ Number(req.body.amount);
 
 
 
-if(
-![10000,20000,50000,100000]
-.includes(amount)
-){
+const allow = [
+
+10000,
+
+20000,
+
+50000,
+
+100000
+
+];
+
+
+
+if(!allow.includes(amount)){
+
 
 return res.json({
- error:"Sai mệnh giá"
+
+error:"Sai mệnh giá"
+
 });
 
+
 }
+
 
 
 
 db.prepare(`
 
 INSERT INTO topups
+
 (user_id,method,amount)
 
 VALUES(?,?,?)
 
 `).run(
+
+
 req.user.id,
+
+
 "BANK",
+
+
 amount
+
+
 );
+
 
 
 
@@ -498,9 +913,12 @@ success:true
 
 
 
-// =========================
-// NẠP THẺ
-// =========================
+
+
+
+// =====================
+// NẠP THẺ CÀO
+// =====================
 
 
 app.post("/api/topups/card",auth,(req,res)=>{
@@ -509,29 +927,58 @@ app.post("/api/topups/card",auth,(req,res)=>{
 const {
 
 provider,
+
 value,
+
 serial,
+
 code
 
 }=req.body;
 
 
 
+
+if(!provider || !value || !serial || !code){
+
+
+return res.json({
+
+error:"Thiếu thông tin thẻ"
+
+});
+
+
+}
+
+
+
+
 db.prepare(`
 
 INSERT INTO topups
+
 (user_id,method,amount,status)
 
 VALUES(?,?,?,?)
 
 `).run(
 
+
 req.user.id,
+
+
 "CARD",
-value,
+
+
+Number(value),
+
+
 "PENDING"
 
+
 );
+
 
 
 
@@ -548,7 +995,12 @@ success:true
 
 
 
-// lịch sử nạp
+
+
+// =====================
+// LỊCH SỬ NẠP
+// =====================
+
 
 app.get("/api/topups",auth,(req,res)=>{
 
@@ -565,7 +1017,11 @@ WHERE user_id=?
 ORDER BY id DESC
 
 `).all(
+
+
 req.user.id
+
+
 );
 
 
@@ -573,89 +1029,74 @@ req.user.id
 res.json(data);
 
 
-});// =========================
-// TẠO ADMIN MẶC ĐỊNH
-// =========================
 
-const admin =
-db.prepare(
-"SELECT * FROM users WHERE username=?"
-).get("admin");
-
-
-if(!admin){
-
-db.prepare(`
-
-INSERT INTO users
-(username,contact,password,balance,role)
-
-VALUES(?,?,?,?,?)
-
-`).run(
-"admin",
-"admin@gmail.com",
-"admin123",
-0,
-"admin"
-);
-
-}
-
-
-
-// =========================
-// CHECK ADMIN
-// =========================
-
-function adminOnly(req,res,next){
-
-if(req.user.role!=="admin"){
-
-return res.status(403).json({
- error:"Không có quyền"
 });
 
-}
-
-
-next();
-
-}
 
 
 
 
 
-// =========================
+// =====================
 // ADMIN OVERVIEW
-// =========================
+// =====================
+
 
 app.get(
+
 "/api/admin/overview",
+
 auth,
-adminOnly,
+
+adminAuth,
+
 (req,res)=>{
+
 
 
 res.json({
 
+
+
 users:
-db.prepare(
-"SELECT id,username,balance,role FROM users"
-).all(),
+
+db.prepare(`
+
+SELECT id,username,balance,role
+
+FROM users
+
+ORDER BY id DESC
+
+`).all(),
+
+
 
 
 products:
-db.prepare(
-"SELECT * FROM products"
-).all(),
+
+db.prepare(`
+
+SELECT *
+
+FROM products
+
+ORDER BY id DESC
+
+`).all(),
+
+
 
 
 topups:
+
 db.prepare(`
 
-SELECT topups.*,users.username
+SELECT
+
+topups.*,
+
+users.username
 
 FROM topups
 
@@ -668,10 +1109,17 @@ ORDER BY topups.id DESC
 `).all(),
 
 
+
+
 orders:
+
 db.prepare(`
 
-SELECT orders.*,users.username
+SELECT
+
+orders.*,
+
+users.username
 
 FROM orders
 
@@ -684,23 +1132,21 @@ ORDER BY orders.id DESC
 `).all()
 
 
-});
-
 
 });
 
 
+});
 
-
-// =========================
+// =====================
 // ADMIN SỬA SẢN PHẨM
-// =========================
+// =====================
 
 
 app.patch(
 "/api/admin/products/:id",
 auth,
-adminOnly,
+adminAuth,
 (req,res)=>{
 
 
@@ -717,61 +1163,91 @@ db.prepare(`
 
 UPDATE products
 
-SET name=?,
+SET
+
+name=?,
+
 price=?,
+
 image=?,
+
 stock=?
 
 WHERE id=?
 
 `).run(
+
+
 name,
-price,
+
+Number(price),
+
 image,
-stock,
+
+Number(stock)||0,
+
 req.params.id
+
+
 );
 
 
 
 res.json({
+
 success:true
-});
-
 
 });
 
 
+});
 
 
 
 
-// =========================
+
+
+
+// =====================
 // ADMIN DUYỆT NẠP
-// =========================
+// =====================
 
-
-// thành công
 
 app.post(
+
 "/api/admin/topups/:id/approve",
+
 auth,
-adminOnly,
+
+adminAuth,
+
 (req,res)=>{
 
 
 const topup =
-db.prepare(
-"SELECT * FROM topups WHERE id=?"
-)
-.get(req.params.id);
+
+db.prepare(`
+
+SELECT *
+
+FROM topups
+
+WHERE id=?
+
+`).get(
+
+req.params.id
+
+);
 
 
 
 if(!topup){
 
 return res.json({
-error:"Không có"
+
+error:"Không tìm thấy"
+
 });
 
 }
@@ -790,10 +1266,11 @@ if(topup.method==="CARD"){
 
 money =
 Math.floor(
-money*0.84
+topup.amount * 0.84
 );
 
 }
+
 
 
 
@@ -807,9 +1284,16 @@ SET balance=balance+?
 WHERE id=?
 
 `).run(
+
+
 money,
+
 topup.user_id
+
+
 );
+
+
 
 
 
@@ -817,18 +1301,32 @@ db.prepare(`
 
 UPDATE topups
 
-SET status='SUCCESS'
+SET
+
+status='SUCCESS',
+
+credited=?
 
 WHERE id=?
 
 `).run(
+
+
+money,
+
 topup.id
+
+
 );
 
 
 
 res.json({
-success:true
+
+success:true,
+
+credited:money
+
 });
 
 
@@ -838,12 +1336,21 @@ success:true
 
 
 
-// từ chối
+
+
+// =====================
+// ADMIN TỪ CHỐI NẠP
+// =====================
+
 
 app.post(
+
 "/api/admin/topups/:id/reject",
+
 auth,
-adminOnly,
+
+adminAuth,
+
 (req,res)=>{
 
 
@@ -856,57 +1363,84 @@ SET status='FAILED'
 WHERE id=?
 
 `).run(
+
 req.params.id
+
 );
 
 
 
 res.json({
+
 success:true
-});
-
 
 });
 
 
+});
 
 
 
 
-// =========================
+
+
+
+// =====================
 // ADMIN CỘNG TIỀN USER
-// =========================
+// =====================
 
 
 app.post(
+
 "/api/admin/add-money",
+
 auth,
-adminOnly,
+
+adminAuth,
+
 (req,res)=>{
 
 
 const {
+
 username,
+
 amount
+
 }=req.body;
 
 
 
+
 const user =
-db.prepare(
-"SELECT * FROM users WHERE username=?"
-)
-.get(username);
+
+db.prepare(`
+
+SELECT *
+
+FROM users
+
+WHERE username=?
+
+`).get(
+
+username
+
+);
 
 
 
 if(!user){
 
 return res.json({
-error:"Không tìm thấy user"
+
+error:"Không có user"
+
 });
 
 }
+
+
 
 
 
@@ -919,38 +1453,53 @@ SET balance=balance+?
 WHERE id=?
 
 `).run(
-amount,
+
+
+Number(amount),
+
 user.id
+
+
 );
 
 
 
 res.json({
+
 success:true
-});
-
 
 });
 
 
+});
 
 
 
 
-// =========================
-// TRANG WEB
-// (sửa lỗi Express 5)
-// =========================
+
+
+
+// =====================
+// TRANG INDEX
+// =====================
+// Express 5 không dùng app.get("*")
 
 
 app.use((req,res)=>{
 
+
 res.sendFile(
+
 path.join(
+
 __dirname,
+
 "public",
+
 "index.html"
+
 )
+
 );
 
 
@@ -961,16 +1510,21 @@ __dirname,
 
 
 
-// =========================
-// START
-// =========================
+
+// =====================
+// START SERVER
+// =====================
 
 
 app.listen(PORT,()=>{
 
+
 console.log(
-"BLACK GAG2 SHOP running port "
+
+"BLACK GAG2 SHOP RUNNING PORT "
+
 +PORT
+
 );
 
 
